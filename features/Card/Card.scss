@@ -1,0 +1,37 @@
+.container {
+  width: 200px;
+  transition: all 0.2s ease;
+
+  &:not(:last-child) {
+    margin-right: 2rem;
+  }
+
+  &:hover {
+    transform: scale(1.03);
+
+    & .triangle {
+      transform: perspective(800px) translateZ(50px) scale3d(1.5, 1.5, 1.5);
+    }
+  }
+}
+
+.image {
+  position: relative;
+  height: 400px;
+  background-color: aquamarine;
+  transition: all 0.02s ease;
+}
+
+.triangle {
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  height: 50px;
+  width: 30px;
+  background-color: red;
+  // border-bottom: 50px solid red;
+  // border-left: 30px solid transparent;
+  transform: perspective(800px) translateZ(0px) scale3d(1, 1, 1);
+  transition: all 0.2s ease;
+  z-index: 20;
+}

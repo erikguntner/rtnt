@@ -1,0 +1,46 @@
+{
+  "name": "new-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-common-types": "^0.2.26",
+    "@fortawesome/fontawesome-svg-core": "^1.2.26",
+    "@fortawesome/free-solid-svg-icons": "^5.12.0",
+    "@fortawesome/react-fontawesome": "^0.1.8",
+    "@reduxjs/toolkit": "^1.2.1",
+    "@turf/turf": "^5.1.6",
+    "@types/react-map-gl": "^5.0.3",
+    "@zeit/next-css": "^1.0.1",
+    "@zeit/next-sass": "^1.0.1",
+    "apollo-server-micro": "^2.9.7",
+    "dotenv": "^8.2.0",
+    "graphql": "^14.5.8",
+    "isomorphic-unfetch": "^3.0.0",
+    "mapbox-gl": "^1.5.0",
+    "mongoose": "^5.7.7",
+    "next": "^9.1.7",
+    "node-sass": "^4.13.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-map-gl": "^5.0.12",
+    "react-redux": "^7.1.3",
+    "redux": "^4.0.5",
+    "redux-undo": "^1.0.0",
+    "styled-components": "^4.4.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.23",
+    "@types/node": "^12.12.14",
+    "@types/react": "^16.9.13",
+    "@types/react-dom": "^16.9.4",
+    "@types/react-redux": "^7.1.5",
+    "@types/styled-components": "^4.4.2",
+    "babel-plugin-styled-components": "^1.10.6",
+    "typescript": "^3.6.4"
+  }
+}
