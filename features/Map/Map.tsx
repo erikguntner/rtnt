@@ -11,7 +11,12 @@ import bbox from '@turf/bbox';
 import { RootState } from '../../app/rootReducer';
 import { AppDispatch } from '../../app/store';
 // import { addPoint, addRoute } from './routeReducer';
-import { addPoint, addRoute } from './routeSlice';
+import {
+  addPoint,
+  addRoute,
+  updateRouteAfterDrag,
+  updateStartAfterDrag,
+} from './routeSlice';
 
 import PolylineOverlay from './PolylineOverlay';
 import SvgOverlay from './SvgOverlay';
@@ -79,7 +84,38 @@ const Map = () => {
     }
   };
 
-  const onMarkerDragEnd = event => {};
+  const onMarkerDragEnd = (
+    newLngLat: number[],
+    point: number[],
+    pointIndex: number
+  ) => {
+    const waypoints: number[][] = [];
+    const lineIndices: number[] = [];
+
+    // If only one point, update that points position
+    if (points.length === 1) {
+      dispatch(updateStartAfterDrag(newLngLat));
+      // else handle cases for for multiple points, beginning, middle, and end
+    } else {
+      if (pointIndex === 0) {
+        // If you drag deginning point
+        waypoints.push(point, points[1]);
+        lineIndices.push(0);
+      } else if (pointIndex === lines.length) {
+        // If you drag the end point
+        waypoints.push(points[points.length - 2], point);
+        lineIndices.push(pointIndex);
+      } else {
+        // if you drag a middle point
+        waypoints.push(points[pointIndex - 1], point, points[pointIndex + 1]);
+        lineIndices.push(pointIndex - 1, pointIndex);
+      }
+    }
+
+    dispatch(
+      updateRouteAfterDrag(newLngLat, point, pointIndex, waypoints, lineIndices)
+    );
+  };
 
   return (
     <MapContainer>
@@ -106,7 +142,7 @@ const Map = () => {
             draggable
             onDragStart={() => {}}
             onDrag={() => {}}
-            onDragEnd={onMarkerDragEnd}
+            onDragEnd={event => onMarkerDragEnd(event.lngLat, point, i)}
           >
             <Pin size={20} />
           </Marker>

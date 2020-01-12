@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import fetch from 'isomorphic-unfetch';
 import { AppThunk } from '../../app/store';
+import { fetchRoutes } from '../../utils/fetchRoutes';
 
 interface RouteState {
   points: number[][];
-  lines: number[][];
+  lines: number[][][];
   startPoint: number[];
   endPoint: number[];
   distance: number;
@@ -26,6 +27,11 @@ interface RoutingInfo {
   coordinates: number[][];
   elevation: number[];
   newPoint: number[];
+}
+
+interface UpdateRouteResults {
+  index: number;
+  lngLat: number[];
 }
 
 const initialState: RouteState = {
@@ -53,9 +59,15 @@ const { actions, reducer } = createSlice({
     addRoutingInfo: (state, action: PayloadAction<RoutingInfo>) => {
       const { distance, coordinates, elevation, newPoint } = action.payload;
       state.points.push(newPoint);
-      state.lines = state.lines.concat(coordinates);
+      state.lines.push(coordinates);
       state.distance += distance;
       state.elevation = state.elevation.concat(elevation);
+    },
+    updateStartAfterDrag: (state, action: PayloadAction<number[]>) => {
+      state.points[0] = action.payload;
+    },
+    updateRoute: (state, action: PayloadAction<UpdateRouteResults>) => {
+      return state;
     },
   },
 });
@@ -65,7 +77,33 @@ export const {
   clearRoute,
   removeLastPoint,
   addRoutingInfo,
+  updateRoute,
+  updateStartAfterDrag,
 } = actions;
+
+export const updateRouteAfterDrag = (
+  newLngLat: number[],
+  point: number[],
+  pointIndex: number,
+  waypoints: number[][],
+  lineIndices: number[]
+): AppThunk => async dispatch => {
+  const data = await fetchRoutes(waypoints);
+
+  console.log(data);
+
+  // Use snapped_waypoints to identify center point in coordinates, as well as updated location of marker.
+  // because the marker may be dragged away from a road where the line should nor render
+
+  let middlePointIndex;
+  if (waypoints.length === 3) {
+    // middlePointIndex = data.points.coordinates.findIndex((coord) => coord[0] )
+  }
+
+  // first point in data.points.coordinates will be the starting point
+  // last point in data.points.coordinates will be the ending point
+  // You Need to find the index of the middle snapped waypoint and split the coordinates array into two new arrays
+};
 
 export const addRoute = ({
   newPoint,
@@ -76,26 +114,13 @@ export const addRoute = ({
   transportationType,
   clipPath,
 }: RouteParams): AppThunk => async dispatch => {
-  let numberOfPoints: number;
-  let pointString: string;
-  let distance: number;
+  const points = [
+    [startLong, startLat],
+    [newLong, newLat],
+  ];
 
   try {
-    const response = await fetch('http://localhost:3000/api/path', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json, text/plain, */*',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        newLat,
-        newLong,
-        startLat,
-        startLong,
-        transportationType,
-      }),
-    });
-    const { data } = await response.json();
+    const data = await fetchRoutes(points);
 
     const { coordinates, elevation } = data.points.coordinates.reduce(
       (accum, coords) => {
@@ -117,7 +142,9 @@ export const addRoute = ({
         newPoint,
       })
     );
-  } catch (e) {}
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 export default reducer;

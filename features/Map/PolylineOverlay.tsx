@@ -2,7 +2,7 @@ import React, { useLayoutEffect } from 'react';
 import { CanvasOverlay } from 'react-map-gl';
 
 interface PolylineOverlayProps {
-  points: number[][];
+  points: number[][][];
   color?: string;
   lineWidth?: number;
   renderWhileDragging?: boolean;
@@ -22,10 +22,12 @@ const PolylineOverlay = ({
       ctx.lineWidth = lineWidth;
       ctx.strokeStyle = color;
       ctx.beginPath();
-      points.forEach(point => {
-        const pixel = project([point[0], point[1]]);
-        ctx.lineTo(pixel[0], pixel[1]);
-      });
+      points.forEach(arr =>
+        arr.forEach(point => {
+          const pixel = project([point[0], point[1]]);
+          ctx.lineTo(pixel[0], pixel[1]);
+        })
+      );
       ctx.stroke();
     }
   };
