@@ -32,6 +32,7 @@ interface RoutingInfo {
 interface UpdatedRouteResults {
   pointIndex: number;
   snappedWaypoints: number[][];
+  elevation: number[];
   lineIndices: number[];
   line: number[][];
 }
@@ -68,34 +69,30 @@ const { actions, reducer } = createSlice({
     updateStartAfterDrag: (state, action: PayloadAction<number[]>) => {
       state.points[0] = action.payload;
     },
-    updateRouteAfterDragSuccess: {
-      reducer: (state, action: PayloadAction<UpdatedRouteResults>) => {
-        const {
-          pointIndex,
-          snappedWaypoints,
-          lineIndices,
-          line,
-        } = action.payload;
-
-        state.points.splice(0, 1, snappedWaypoints[0]);
-        state.lines.splice(0, 1, line);
-        return state;
-      },
-      prepare: ({
+    updateRouteAfterDragSuccess: (
+      state,
+      action: PayloadAction<UpdatedRouteResults>
+    ) => {
+      const {
         pointIndex,
         snappedWaypoints,
+        elevation,
         lineIndices,
         line,
-      }: UpdatedRouteResults) => {
-        return {
-          payload: {
-            pointIndex,
-            snappedWaypoints,
-            lineIndices,
-            line,
-          },
-        };
-      },
+      } = action.payload;
+
+      if (pointIndex === 0) {
+        state.points.splice(0, 1, snappedWaypoints[0]);
+        state.lines.splice(0, 1, line);
+        // return state;
+      } else if (pointIndex === state.points.length - 1) {
+        state.points.pop();
+        state.points.push(snappedWaypoints[1]);
+        state.lines.pop();
+        state.lines.push(line);
+      } else {
+        state.points.splice(pointIndex, 1, snappedWaypoints[1]);
+      }
     },
   },
 });
@@ -132,6 +129,8 @@ export const updateRouteAfterDrag = (
         coord[0] === snapped_waypoints.coordinates[1][0] &&
         coord[1] === snapped_waypoints.coordinates[1][1]
     );
+
+    
   }
 
   const { coordinates, elevation } = data.points.coordinates.reduce(
@@ -150,6 +149,7 @@ export const updateRouteAfterDrag = (
     updateRouteAfterDragSuccess({
       pointIndex,
       snappedWaypoints: snapped_waypoints.coordinates,
+      elevation,
       lineIndices,
       line: coordinates,
     })

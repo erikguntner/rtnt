@@ -5,6 +5,8 @@ import App from 'next/app';
 import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
+import 'mapbox-gl/src/css/mapbox-gl.css';
+
 config.autoAddCss = false;
 
 const theme = {

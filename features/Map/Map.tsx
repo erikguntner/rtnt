@@ -6,7 +6,6 @@ import WebMercatorViewport from 'viewport-mercator-project';
 import * as turfHelpers from '@turf/helpers';
 // import center from '@turf/center';
 import bbox from '@turf/bbox';
-// import "mapbox-gl/src/css/mapbox-gl.css";
 
 import { RootState } from '../../app/rootReducer';
 import { AppDispatch } from '../../app/store';
@@ -100,18 +99,20 @@ const Map = () => {
     } else {
       if (pointIndex === 0) {
         // If you drag deginning point
-        console.log('moving first point');
         waypoints.push(newLngLat, points[1]);
         lineIndices.push(0);
       } else if (pointIndex === lines.length) {
         // If you drag the end point
-        waypoints.push(points[points.length - 2], point);
+        waypoints.push(points[points.length - 2], newLngLat);
         lineIndices.push(pointIndex);
       } else {
         // if you drag a middle point
-        waypoints.push(points[pointIndex - 1], point, points[pointIndex + 1]);
+        waypoints.push(
+          points[pointIndex - 1],
+          newLngLat,
+          points[pointIndex + 1]
+        );
         lineIndices.push(pointIndex - 1, pointIndex);
-        console.log('astasfds');
       }
 
       dispatch(
@@ -124,6 +125,10 @@ const Map = () => {
         )
       );
     }
+  };
+
+  const onMarkerDrag = (event, index: number) => {
+    // console.log(event.lngLat);
   };
 
   return (
@@ -150,7 +155,7 @@ const Map = () => {
             offsetLeft={-10}
             draggable
             onDragStart={() => {}}
-            onDrag={() => {}}
+            onDrag={event => onMarkerDrag(event, i)}
             onDragEnd={event => onMarkerDragEnd(event.lngLat, point, i)}
           >
             <Pin size={20} />
