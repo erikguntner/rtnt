@@ -68,10 +68,8 @@ const { actions, reducer } = createSlice({
     updateStartAfterDrag: (state, action: PayloadAction<number[]>) => {
       state.points[0] = action.payload;
     },
-    updateRoutePointsAfterDrag: {
+    updateRouteAfterDragSuccess: {
       reducer: (state, action: PayloadAction<UpdatedRouteResults>) => {
-        console.log('updating');
-
         const {
           pointIndex,
           snappedWaypoints,
@@ -79,6 +77,8 @@ const { actions, reducer } = createSlice({
           line,
         } = action.payload;
 
+        state.points.splice(0, 1, snappedWaypoints[0]);
+        state.lines.splice(0, 1, line);
         return state;
       },
       prepare: ({
@@ -106,7 +106,7 @@ export const {
   removeLastPoint,
   addRoutingInfo,
   updateStartAfterDrag,
-  updateRoutePointsAfterDrag,
+  updateRouteAfterDragSuccess,
 } = actions;
 
 export const updateRouteAfterDrag = (
@@ -143,19 +143,13 @@ export const updateRouteAfterDrag = (
     {
       coordinates: [],
       elevation: [],
-      snapped_waypoints: [],
     }
   );
 
-  const snappedWaypoints = snapped_waypoints.coordinates.map(point => [
-    point[0],
-    point[1],
-  ]);
-
   dispatch(
-    updateRoutePointsAfterDrag({
+    updateRouteAfterDragSuccess({
       pointIndex,
-      snappedWaypoints: snappedWaypoints,
+      snappedWaypoints: snapped_waypoints.coordinates,
       lineIndices,
       line: coordinates,
     })

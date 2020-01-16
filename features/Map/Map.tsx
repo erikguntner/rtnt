@@ -100,7 +100,8 @@ const Map = () => {
     } else {
       if (pointIndex === 0) {
         // If you drag deginning point
-        waypoints.push(point, points[1]);
+        console.log('moving first point');
+        waypoints.push(newLngLat, points[1]);
         lineIndices.push(0);
       } else if (pointIndex === lines.length) {
         // If you drag the end point

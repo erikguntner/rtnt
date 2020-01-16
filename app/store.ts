@@ -10,9 +10,7 @@ export const initializeStore = (preloadedState = {}) => {
   });
 
   if (process.env.NODE_ENV === 'development' && module.hot) {
-    console.log('it is dev');
     module.hot.accept('./rootReducer', () => {
-      console.log('updating root reducer');
       const newRootReducer = require('./rootReducer').default;
       storeInit.replaceReducer(newRootReducer);
     });
