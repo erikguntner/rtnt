@@ -29,12 +29,14 @@ interface RoutingInfo {
   newPoint: number[];
 }
 
-interface UpdateRouteResults {
-  index: number;
-  lngLat: number[];
+interface UpdatedRouteResults {
+  pointIndex: number;
+  snappedWaypoints: number[][];
+  lineIndices: number[];
+  line: number[][];
 }
 
-const initialState: RouteState = {
+export const initialState: RouteState = {
   points: [],
   lines: [],
   startPoint: [],
@@ -66,8 +68,34 @@ const { actions, reducer } = createSlice({
     updateStartAfterDrag: (state, action: PayloadAction<number[]>) => {
       state.points[0] = action.payload;
     },
-    updateRoute: (state, action: PayloadAction<UpdateRouteResults>) => {
-      return state;
+    updateRoutePointsAfterDrag: {
+      reducer: (state, action: PayloadAction<UpdatedRouteResults>) => {
+        console.log('updating');
+
+        const {
+          pointIndex,
+          snappedWaypoints,
+          lineIndices,
+          line,
+        } = action.payload;
+
+        return state;
+      },
+      prepare: ({
+        pointIndex,
+        snappedWaypoints,
+        lineIndices,
+        line,
+      }: UpdatedRouteResults) => {
+        return {
+          payload: {
+            pointIndex,
+            snappedWaypoints,
+            lineIndices,
+            line,
+          },
+        };
+      },
     },
   },
 });
@@ -77,8 +105,8 @@ export const {
   clearRoute,
   removeLastPoint,
   addRoutingInfo,
-  updateRoute,
   updateStartAfterDrag,
+  updateRoutePointsAfterDrag,
 } = actions;
 
 export const updateRouteAfterDrag = (
@@ -92,17 +120,57 @@ export const updateRouteAfterDrag = (
 
   console.log(data);
 
+  const { snapped_waypoints, points } = data;
+
   // Use snapped_waypoints to identify center point in coordinates, as well as updated location of marker.
   // because the marker may be dragged away from a road where the line should nor render
 
-  let middlePointIndex;
-  if (waypoints.length === 3) {
-    // middlePointIndex = data.points.coordinates.findIndex((coord) => coord[0] )
+  let middlePointIndex: number | undefined = undefined;
+  if (snapped_waypoints.coordinates.length === 3) {
+    middlePointIndex = data.points.coordinates.findIndex(
+      coord =>
+        coord[0] === snapped_waypoints.coordinates[1][0] &&
+        coord[1] === snapped_waypoints.coordinates[1][1]
+    );
   }
+
+  const { coordinates, elevation } = data.points.coordinates.reduce(
+    (accum, coords) => {
+      accum.coordinates.push([coords[0], coords[1]]);
+      accum.elevation.push(coords[2]);
+      return accum;
+    },
+    {
+      coordinates: [],
+      elevation: [],
+      snapped_waypoints: [],
+    }
+  );
+
+  const snappedWaypoints = snapped_waypoints.coordinates.map(point => [
+    point[0],
+    point[1],
+  ]);
+
+  dispatch(
+    updateRoutePointsAfterDrag({
+      pointIndex,
+      snappedWaypoints: snappedWaypoints,
+      lineIndices,
+      line: coordinates,
+    })
+  );
 
   // first point in data.points.coordinates will be the starting point
   // last point in data.points.coordinates will be the ending point
   // You Need to find the index of the middle snapped waypoint and split the coordinates array into two new arrays
+};
+
+export const fetchSinglePoint = (
+  newPoint: number[]
+): AppThunk => async dispatch => {
+  const data = await fetchRoutes([newPoint, newPoint]);
+  dispatch(addPoint(data.snapped_waypoints.coordinates[0]));
 };
 
 export const addRoute = ({
@@ -121,6 +189,7 @@ export const addRoute = ({
 
   try {
     const data = await fetchRoutes(points);
+    console.log(data);
 
     const { coordinates, elevation } = data.points.coordinates.reduce(
       (accum, coords) => {
@@ -139,7 +208,7 @@ export const addRoute = ({
         distance: data.distance,
         coordinates,
         elevation,
-        newPoint,
+        newPoint: data.snapped_waypoints.coordinates[1],
       })
     );
   } catch (e) {

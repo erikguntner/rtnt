@@ -3,20 +3,30 @@ import { ThunkAction } from 'redux-thunk';
 
 import rootReducer, { RootState } from './rootReducer';
 
-const initialState = {};
-
-export const initializeStore = (preloadedState = initialState) => {
-  return configureStore({
+export const initializeStore = (preloadedState = {}) => {
+  const storeInit = configureStore({
     reducer: rootReducer,
     preloadedState,
   });
+
+  if (process.env.NODE_ENV === 'development' && module.hot) {
+    console.log('it is dev');
+    module.hot.accept('./rootReducer', () => {
+      console.log('updating root reducer');
+      const newRootReducer = require('./rootReducer').default;
+      storeInit.replaceReducer(newRootReducer);
+    });
+  }
+
+  return storeInit;
 };
 
 const store = initializeStore();
 
-// if (process.env.NODE_ENV === "development" && module.hot) {
-//   module.hot.accept("./rootReducer", () => {
-//     const newRootReducer = require("./rootReducer").default;
+// if (process.env.NODE_ENV === 'development' && module.hot) {
+//   module.hot.accept('./rootReducer', () => {
+//     const newRootReducer = require('./rootReducer').default;
+//     console.log(newRootReducer);
 //     store.replaceReducer(newRootReducer);
 //   });
 // }

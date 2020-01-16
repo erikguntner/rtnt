@@ -16,6 +16,7 @@ import {
   addRoute,
   updateRouteAfterDrag,
   updateStartAfterDrag,
+  fetchSinglePoint,
 } from './routeSlice';
 
 import PolylineOverlay from './PolylineOverlay';
@@ -80,7 +81,7 @@ const Map = () => {
         })
       );
     } else {
-      dispatch(addPoint([newLong, newLat]));
+      dispatch(fetchSinglePoint([newLong, newLat]));
     }
   };
 
@@ -109,12 +110,19 @@ const Map = () => {
         // if you drag a middle point
         waypoints.push(points[pointIndex - 1], point, points[pointIndex + 1]);
         lineIndices.push(pointIndex - 1, pointIndex);
+        console.log('astasfds');
       }
-    }
 
-    dispatch(
-      updateRouteAfterDrag(newLngLat, point, pointIndex, waypoints, lineIndices)
-    );
+      dispatch(
+        updateRouteAfterDrag(
+          newLngLat,
+          point,
+          pointIndex,
+          waypoints,
+          lineIndices
+        )
+      );
+    }
   };
 
   return (

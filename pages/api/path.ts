@@ -10,10 +10,9 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
 
     try {
       const response = await fetch(
-        `https://graphhopper.com/api/1/route?${pointString}vehicle=car&debug=true&elevation=true&details=street_name&key=${process.env.GRAPH_HOPPER_KEY}&type=json&points_encoded=false`
+        `https://graphhopper.com/api/1/route?${pointString}vehicle=foot&debug=true&elevation=true&details=street_name&key=${process.env.GRAPH_HOPPER_KEY}&type=json&points_encoded=false`
       );
       const data = await response.json();
-      console.log(data);
       res.status(200).json({ data: data.paths[0] });
     } catch (e) {
       console.log(e);

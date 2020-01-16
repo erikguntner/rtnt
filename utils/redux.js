@@ -1,7 +1,7 @@
-import React from "react";
-import { Provider } from "react-redux";
-import App from "next/app";
-import { initializeStore } from "../app/store";
+import React from 'react';
+import { Provider } from 'react-redux';
+import App from 'next/app';
+import { initializeStore } from '../app/store';
 
 export const withRedux = (PageComponent, { ssr = true } = {}) => {
   const WithRedux = ({ initialReduxState, ...props }) => {
@@ -14,18 +14,18 @@ export const withRedux = (PageComponent, { ssr = true } = {}) => {
   };
 
   // Make sure people don't use this HOC on _app.js level
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== 'production') {
     const isAppHoc =
       PageComponent === App || PageComponent.prototype instanceof App;
     if (isAppHoc) {
-      throw new Error("The withRedux HOC only works with PageComponents");
+      throw new Error('The withRedux HOC only works with PageComponents');
     }
   }
 
   // Set the correct displayName in development
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== 'production') {
     const displayName =
-      PageComponent.displayName || PageComponent.name || "Component";
+      PageComponent.displayName || PageComponent.name || 'Component';
 
     WithRedux.displayName = `withRedux(${displayName})`;
   }
@@ -41,14 +41,14 @@ export const withRedux = (PageComponent, { ssr = true } = {}) => {
 
       // Run getInitialProps from HOCed PageComponent
       const pageProps =
-        typeof PageComponent.getInitialProps === "function"
+        typeof PageComponent.getInitialProps === 'function'
           ? await PageComponent.getInitialProps(context)
           : {};
 
       // Pass props to PageComponent
       return {
         ...pageProps,
-        initialReduxState: reduxStore.getState()
+        initialReduxState: reduxStore.getState(),
       };
     };
   }
@@ -59,7 +59,7 @@ export const withRedux = (PageComponent, { ssr = true } = {}) => {
 let reduxStore;
 const getOrInitializeStore = initialState => {
   // Always make a new store if server, otherwise state is shared between requests
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return initializeStore(initialState);
   }
 

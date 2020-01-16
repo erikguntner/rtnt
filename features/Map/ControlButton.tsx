@@ -104,7 +104,7 @@ const InnerButton = styled.div`
     align-items: center;
     justify-content: center;
     transform: translate3d(0, -3px, 0);
-    background-color: ${props => props.theme.colors.bluesss};
+    background-color: ${props => props.theme.colors.primary};
     color: #fff;
     transition: 0.2s all ease;
   }

@@ -16,7 +16,6 @@ const theme = {
   },
   colors: {
     primary: '#0070f3',
-    blue: '#0991d3',
     lightGrey: '#e4e7eb',
     gray: {
       100: '#f7fafc',
@@ -118,7 +117,9 @@ const theme = {
   },
 };
 
-const GlobalStyle = createGlobalStyle`
+type ThemeType = typeof theme;
+
+const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
   html {
     height: 100%;
     width: 100%;
