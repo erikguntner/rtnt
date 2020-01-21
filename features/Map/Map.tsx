@@ -19,6 +19,7 @@ import {
 } from './routeSlice';
 
 import PolylineOverlay from './PolylineOverlay';
+import ConnectingLines from './ConnectingLines';
 import SvgOverlay from './SvgOverlay';
 import Controls from './Controls';
 import Pin from './Pin';
@@ -41,6 +42,10 @@ const Map = () => {
     pitch: 0,
   });
 
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [point, setPoint] = useState<number[]>([]);
+  const [index, setIndex] = useState<number>(0);
+
   const dispatch: AppDispatch = useDispatch();
   const { points } = useSelector((state: RootState) => ({
     points: state.route.present.points,
@@ -50,17 +55,6 @@ const Map = () => {
   }));
 
   const handleClick = event => {
-    // if (event.target.classList.contains("mapboxgl-ctrl-icon")) {
-    //   navigator.geolocation.getCurrentPosition(position => {
-    //     updateViewport({
-    //       ...viewport,
-    //       longitude: position.coords.longitude,
-    //       latitude: position.coords.latitude
-    //     });
-    //   });
-    //   return;
-    // }
-
     const [newLong, newLat] = event.lngLat;
 
     if (points.length) {
@@ -84,7 +78,7 @@ const Map = () => {
     }
   };
 
-  const onMarkerDragEnd = (
+  const handleMarkerDragEnd = (
     newLngLat: number[],
     point: number[],
     pointIndex: number
@@ -115,6 +109,8 @@ const Map = () => {
         lineIndices.push(pointIndex - 1, pointIndex);
       }
 
+      setIsDragging(false);
+
       dispatch(
         updateRouteAfterDrag(
           newLngLat,
@@ -127,8 +123,14 @@ const Map = () => {
     }
   };
 
-  const onMarkerDrag = (event, index: number) => {
+  const handleMarkerDrag = (event, index: number) => {
     // console.log(event.lngLat);
+    setPoint(event.lngLat);
+  };
+
+  const handleDragStart = (event, index: number) => {
+    setIsDragging(true);
+    setIndex(index);
   };
 
   return (
@@ -152,13 +154,19 @@ const Map = () => {
             longitude={point[0]}
             latitude={point[1]}
             draggable
-            onDragStart={() => {}}
-            onDrag={event => onMarkerDrag(event, i)}
-            onDragEnd={event => onMarkerDragEnd(event.lngLat, point, i)}
+            onDragStart={event => handleDragStart(event, i)}
+            onDrag={event => handleMarkerDrag(event, i)}
+            onDragEnd={event => handleMarkerDragEnd(event.lngLat, point, i)}
           >
             <Pin size={20} />
           </Marker>
         ))}
+        {point.length !== 0 && (
+          <>
+            <ConnectingLines points={points} index={index} endPoint={point} />
+            <ConnectingLines points={points} index={index} endPoint={point} />
+          </>
+        )}
       </ReactMapGL>
     </MapContainer>
   );
