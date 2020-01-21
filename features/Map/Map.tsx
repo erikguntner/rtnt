@@ -151,8 +151,6 @@ const Map = () => {
             key={i}
             longitude={point[0]}
             latitude={point[1]}
-            offsetTop={-20}
-            offsetLeft={-10}
             draggable
             onDragStart={() => {}}
             onDrag={event => onMarkerDrag(event, i)}

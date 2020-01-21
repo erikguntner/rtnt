@@ -20,7 +20,7 @@ const PolylineOverlay = ({
 
     if ((renderWhileDragging || !isDragging) && points) {
       ctx.lineWidth = lineWidth;
-      ctx.strokeStyle = color;
+      ctx.strokeStyle = '#667eea';
       ctx.beginPath();
       points.forEach(arr =>
         arr.forEach(point => {
