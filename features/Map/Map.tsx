@@ -78,7 +78,7 @@ const Map = () => {
     }
   };
 
-  const handleMarkerDragEnd = (
+  const handleDragEnd = (
     newLngLat: number[],
     point: number[],
     pointIndex: number
@@ -110,6 +110,7 @@ const Map = () => {
       }
 
       setIsDragging(false);
+      setPoint([]);
 
       dispatch(
         updateRouteAfterDrag(
@@ -123,7 +124,7 @@ const Map = () => {
     }
   };
 
-  const handleMarkerDrag = (event, index: number) => {
+  const handleDrag = (event, index: number) => {
     // console.log(event.lngLat);
     setPoint(event.lngLat);
   };
@@ -147,6 +148,9 @@ const Map = () => {
         onViewportChange={viewport => setViewport(viewport)}
         mapStyle="mapbox://styles/mapbox/outdoors-v10"
       >
+        {isDragging && (
+          <ConnectingLines points={points} index={index} endPoint={point} />
+        )}
         <PolylineOverlay points={lines} />
         {points.map((point, i) => (
           <Marker
@@ -155,18 +159,12 @@ const Map = () => {
             latitude={point[1]}
             draggable
             onDragStart={event => handleDragStart(event, i)}
-            onDrag={event => handleMarkerDrag(event, i)}
-            onDragEnd={event => handleMarkerDragEnd(event.lngLat, point, i)}
+            onDrag={event => handleDrag(event, i)}
+            onDragEnd={event => handleDragEnd(event.lngLat, point, i)}
           >
-            <Pin size={20} />
+            <Pin index={i} size={20} />
           </Marker>
         ))}
-        {point.length !== 0 && (
-          <>
-            <ConnectingLines points={points} index={index} endPoint={point} />
-            <ConnectingLines points={points} index={index} endPoint={point} />
-          </>
-        )}
       </ReactMapGL>
     </MapContainer>
   );
