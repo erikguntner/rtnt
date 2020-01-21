@@ -37,6 +37,7 @@ const Nav = () => (
 );
 
 const NavContainer = styled.nav`
+  background-color: ${props => props.theme.colors.gray[800]};
   text-align: center;
 
   & ul {
@@ -54,7 +55,7 @@ const NavContainer = styled.nav`
   }
 
   & a {
-    color: ${props => props.theme.colors.primary};
+    color: ${props => props.theme.colors.gray[100]};
     text-decoration: none;
     font-size: 13px;
   }
