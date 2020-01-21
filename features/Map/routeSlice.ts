@@ -80,17 +80,13 @@ const { actions, reducer } = createSlice({
         lineIndices,
         line,
       } = action.payload;
-      console.log(line);
 
       if (pointIndex === 0) {
-        state.points.splice(0, 1, snappedWaypoints[0]);
-        state.lines.splice(0, 1, line[0]);
-        // return state;
+        state.points[0] = snappedWaypoints[0];
+        state.lines[0] = line[0];
       } else if (pointIndex === state.points.length - 1) {
-        state.points.pop();
-        state.points.push(snappedWaypoints[1]);
-        state.lines.pop();
-        state.lines.push(line[0]);
+        state.points[state.points.length - 1] = snappedWaypoints[1];
+        state.lines[state.lines.length - 1] = line[0];
       } else {
         state.points.splice(pointIndex, 1, snappedWaypoints[1]);
         state.lines.splice(pointIndex - 1, 2, line[0], line[1]);
@@ -142,6 +138,7 @@ export const updateRouteAfterDrag = (
     lines.push(leftLine, rightLine);
   }
 
+  // TODO: Possibly remove this code in refactor? Test first.
   const { coordinates, elevation } = data.points.coordinates.reduce(
     (accum, coords) => {
       accum.coordinates.push([coords[0], coords[1]]);
