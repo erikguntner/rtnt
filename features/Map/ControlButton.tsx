@@ -23,7 +23,7 @@ const ControlButton: React.FC<Props> = ({
       <InnerButton {...{ activeState }} onClick={handleClick}>
         <FontAwesomeIcon icon={icon} />
       </InnerButton>
-      <Tooltip className="tooltip">{tooltip}</Tooltip>
+      <Tooltip>{tooltip}</Tooltip>
     </Button>
   );
 };
@@ -42,13 +42,6 @@ const Button = styled.button`
 
   &:hover {
     cursor: pointer;
-  }
-
-  @media (hover: hover) {
-    &:hover .tooltip {
-      visibility: visible;
-      opacity: 1;
-    }
   }
 
   &:hover div:first-of-type {
@@ -96,6 +89,14 @@ const InnerButton = styled.div`
   transform: translate3d(0, -6px, 0);
   transition: 0.2s all linear;
 
+  @media (hover: hover) {
+    &:hover ~ span {
+      visibility: visible;
+      opacity: 1;
+      transform: translate3d(10%, 133%, 0);
+    }
+  }
+
   &Active {
     height: 100%;
     width: 100%;
@@ -114,7 +115,7 @@ const InnerButton = styled.div`
   }
 `;
 
-const Tooltip = styled.div`
+const Tooltip = styled.span`
   display: flex;
   visibility: hidden;
   justify-content: center;
@@ -123,17 +124,18 @@ const Tooltip = styled.div`
   bottom: 0;
   left: 0;
   opacity: 0;
-  width: 100%;
+  width: 80%;
   height: 3rem;
   margin-top: 1rem;
   background-color: #333;
+  border-radius: 0.5rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05), 0 1px 2rem rgba(0, 0, 0, 0.04);
   color: #fff;
   font-size: 1.4rem;
-  transform: translateY(133%);
-  transition: opacity 0.2s ease;
+  transform: translate3d(10%, 100%, 0);
+  transition: all 0.2s ease;
 
-  &::before {
+  /* &::before {
     content: '';
     width: 0;
     height: 0;
@@ -142,7 +144,7 @@ const Tooltip = styled.div`
     border-right: 5px solid transparent;
     border-bottom: 5px solid #333;
     transform: translate(2rem, -350%);
-  }
+  } */
 `;
 
 export default ControlButton;
