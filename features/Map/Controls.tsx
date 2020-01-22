@@ -15,7 +15,7 @@ import {
 import ControlButton from './ControlButton';
 
 import { RootState } from '../../app/rootReducer';
-import { clearRoute } from './routeReducer';
+import { clearRoute } from './routeSlice';
 
 interface Props {
   clipPath: boolean;

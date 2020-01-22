@@ -160,7 +160,7 @@ const Map = () => {
             onDrag={event => handleDrag(event, i)}
             onDragEnd={event => handleDragEnd(event.lngLat, point, i)}
           >
-            <Pin index={i} size={20} />
+            <Pin index={i} size={20} points={points} />
           </Marker>
         ))}
       </ReactMapGL>

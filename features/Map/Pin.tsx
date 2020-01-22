@@ -4,26 +4,35 @@ import styled from 'styled-components';
 interface Props {
   index: number;
   size: number;
+  points: number[][];
 }
 
-const pinStyle = {
-  fill: '#d00',
-  stroke: 'black',
-};
-
-const Pin: React.FC<Props> = ({ size = 20, index }) => {
+const Pin: React.FC<Props> = ({ size = 20, index, points }) => {
   return (
-    <SVG {...{ index }} width="11" height="11">
+    <SVG index={index} coordinates={points} width="11" height="11">
       <circle cx="50%" cy="50%" r="5" />
     </SVG>
   );
 };
 
-const SVG = styled.svg`
+interface SVGProps {
+  readonly index: number;
+  readonly coordinates: number[][];
+}
+
+const SVG = styled.svg<SVGProps>`
   transform: translate3d(-50%, -50%, 0);
 
   circle {
-    fill: #4c51bf;
+    fill: ${props => {
+      if (props.index === 0) {
+        return props.theme.colors.green[400];
+      } else if (props.index === props.coordinates.length - 1) {
+        return props.theme.colors.red[600];
+      } else {
+        return props.theme.colors.indigo[700];
+      }
+    }};
     stroke: black;
   }
 `;

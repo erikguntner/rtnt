@@ -54,8 +54,7 @@ const { actions, reducer } = createSlice({
       state.points.push(action.payload);
     },
     clearRoute: state => {
-      console.log('clearing state');
-      state = initialState;
+      return initialState;
     },
     removeLastPoint: state => {
       return state;

@@ -8,14 +8,6 @@ interface Links {
   key?: string;
 }
 
-const links: Links[] = [
-  { href: 'https://zeit.co/now', label: 'ZEIT', key: '' },
-  { href: 'https://github.com/zeit/next.js', label: 'GitHub', key: '' },
-].map(link => {
-  link.key = `nav-link-${link.href}-${link.label}`;
-  return link;
-});
-
 const Nav = () => (
   <NavContainer>
     <ul>
@@ -23,15 +15,12 @@ const Nav = () => (
         <Link href="/">
           <a>Home</a>
         </Link>
+      </li>
+      <li>
         <Link href="/about">
           <a>About</a>
         </Link>
       </li>
-      {links.map(({ key, href, label }) => (
-        <li key={key}>
-          <a href={href}>{label}</a>
-        </li>
-      ))}
     </ul>
   </NavContainer>
 );
@@ -42,7 +31,7 @@ const NavContainer = styled.nav`
 
   & ul {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
   }
 
   & > ul {
