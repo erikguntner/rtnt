@@ -1,9 +1,11 @@
 import React from 'react';
+import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { ActionCreators } from 'redux-undo';
 import {
   faUndoAlt,
   faTimes,
+  faRedoAlt,
   faMountain,
   faRoute,
   faDrawPolygon,
@@ -13,8 +15,7 @@ import {
 import ControlButton from './ControlButton';
 
 import { RootState } from '../../app/rootReducer';
-import store from '../../app/store';
-import { clearRoute, removeLastPoint, undo } from './routeReducer';
+import { clearRoute } from './routeReducer';
 
 interface Props {
   clipPath: boolean;
@@ -28,15 +29,7 @@ const Controls: React.FC<Props> = ({ setClipPath, clipPath }) => {
   }));
 
   return (
-    <div className="controls">
-      <ControlButton
-        disabled={!points.length}
-        handleClick={() => {
-          dispatch(clearRoute());
-        }}
-        icon={faTimes}
-        tooltip={'Clear Route'}
-      />
+    <ControlsContainer>
       <ControlButton
         disabled={!points.length}
         handleClick={() => dispatch(ActionCreators.undo())}
@@ -46,8 +39,14 @@ const Controls: React.FC<Props> = ({ setClipPath, clipPath }) => {
       <ControlButton
         disabled={!points.length}
         handleClick={() => dispatch(ActionCreators.redo())}
-        icon={faUndoAlt}
+        icon={faRedoAlt}
         tooltip={'Redo Last'}
+      />
+      <ControlButton
+        disabled={!points.length}
+        handleClick={() => dispatch(clearRoute())}
+        icon={faTimes}
+        tooltip={'Clear Route'}
       />
       {/* <ControlButton
         click={showElevation}
@@ -82,23 +81,26 @@ const Controls: React.FC<Props> = ({ setClipPath, clipPath }) => {
       </Modal> */}
       <style jsx>{`
         .controls {
-          position: absolute;
-          top: 8rem;
-          left: 0;
-          right: 0;
-          margin: 0 auto;
-          max-width: 50%;
-          display: flex;
-          justify-content: center;
-          z-index: 10;
-
-          // @media screen and (max-width: 800px) {
-          //   max-width: 90%;
-          // }
         }
       `}</style>
-    </div>
+    </ControlsContainer>
   );
 };
+
+const ControlsContainer = styled.div`
+  position: absolute;
+  top: 8rem;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  max-width: 50%;
+  display: flex;
+  justify-content: center;
+  z-index: 10;
+
+  @media screen and (max-width: 800px) {
+    max-width: 90%;
+  }
+`;
 
 export default Controls;

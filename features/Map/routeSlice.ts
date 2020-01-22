@@ -54,7 +54,8 @@ const { actions, reducer } = createSlice({
       state.points.push(action.payload);
     },
     clearRoute: state => {
-      return state;
+      console.log('clearing state');
+      state = initialState;
     },
     removeLastPoint: state => {
       return state;
@@ -111,55 +112,59 @@ export const updateRouteAfterDrag = (
   waypoints: number[][],
   lineIndices: number[]
 ): AppThunk => async dispatch => {
-  const data = await fetchRoutes(waypoints);
+  try {
+    const data = await fetchRoutes(waypoints);
 
-  const { snapped_waypoints, points } = data;
+    const { snapped_waypoints, points } = data;
 
-  // first point in data.points.coordinates will be the starting point
-  // last point in data.points.coordinates will be the ending point
-  // You Need to find the index of the middle snapped waypoint and split the coordinates array into two new arrays
+    // first point in data.points.coordinates will be the starting point
+    // last point in data.points.coordinates will be the ending point
+    // You Need to find the index of the middle snapped waypoint and split the coordinates array into two new arrays
 
-  // Use snapped_waypoints to identify center point in coordinates, as well as updated location of marker.
-  // because the marker may be dragged away from a road where the line should nor render
+    // Use snapped_waypoints to identify center point in coordinates, as well as updated location of marker.
+    // because the marker may be dragged away from a road where the line should nor render
 
-  let middlePointIndex: number | undefined = undefined;
-  const isMiddlePoint: boolean = snapped_waypoints.coordinates.length === 3;
-  const lines: number[][][] = [];
-  if (isMiddlePoint) {
-    middlePointIndex = data.points.coordinates.findIndex(
-      coord =>
-        coord[0] === snapped_waypoints.coordinates[1][0] &&
-        coord[1] === snapped_waypoints.coordinates[1][1]
+    let middlePointIndex: number | undefined = undefined;
+    const isMiddlePoint: boolean = snapped_waypoints.coordinates.length === 3;
+    const lines: number[][][] = [];
+    if (isMiddlePoint) {
+      middlePointIndex = data.points.coordinates.findIndex(
+        coord =>
+          coord[0] === snapped_waypoints.coordinates[1][0] &&
+          coord[1] === snapped_waypoints.coordinates[1][1]
+      );
+
+      const leftLine = data.points.coordinates.slice(0, middlePointIndex + 1);
+      const rightLine = data.points.coordinates.slice(middlePointIndex);
+
+      lines.push(leftLine, rightLine);
+    }
+
+    // TODO: Possibly remove this code in refactor? Test first.
+    const { coordinates, elevation } = data.points.coordinates.reduce(
+      (accum, coords) => {
+        accum.coordinates.push([coords[0], coords[1]]);
+        accum.elevation.push(coords[2]);
+        return accum;
+      },
+      {
+        coordinates: [],
+        elevation: [],
+      }
     );
 
-    const leftLine = data.points.coordinates.slice(0, middlePointIndex + 1);
-    const rightLine = data.points.coordinates.slice(middlePointIndex);
-
-    lines.push(leftLine, rightLine);
+    dispatch(
+      updateRouteAfterDragSuccess({
+        pointIndex,
+        snappedWaypoints: snapped_waypoints.coordinates,
+        elevation,
+        lineIndices,
+        line: isMiddlePoint ? lines : [coordinates],
+      })
+    );
+  } catch (e) {
+    console.log(e);
   }
-
-  // TODO: Possibly remove this code in refactor? Test first.
-  const { coordinates, elevation } = data.points.coordinates.reduce(
-    (accum, coords) => {
-      accum.coordinates.push([coords[0], coords[1]]);
-      accum.elevation.push(coords[2]);
-      return accum;
-    },
-    {
-      coordinates: [],
-      elevation: [],
-    }
-  );
-
-  dispatch(
-    updateRouteAfterDragSuccess({
-      pointIndex,
-      snappedWaypoints: snapped_waypoints.coordinates,
-      elevation,
-      lineIndices,
-      line: isMiddlePoint ? lines : [coordinates],
-    })
-  );
 };
 
 export const fetchSinglePoint = (
@@ -185,7 +190,6 @@ export const addRoute = ({
 
   try {
     const data = await fetchRoutes(points);
-    console.log(data);
 
     const { coordinates, elevation } = data.points.coordinates.reduce(
       (accum, coords) => {

@@ -4,12 +4,10 @@ import ReactMapGL, { Marker } from 'react-map-gl';
 import styled from 'styled-components';
 import WebMercatorViewport from 'viewport-mercator-project';
 import * as turfHelpers from '@turf/helpers';
-// import center from '@turf/center';
 import bbox from '@turf/bbox';
 
 import { RootState } from '../../app/rootReducer';
 import { AppDispatch } from '../../app/store';
-// import { addPoint, addRoute } from './routeReducer';
 import {
   addPoint,
   addRoute,

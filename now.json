@@ -1,0 +1,8 @@
+{
+  "build": {
+    "env": {
+      "GRAPH_HOPPER_KEY": "@graph-hopper-key",
+      "MAPBOX_TOKEN": "@mapbox-token"
+    }
+  }
+}
