@@ -32,6 +32,7 @@ interface Viewport {
 
 const Map = () => {
   const [clipPath, setClipPath] = useState<boolean>(false);
+  const [showElevation, setShowElevation] = useState<boolean>(false);
   const [viewport, setViewport] = useState<Viewport>({
     latitude: 34.105999576,
     longitude: -117.718497126,
@@ -134,7 +135,9 @@ const Map = () => {
 
   return (
     <MapContainer>
-      <Controls {...{ setClipPath, clipPath }} />
+      <Controls
+        {...{ setClipPath, clipPath, showElevation, setShowElevation }}
+      />
       <ReactMapGL
         {...viewport}
         mapboxApiAccessToken={process.env.MAPBOX_TOKEN}

@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-common-types';
 
 interface Props {
-  disabled: boolean;
+  disabled?: boolean;
   handleClick: () => void;
   icon: IconDefinition;
   tooltip: string;
@@ -19,7 +19,7 @@ const ControlButton: React.FC<Props> = ({
   activeState = false,
 }) => {
   return (
-    <Button disabled={disabled}>
+    <Button {...{ activeState }} disabled={disabled}>
       <InnerButton {...{ activeState }} onClick={handleClick}>
         <FontAwesomeIcon icon={icon} />
       </InnerButton>
@@ -28,7 +28,11 @@ const ControlButton: React.FC<Props> = ({
   );
 };
 
-const Button = styled.button`
+interface ButtonProps {
+  activeState: boolean;
+}
+
+const Button = styled.button<ButtonProps>`
   position: relative;
   height: 4rem;
   width: 12rem;
@@ -46,7 +50,10 @@ const Button = styled.button`
 
   &:hover div:first-of-type {
     cursor: pointer;
-    transform: translate3d(0, -8px, 0);
+    transform: ${props =>
+      props.activeState
+        ? 'translate3d(0, -3px, 0)'
+        : 'translate3d(0, -8px, 0)'};
   }
 
   &:disabled div:first-of-type:hover {
@@ -74,7 +81,7 @@ const Button = styled.button`
   }
 `;
 
-const InnerButton = styled.div`
+const InnerButton = styled.div<ButtonProps>`
   height: 100%;
   width: 100%;
   font-weight: 600;
@@ -82,11 +89,14 @@ const InnerButton = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #fff;
-  color: black;
+  background-color: ${props =>
+    props.activeState ? props.theme.colors.indigo[100] : '#fff'};
+  color: ${props =>
+    props.activeState ? props.theme.colors.indigo[600] : 'black'};
   font-size: 2rem;
   text-transform: uppercase;
-  transform: translate3d(0, -6px, 0);
+  transform: ${props =>
+    props.activeState ? 'translate3d(0, -3px, 0)' : 'translate3d(0, -6px, 0)'};
   transition: 0.2s all linear;
 
   @media (hover: hover) {

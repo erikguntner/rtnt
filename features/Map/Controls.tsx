@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { ActionCreators } from 'redux-undo';
@@ -19,14 +19,23 @@ import { clearRoute } from './routeSlice';
 
 interface Props {
   clipPath: boolean;
-  setClipPath: (clipPath: boolean) => void;
+  showElevation: boolean;
+  setClipPath: Dispatch<SetStateAction<boolean>>;
+  setShowElevation: Dispatch<SetStateAction<boolean>>;
 }
 
-const Controls: React.FC<Props> = ({ setClipPath, clipPath }) => {
+const Controls: React.FC<Props> = ({
+  setClipPath,
+  clipPath,
+  showElevation,
+  setShowElevation,
+}) => {
   const dispatch = useDispatch();
   const { points } = useSelector((state: RootState) => ({
     points: state.route.present.points,
   }));
+
+  console.log(showElevation);
 
   return (
     <ControlsContainer>
@@ -48,12 +57,12 @@ const Controls: React.FC<Props> = ({ setClipPath, clipPath }) => {
         icon={faTimes}
         tooltip={'Clear Route'}
       />
-      {/* <ControlButton
-        click={showElevation}
+      <ControlButton
+        handleClick={() => setShowElevation(!showElevation)}
         icon={faMountain}
-        activeState={elevation}
+        activeState={showElevation}
         tooltip={'elevation'}
-      /> */}
+      />
       {/* <ControlButton
         click={() => changeToClipPath(true)}
         icon={faRoute}
@@ -93,7 +102,7 @@ const ControlsContainer = styled.div`
   left: 0;
   right: 0;
   margin: 0 auto;
-  max-width: 50%;
+  max-width: min-content;
   display: flex;
   justify-content: center;
   z-index: 10;
