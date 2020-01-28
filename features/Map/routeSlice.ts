@@ -25,14 +25,12 @@ interface RouteParams {
 interface RoutingInfo {
   distance: number;
   coordinates: number[][];
-  elevation: number[];
   newPoint: number[];
 }
 
 interface UpdatedRouteResults {
   pointIndex: number;
   snappedWaypoints: number[][];
-  elevation: number[];
   lineIndices: number[];
   line: number[][][];
 }
@@ -60,11 +58,10 @@ const { actions, reducer } = createSlice({
       return state;
     },
     addRoutingInfo: (state, action: PayloadAction<RoutingInfo>) => {
-      const { distance, coordinates, elevation, newPoint } = action.payload;
+      const { distance, coordinates, newPoint } = action.payload;
       state.points.push(newPoint);
       state.lines.push(coordinates);
       state.distance += distance;
-      state.elevation = state.elevation.concat(elevation);
     },
     updateStartAfterDrag: (state, action: PayloadAction<number[]>) => {
       state.points[0] = action.payload;
@@ -73,21 +70,17 @@ const { actions, reducer } = createSlice({
       state,
       action: PayloadAction<UpdatedRouteResults>
     ) => {
-      const {
-        pointIndex,
-        snappedWaypoints,
-        elevation,
-        lineIndices,
-        line,
-      } = action.payload;
-
+      const { pointIndex, snappedWaypoints, line } = action.payload;
       if (pointIndex === 0) {
+        // drag first point
         state.points[0] = snappedWaypoints[0];
         state.lines[0] = line[0];
       } else if (pointIndex === state.points.length - 1) {
+        // drag last point
         state.points[state.points.length - 1] = snappedWaypoints[1];
         state.lines[state.lines.length - 1] = line[0];
       } else {
+        // drag a middle point
         state.points.splice(pointIndex, 1, snappedWaypoints[1]);
         state.lines.splice(pointIndex - 1, 2, line[0], line[1]);
       }
@@ -137,28 +130,17 @@ export const updateRouteAfterDrag = (
       const rightLine = data.points.coordinates.slice(middlePointIndex);
 
       lines.push(leftLine, rightLine);
+    } else {
+      const { coordinates } = points;
+      lines.push(coordinates);
     }
-
-    // TODO: Possibly remove this code in refactor? Test first.
-    const { coordinates, elevation } = data.points.coordinates.reduce(
-      (accum, coords) => {
-        accum.coordinates.push([coords[0], coords[1]]);
-        accum.elevation.push(coords[2]);
-        return accum;
-      },
-      {
-        coordinates: [],
-        elevation: [],
-      }
-    );
 
     dispatch(
       updateRouteAfterDragSuccess({
         pointIndex,
         snappedWaypoints: snapped_waypoints.coordinates,
-        elevation,
         lineIndices,
-        line: isMiddlePoint ? lines : [coordinates],
+        line: lines,
       })
     );
   } catch (e) {
@@ -190,23 +172,12 @@ export const addRoute = ({
   try {
     const data = await fetchRoutes(points);
 
-    const { coordinates, elevation } = data.points.coordinates.reduce(
-      (accum, coords) => {
-        accum.coordinates.push([coords[0], coords[1]]);
-        accum.elevation.push(coords[2]);
-        return accum;
-      },
-      {
-        coordinates: [],
-        elevation: [],
-      }
-    );
+    const { coordinates } = data.points;
 
     dispatch(
       addRoutingInfo({
         distance: data.distance,
         coordinates,
-        elevation,
         newPoint: data.snapped_waypoints.coordinates[1],
       })
     );

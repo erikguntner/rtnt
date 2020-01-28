@@ -180,8 +180,10 @@ const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
 `;
 
 const Container = styled.div`
-  height: 90%;
-  width: 100%;
+  height: 100vh;
+  width: 100vw;
+  display: grid;
+  grid-template-rows: 50px 1fr;
 `;
 
 const Layout = ({ children }) => {
