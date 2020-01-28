@@ -38,10 +38,10 @@ const Button = styled.button<ButtonProps>`
   width: 12rem;
   border: none;
   padding: 0;
-  background-color: ${props => props.theme.colors.lightGrey};
+  background-color: ${props => props.theme.colors.gray[200]};
 
   &:not(:last-child) {
-    border-right: 1px solid ${props => props.theme.colors.lightGrey};
+    border-right: 1px solid ${props => props.theme.colors.gray[200]};
   }
 
   &:hover {
@@ -121,7 +121,7 @@ const InnerButton = styled.div<ButtonProps>`
   }
 
   &:not(:last-child) {
-    border-right: 1px solid ${props => props.theme.colors.lightGrey};
+    border-right: 1px solid ${props => props.theme.colors.gray[200]};
   }
 `;
 

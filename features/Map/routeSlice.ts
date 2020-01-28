@@ -8,7 +8,8 @@ interface RouteState {
   lines: number[][][];
   startPoint: number[];
   endPoint: number[];
-  distance: number;
+  totalDistance: number;
+  segmentDistances: number[][];
   elevation: number[];
 }
 
@@ -40,7 +41,8 @@ export const initialState: RouteState = {
   lines: [],
   startPoint: [],
   endPoint: [],
-  distance: 0,
+  totalDistance: 0,
+  segmentDistances: [],
   elevation: [],
 };
 
@@ -61,7 +63,7 @@ const { actions, reducer } = createSlice({
       const { distance, coordinates, newPoint } = action.payload;
       state.points.push(newPoint);
       state.lines.push(coordinates);
-      state.distance += distance;
+      state.totalDistance += distance;
     },
     updateStartAfterDrag: (state, action: PayloadAction<number[]>) => {
       state.points[0] = action.payload;
@@ -171,6 +173,8 @@ export const addRoute = ({
 
   try {
     const data = await fetchRoutes(points);
+
+    console.log(data);
 
     const { coordinates } = data.points;
 

@@ -35,8 +35,6 @@ const Controls: React.FC<Props> = ({
     points: state.route.present.points,
   }));
 
-  console.log(showElevation);
-
   return (
     <ControlsContainer>
       <ControlButton

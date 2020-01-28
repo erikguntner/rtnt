@@ -18,7 +18,7 @@ import {
 
 import PolylineOverlay from './PolylineOverlay';
 import ConnectingLines from './ConnectingLines';
-import SvgOverlay from './SvgOverlay';
+import ElevationProfile from './ElevationProfile';
 import Controls from './Controls';
 import Pin from './Pin';
 
@@ -124,7 +124,6 @@ const Map = () => {
   };
 
   const handleDrag = (event, index: number) => {
-    // console.log(event.lngLat);
     setPoint(event.lngLat);
   };
 
@@ -138,6 +137,7 @@ const Map = () => {
       <Controls
         {...{ setClipPath, clipPath, showElevation, setShowElevation }}
       />
+      <ElevationProfile {...{ showElevation, lines }} />
       <ReactMapGL
         {...viewport}
         mapboxApiAccessToken={process.env.MAPBOX_TOKEN}
