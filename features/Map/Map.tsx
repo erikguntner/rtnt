@@ -46,8 +46,9 @@ const Map = () => {
   const [index, setIndex] = useState<number>(0);
 
   const dispatch: AppDispatch = useDispatch();
-  const { points } = useSelector((state: RootState) => ({
+  const { points, totalDistance } = useSelector((state: RootState) => ({
     points: state.route.present.points,
+    totalDistance: state.route.present.totalDistance,
   }));
   const { lines } = useSelector((state: RootState) => ({
     lines: state.route.present.lines,
@@ -137,7 +138,7 @@ const Map = () => {
       <Controls
         {...{ setClipPath, clipPath, showElevation, setShowElevation }}
       />
-      <ElevationProfile {...{ showElevation, lines }} />
+      <ElevationProfile {...{ showElevation, lines, totalDistance }} />
       <ReactMapGL
         {...viewport}
         mapboxApiAccessToken={process.env.MAPBOX_TOKEN}

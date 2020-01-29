@@ -1,19 +1,59 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import d3Config from '../../utils/d3/config';
+import { initializeChart } from '../../utils/d3/utils';
+import {
+  axisLeft,
+  axisBottom,
+  format,
+  timeFormat,
+  scaleTime,
+  scaleLinear,
+} from 'd3';
 
 interface Props {
   showElevation: boolean;
   lines: number[][][];
+  totalDistance: number;
 }
 
-const ElevationProfile: React.FC<Props> = ({ showElevation, lines }) => {
+const ElevationProfile: React.FC<Props> = ({
+  showElevation,
+  lines,
+  totalDistance,
+}) => {
+  useEffect(() => {
+    // initialize chart on render
+    initializeChart(lines, totalDistance);
 
-
+    return () => {};
+  }, []);
 
   return (
-    <ElevationGraph {...{ showElevation }}>Elevation Profile</ElevationGraph>
+    <ElevationGraph {...{ showElevation }}>
+      <svg className="line-chart" width="100%" height="100%" />
+    </ElevationGraph>
   );
 };
+
+{
+  /* <ResponsiveContainer>
+  <LineChart
+    data={data}
+    margin={{
+      top: 10,
+      right: 30,
+      left: 0,
+      bottom: 0,
+    }}
+  >
+    <XAxis dataKey="name" />
+    <YAxis />
+    <Tooltip />
+    <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+  </LineChart>
+</ResponsiveContainer> */
+}
 
 interface StyleProps {
   showElevation: boolean;
