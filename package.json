@@ -14,6 +14,7 @@
     "@fortawesome/react-fontawesome": "^0.1.8",
     "@reduxjs/toolkit": "^1.2.1",
     "@turf/turf": "^5.1.6",
+    "@types/d3": "^5.7.2",
     "@types/react-map-gl": "^5.0.3",
     "@zeit/next-sass": "^1.0.1",
     "apollo-server-micro": "^2.9.7",

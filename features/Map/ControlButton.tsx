@@ -135,13 +135,13 @@ const Tooltip = styled.span`
   left: 0;
   opacity: 0;
   width: 80%;
-  height: 3rem;
+  height: 2.5rem;
   margin-top: 1rem;
   background-color: #333;
   border-radius: 0.5rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05), 0 1px 2rem rgba(0, 0, 0, 0.04);
   color: #fff;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   transform: translate3d(10%, 100%, 0);
   transition: all 0.2s ease;
 

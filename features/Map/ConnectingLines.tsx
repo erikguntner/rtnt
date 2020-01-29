@@ -28,6 +28,7 @@ const ConnectingLines = ({
 
       ctx.lineWidth = lineWidth;
       ctx.strokeStyle = '#667eea';
+      ctx.globalAlpha = 0.5;
       ctx.beginPath();
       const pixel = project([endPoint[0], endPoint[1]]);
       if (index === 0) {

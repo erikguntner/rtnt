@@ -32,7 +32,7 @@ interface Viewport {
 
 const Map = () => {
   const [clipPath, setClipPath] = useState<boolean>(false);
-  const [showElevation, setShowElevation] = useState<boolean>(false);
+  const [showElevation, setShowElevation] = useState<boolean>(true);
   const [viewport, setViewport] = useState<Viewport>({
     latitude: 34.105999576,
     longitude: -117.718497126,
@@ -109,18 +109,20 @@ const Map = () => {
         lineIndices.push(pointIndex - 1, pointIndex);
       }
 
-      setIsDragging(false);
-      setPoint([]);
-
       dispatch(
         updateRouteAfterDrag(
           newLngLat,
           point,
           pointIndex,
           waypoints,
-          lineIndices
+          lineIndices,
+          setIsDragging,
+          setPoint
         )
       );
+
+      setIsDragging(false);
+      setPoint([]);
     }
   };
 

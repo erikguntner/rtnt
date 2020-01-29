@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import fetch from 'isomorphic-unfetch';
+import { Dispatch, SetStateAction } from 'react';
 import { AppThunk } from '../../app/store';
 import { fetchRoutes } from '../../utils/fetchRoutes';
 
@@ -104,7 +104,9 @@ export const updateRouteAfterDrag = (
   point: number[],
   pointIndex: number,
   waypoints: number[][],
-  lineIndices: number[]
+  lineIndices: number[],
+  setIsDragging: Dispatch<SetStateAction<boolean>>,
+  setPoint: Dispatch<SetStateAction<number[]>>
 ): AppThunk => async dispatch => {
   try {
     const data = await fetchRoutes(waypoints);
@@ -121,6 +123,7 @@ export const updateRouteAfterDrag = (
     let middlePointIndex: number | undefined = undefined;
     const isMiddlePoint: boolean = snapped_waypoints.coordinates.length === 3;
     const lines: number[][][] = [];
+
     if (isMiddlePoint) {
       middlePointIndex = data.points.coordinates.findIndex(
         coord =>
