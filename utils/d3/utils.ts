@@ -7,9 +7,8 @@ import {
   extent,
   select,
   selectAll,
-  curveMonotoneX,
   bisector,
-  curveBasis,
+  curveMonotoneX,
   line,
   mouse,
   csv,
@@ -29,7 +28,6 @@ export const renderLineChart = (data: Data[]) => {
   const newWidth = document
     .querySelector('.line-chart-container')
     .getBoundingClientRect();
-  console.log(newWidth);
   const width = +svg.attr('width');
   const height = +svg.attr('height');
   const innerWidth = width - margin.left - margin.right;
@@ -58,7 +56,7 @@ export const renderLineChart = (data: Data[]) => {
   const lineGenerator = line()
     .x(d => xScale(xValue(d)))
     .y(d => yScale(yValue(d)))
-    .curve(curveBasis);
+    .curve(curveMonotoneX);
 
   const linePath = g
     .append('path')

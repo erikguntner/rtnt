@@ -16,7 +16,7 @@ import {
   fetchSinglePoint,
 } from './routeSlice';
 
-import PolylineOverlay from './PolylineOverlay';
+import SVGOverlay from './SVGOverlay';
 import ConnectingLines from './ConnectingLines';
 import ElevationProfile from './ElevationProfile';
 import Controls from './Controls';
@@ -155,7 +155,7 @@ const Map = () => {
         {isDragging && (
           <ConnectingLines points={points} index={index} endPoint={point} />
         )}
-        <PolylineOverlay points={lines} />
+        <SVGOverlay points={lines} />
         {points.map((point, i) => (
           <Marker
             key={i}

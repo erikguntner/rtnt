@@ -177,8 +177,6 @@ export const addRoute = ({
   try {
     const data = await fetchRoutes(points);
 
-    console.log(data);
-
     const { coordinates } = data.points;
 
     dispatch(

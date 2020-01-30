@@ -2,13 +2,30 @@ import React from 'react';
 import { SVGOverlay } from 'react-map-gl';
 
 interface Props {
-  point: number[];
+  points: number[][][];
 }
 
-const SvgOverlay: React.FC<Props> = ({ point }) => {
+const SvgOverlay: React.FC<Props> = ({ points }) => {
   const redraw = ({ project }) => {
-    const [cx, cy] = project([point[0], point[1]]);
-    return <circle cx={cx} cy={cy} r={4} fill="blue" />;
+    const path = points.flat().reduce((accum, point, i) => {
+      const [x, y] = project([point[0], point[1]]);
+      if (i === 0) {
+        accum += `M ${x} ${y} `;
+      } else {
+        accum += `L ${x} ${y} `;
+      }
+      return accum;
+    }, '');
+
+    return (
+      <path
+        d={path}
+        stroke="#667eea"
+        strokeWidth="2.5"
+        fill="none"
+        className="route-path"
+      />
+    );
   };
 
   return <SVGOverlay redraw={redraw} />;
