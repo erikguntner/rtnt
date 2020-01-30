@@ -14,19 +14,39 @@ const ElevationProfile: React.FC<Props> = ({
   lines,
   totalDistance,
 }) => {
+  const handleResize = () => {
+    const container = document.getElementsByClassName('line-chart');
+    container[0].innerHTML = '';
+    createChart();
+  };
+
+  if (!showElevation) {
+    return null;
+  }
+
   useEffect(() => {
     // initialize chart on render
     // initializeChart(lines, totalDistance);
     // render({ distance: totalDistance, elevation: [] });
     createChart();
-
-    return () => {};
   }, [totalDistance]);
 
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
-    <ElevationGraph {...{ showElevation }} className="line-chart-container">
-      <svg className="line-chart" width="600" height="200" />
-    </ElevationGraph>
+    <ChartContainer
+      {...{ showElevation }}
+      className="line-chart-container"
+      id="elevation-container"
+    >
+      <svg className="line-chart" width="100%" height="100%" />
+    </ChartContainer>
   );
 };
 
@@ -34,7 +54,7 @@ interface StyleProps {
   showElevation: boolean;
 }
 
-const ElevationGraph = styled.div<StyleProps>`
+const ChartContainer = styled.div<StyleProps>`
   position: absolute;
   bottom: 0;
   left: 0;
@@ -43,11 +63,9 @@ const ElevationGraph = styled.div<StyleProps>`
   width: 100vw;
   height: 35%;
   background-color: ${props => props.theme.colors.gray[100]};
-  display: flex;
-  justify-content: center;
+  display: block;
+  /* justify-content: center; */
   z-index: 10;
-  transform: ${props =>
-    props.showElevation ? 'translateY(0)' : 'translateY(100%)'};
   transition: all 0.3s ease;
 `;
 

@@ -2,6 +2,7 @@ import {
   axisLeft,
   axisBottom,
   format,
+  area,
   scaleLinear,
   scaleBand,
   extent,
@@ -23,15 +24,17 @@ interface Data {
 }
 
 export const renderLineChart = (data: Data[]) => {
-  const margin = { top: 20, right: 20, bottom: 20, left: 100 };
+  const container = document.getElementById('elevation-container');
+  console.log(container);
+  const margin = { top: 20, right: 20, bottom: 20, left: 50 };
+  console.log(container.offsetHeight, container.offsetWidth);
+  const setHeight = container.offsetHeight;
+  const setWidth = container.offsetWidth;
   const svg = select('.line-chart');
-  const newWidth = document
-    .querySelector('.line-chart-container')
-    .getBoundingClientRect();
   const width = +svg.attr('width');
   const height = +svg.attr('height');
-  const innerWidth = width - margin.left - margin.right;
-  const innerHeight = height - margin.top - margin.bottom;
+  const innerWidth = setWidth - margin.left - margin.right;
+  const innerHeight = setHeight - margin.top - margin.bottom;
 
   const xValue = d => d.distance;
   const yValue = d => d.elevation;
@@ -62,7 +65,8 @@ export const renderLineChart = (data: Data[]) => {
     .append('path')
     .attr('class', 'line-path')
     .attr('fill', 'none')
-    .attr('stroke', '#000')
+    .attr('stroke', '#667eea')
+    .attr('stroke-width', '2')
     //@ts-ignore
     .attr('d', lineGenerator(data));
 
@@ -126,7 +130,7 @@ export const renderLineChart = (data: Data[]) => {
       //@ts-ignore
       const mouseCoords = mouse(this);
       select('.mouse-line').attr('d', function() {
-        let d = 'M' + mouseCoords[0] + ',' + height;
+        let d = 'M' + mouseCoords[0] + ',' + (setHeight - margin.bottom);
         d += ' ' + mouseCoords[0] + ',' + 0;
         return d;
       });
