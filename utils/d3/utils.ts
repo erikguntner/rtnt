@@ -26,6 +26,10 @@ interface Data {
 export const renderLineChart = (data: Data[]) => {
   const margin = { top: 20, right: 20, bottom: 20, left: 100 };
   const svg = select('.line-chart');
+  const newWidth = document
+    .querySelector('.line-chart-container')
+    .getBoundingClientRect();
+  console.log(newWidth);
   const width = +svg.attr('width');
   const height = +svg.attr('height');
   const innerWidth = width - margin.left - margin.right;

@@ -24,8 +24,8 @@ const ElevationProfile: React.FC<Props> = ({
   }, [totalDistance]);
 
   return (
-    <ElevationGraph {...{ showElevation }}>
-      <svg className="line-chart" width="600" height="150" />
+    <ElevationGraph {...{ showElevation }} className="line-chart-container">
+      <svg className="line-chart" width="600" height="200" />
     </ElevationGraph>
   );
 };
