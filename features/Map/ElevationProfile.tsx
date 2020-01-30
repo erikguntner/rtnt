@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import d3Config from '../../utils/d3/config';
-import { initializeChart, createChart } from '../../utils/d3/utils';
+import { createChart } from '../../utils/d3/utils';
 
 interface Props {
   showElevation: boolean;
