@@ -39,7 +39,12 @@ export const fetchRoutes = async (
   points: number[][]
 ): Promise<ResponseData> => {
   try {
-    const response = await fetch('http://localhost:3000/api/path', {
+    const url =
+      process.env.NODE_ENV === 'production'
+        ? 'https://run-tracker-next-typescript.now.sh'
+        : 'http://localhost:3000';
+
+    const response = await fetch(`${url}/api/path`, {
       method: 'POST',
       headers: {
         Accept: 'application/json, text/plain, */*',

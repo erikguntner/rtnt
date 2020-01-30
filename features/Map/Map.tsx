@@ -32,7 +32,7 @@ interface Viewport {
 
 const Map = () => {
   const [clipPath, setClipPath] = useState<boolean>(false);
-  const [showElevation, setShowElevation] = useState<boolean>(true);
+  const [showElevation, setShowElevation] = useState<boolean>(false);
   const [viewport, setViewport] = useState<Viewport>({
     latitude: 34.105999576,
     longitude: -117.718497126,
