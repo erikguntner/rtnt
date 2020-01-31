@@ -71,7 +71,6 @@ const ChartContainer = styled.div<StyleProps>`
   height: 35%;
   background-color: ${props => props.theme.colors.gray[100]};
   display: block;
-  /* justify-content: center; */
   z-index: 10;
   transition: all 0.3s ease;
 `;

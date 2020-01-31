@@ -127,7 +127,7 @@ export const renderLineChart = (data: ElevationData[]) => {
       //@ts-ignore
       const mouseCoords = mouse(this);
       select('.mouse-line').attr('d', function() {
-        let d = 'M' + mouseCoords[0] + ',' + (height - margin.bottom);
+        let d = 'M' + mouseCoords[0] + ',' + innerHeight;
         d += ' ' + mouseCoords[0] + ',' + 0;
         return d;
       });

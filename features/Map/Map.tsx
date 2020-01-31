@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import * as turf from '@turf/turf';
 import ReactMapGL, { Marker } from 'react-map-gl';
 import styled from 'styled-components';
 import WebMercatorViewport from 'viewport-mercator-project';
-import * as turfHelpers from '@turf/helpers';
-import bbox from '@turf/bbox';
 
 import { RootState } from '../../app/rootReducer';
 import { AppDispatch } from '../../app/store';
@@ -33,6 +32,7 @@ interface Viewport {
 const Map = () => {
   const [clipPath, setClipPath] = useState<boolean>(false);
   const [showElevation, setShowElevation] = useState<boolean>(false);
+  const [distanceMarkers, setDistanceMarkers] = useState<number[][]>([]);
   const [viewport, setViewport] = useState<Viewport>({
     latitude: 34.105999576,
     longitude: -117.718497126,
@@ -40,20 +40,19 @@ const Map = () => {
     bearing: 0,
     pitch: 0,
   });
-
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [point, setPoint] = useState<number[]>([]);
   const [index, setIndex] = useState<number>(0);
 
   const dispatch: AppDispatch = useDispatch();
-  const { points, totalDistance } = useSelector((state: RootState) => ({
-    points: state.route.present.points,
-    totalDistance: state.route.present.totalDistance,
-  }));
-  const { lines, elevationData } = useSelector((state: RootState) => ({
-    lines: state.route.present.lines,
-    elevationData: state.route.present.elevationData,
-  }));
+  const { points, totalDistance, lines, elevationData } = useSelector(
+    (state: RootState) => ({
+      points: state.route.present.points,
+      totalDistance: state.route.present.totalDistance,
+      lines: state.route.present.lines,
+      elevationData: state.route.present.elevationData,
+    })
+  );
 
   const handleClick = event => {
     const [newLong, newLat] = event.lngLat;
@@ -137,6 +136,29 @@ const Map = () => {
     setIndex(index);
   };
 
+  useEffect(() => {
+    // calculate distance markers
+    if (lines.length > 0) {
+      const line = turf.lineString(lines.flat());
+      let routeDistance = turf.length(line, { units: 'miles' });
+      routeDistance = Math.floor(routeDistance);
+      const markers = [];
+
+      if (routeDistance !== 0) {
+        for (let i = 0; i < routeDistance + 1; i++) {
+          const segment = turf.along(line, i, { units: 'miles' });
+
+          if (i !== 0) {
+            markers.push(segment.geometry.coordinates);
+          }
+        }
+        setDistanceMarkers(markers);
+      } else {
+        setDistanceMarkers([]);
+      }
+    }
+  }, [lines]);
+
   return (
     <MapContainer>
       <Controls
@@ -171,6 +193,11 @@ const Map = () => {
             <Pin index={i} size={20} points={points} />
           </Marker>
         ))}
+        {distanceMarkers.map((point, i) => (
+          <Marker key={i} longitude={point[0]} latitude={point[1]}>
+            <DistanceMarker>{i + 1}</DistanceMarker>
+          </Marker>
+        ))}
       </ReactMapGL>
     </MapContainer>
   );
@@ -181,6 +208,16 @@ const MapContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+`;
+
+const DistanceMarker = styled.div`
+  font-size: 1rem;
+  line-height: 1;
+  background-color: #fff;
+  padding: 1px 2px;
+  border-radius: 3px;
+  border: 2px solid ${props => props.theme.colors.indigo[500]};
+  transform: translate3d(-50%, -50%, 0);
 `;
 
 export default Map;
