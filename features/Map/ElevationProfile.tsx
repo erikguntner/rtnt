@@ -3,21 +3,27 @@ import styled from 'styled-components';
 import d3Config from '../../utils/d3/config';
 import { createChart } from '../../utils/d3/utils';
 
+interface ElevationData {
+  distance: number;
+  elevation: number;
+}
 interface Props {
   showElevation: boolean;
-  lines: number[][][];
   totalDistance: number;
+  elevationData: ElevationData[][];
 }
 
 const ElevationProfile: React.FC<Props> = ({
   showElevation,
-  lines,
   totalDistance,
+  elevationData,
 }) => {
   const handleResize = () => {
     const container = document.getElementsByClassName('line-chart');
-    container[0].innerHTML = '';
-    createChart();
+    if (container.length > 0) {
+      container[0].innerHTML = '';
+      createChart(elevationData);
+    }
   };
 
   if (!showElevation) {
@@ -25,11 +31,12 @@ const ElevationProfile: React.FC<Props> = ({
   }
 
   useEffect(() => {
-    // initialize chart on render
-    // initializeChart(lines, totalDistance);
-    // render({ distance: totalDistance, elevation: [] });
-    createChart();
-  }, [totalDistance]);
+    const container = document.getElementsByClassName('line-chart');
+    if (container.length > 0) {
+      container[0].innerHTML = '';
+      createChart(elevationData);
+    }
+  }, [elevationData]);
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);

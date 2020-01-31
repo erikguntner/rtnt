@@ -27,7 +27,7 @@ interface ResponseData {
   points_encoded: boolean;
   bbox: number[];
   points: Points;
-  instructions: Instructions;
+  instructions: Instructions[];
   legs: [];
   details: Details;
   ascend: number;

@@ -18,23 +18,20 @@ import {
 
 import { popData, lineData } from './mockData';
 
-interface Data {
+interface ElevationData {
   distance: number;
   elevation: number;
 }
 
-export const renderLineChart = (data: Data[]) => {
+export const renderLineChart = (data: ElevationData[]) => {
+  console.log(data);
   const container = document.getElementById('elevation-container');
-  console.log(container);
   const margin = { top: 20, right: 20, bottom: 20, left: 50 };
-  console.log(container.offsetHeight, container.offsetWidth);
-  const setHeight = container.offsetHeight;
-  const setWidth = container.offsetWidth;
+  const height = container.offsetHeight;
+  const width = container.offsetWidth;
   const svg = select('.line-chart');
-  const width = +svg.attr('width');
-  const height = +svg.attr('height');
-  const innerWidth = setWidth - margin.left - margin.right;
-  const innerHeight = setHeight - margin.top - margin.bottom;
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
 
   const xValue = d => d.distance;
   const yValue = d => d.elevation;
@@ -130,12 +127,12 @@ export const renderLineChart = (data: Data[]) => {
       //@ts-ignore
       const mouseCoords = mouse(this);
       select('.mouse-line').attr('d', function() {
-        let d = 'M' + mouseCoords[0] + ',' + (setHeight - margin.bottom);
+        let d = 'M' + mouseCoords[0] + ',' + (height - margin.bottom);
         d += ' ' + mouseCoords[0] + ',' + 0;
         return d;
       });
 
-      select('.mouse').attr('transform', function(d: Data[]) {
+      select('.mouse').attr('transform', function(d: ElevationData[]) {
         const distances = lineData.map(obj => obj.distance);
 
         const xDistance = xScale.invert(mouseCoords[0]);
@@ -174,9 +171,9 @@ export const renderLineChart = (data: Data[]) => {
     });
 };
 
-export const createChart = () => {
+export const createChart = (data: ElevationData[][]) => {
   // renderBarChart(popData);
-  renderLineChart(lineData);
+  renderLineChart(data.flat());
 };
 
 // invoke functions to draw appropriate changes

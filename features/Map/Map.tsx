@@ -50,8 +50,9 @@ const Map = () => {
     points: state.route.present.points,
     totalDistance: state.route.present.totalDistance,
   }));
-  const { lines } = useSelector((state: RootState) => ({
+  const { lines, elevationData } = useSelector((state: RootState) => ({
     lines: state.route.present.lines,
+    elevationData: state.route.present.elevationData,
   }));
 
   const handleClick = event => {
@@ -71,6 +72,7 @@ const Map = () => {
           startLat,
           startLong,
           clipPath,
+          totalDistance,
         })
       );
     } else {
@@ -140,7 +142,7 @@ const Map = () => {
       <Controls
         {...{ setClipPath, clipPath, showElevation, setShowElevation }}
       />
-      <ElevationProfile {...{ showElevation, lines, totalDistance }} />
+      <ElevationProfile {...{ showElevation, elevationData, totalDistance }} />
       <ReactMapGL
         {...viewport}
         mapboxApiAccessToken={process.env.MAPBOX_TOKEN}

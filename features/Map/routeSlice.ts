@@ -3,6 +3,11 @@ import { Dispatch, SetStateAction } from 'react';
 import { AppThunk } from '../../app/store';
 import { fetchRoutes } from '../../utils/fetchRoutes';
 
+interface ElevationData {
+  distance: number;
+  elevation: number;
+}
+
 interface RouteState {
   points: number[][];
   lines: number[][][];
@@ -10,7 +15,7 @@ interface RouteState {
   endPoint: number[];
   totalDistance: number;
   segmentDistances: number[][];
-  elevation: number[];
+  elevationData: ElevationData[][];
 }
 
 interface RouteParams {
@@ -19,6 +24,7 @@ interface RouteParams {
   newLong: number;
   startLat: number;
   startLong: number;
+  totalDistance: number;
   transportationType?: string;
   clipPath: boolean;
 }
@@ -27,6 +33,7 @@ interface RoutingInfo {
   distance: number;
   coordinates: number[][];
   newPoint: number[];
+  elevationData: ElevationData[];
 }
 
 interface UpdatedRouteResults {
@@ -43,7 +50,7 @@ export const initialState: RouteState = {
   endPoint: [],
   totalDistance: 0,
   segmentDistances: [],
-  elevation: [],
+  elevationData: [],
 };
 
 const { actions, reducer } = createSlice({
@@ -52,6 +59,12 @@ const { actions, reducer } = createSlice({
   reducers: {
     addPoint: (state, action: PayloadAction<number[]>) => {
       state.points.push(action.payload);
+      state.elevationData.push([
+        {
+          distance: 0,
+          elevation: action.payload[2],
+        },
+      ]);
     },
     clearRoute: state => {
       return initialState;
@@ -60,10 +73,11 @@ const { actions, reducer } = createSlice({
       return state;
     },
     addRoutingInfo: (state, action: PayloadAction<RoutingInfo>) => {
-      const { distance, coordinates, newPoint } = action.payload;
+      const { distance, coordinates, newPoint, elevationData } = action.payload;
       state.points.push(newPoint);
       state.lines.push(coordinates);
       state.totalDistance += distance;
+      state.elevationData.push(elevationData);
     },
     updateStartAfterDrag: (state, action: PayloadAction<number[]>) => {
       state.points[0] = action.payload;
@@ -110,7 +124,6 @@ export const updateRouteAfterDrag = (
 ): AppThunk => async dispatch => {
   try {
     const data = await fetchRoutes(waypoints);
-
     const { snapped_waypoints, points } = data;
 
     // first point in data.points.coordinates will be the starting point
@@ -166,6 +179,7 @@ export const addRoute = ({
   newLong,
   startLat,
   startLong,
+  totalDistance,
   transportationType,
   clipPath,
 }: RouteParams): AppThunk => async dispatch => {
@@ -178,17 +192,50 @@ export const addRoute = ({
     const data = await fetchRoutes(points);
 
     const { coordinates } = data.points;
+    const { instructions } = data;
+
+    const elevationData = formatElevationData(
+      coordinates,
+      instructions,
+      totalDistance
+    );
 
     dispatch(
       addRoutingInfo({
         distance: data.distance,
         coordinates,
         newPoint: data.snapped_waypoints.coordinates[1],
+        elevationData,
       })
     );
   } catch (e) {
     console.log(e);
   }
+};
+
+interface Instructions {
+  distance: number;
+  heading: number;
+  sign: number;
+  interval: number[];
+  text: string;
+  time: number;
+  street_name: string;
+}
+
+const formatElevationData = (
+  points: number[][],
+  instructions: Instructions[],
+  distance: number
+) => {
+  let currentDistance = distance;
+
+  return instructions.reduce((accum, curr) => {
+    currentDistance += curr.distance;
+    const elevation = points[curr.interval[1]][2];
+    accum.push({ distance: currentDistance, elevation });
+    return accum;
+  }, []);
 };
 
 export default reducer;
