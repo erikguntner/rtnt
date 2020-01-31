@@ -20,6 +20,7 @@ import ConnectingLines from './ConnectingLines';
 import ElevationProfile from './ElevationProfile';
 import Controls from './Controls';
 import Pin from './Pin';
+import DistanceMarkers from './DistanceMarkers';
 
 interface Viewport {
   latitude: number;
@@ -32,7 +33,6 @@ interface Viewport {
 const Map = () => {
   const [clipPath, setClipPath] = useState<boolean>(false);
   const [showElevation, setShowElevation] = useState<boolean>(false);
-  const [distanceMarkers, setDistanceMarkers] = useState<number[][]>([]);
   const [viewport, setViewport] = useState<Viewport>({
     latitude: 34.105999576,
     longitude: -117.718497126,
@@ -136,29 +136,6 @@ const Map = () => {
     setIndex(index);
   };
 
-  useEffect(() => {
-    // calculate distance markers
-    if (lines.length > 0) {
-      const line = turf.lineString(lines.flat());
-      let routeDistance = turf.length(line, { units: 'miles' });
-      routeDistance = Math.floor(routeDistance);
-      const markers = [];
-
-      if (routeDistance !== 0) {
-        for (let i = 0; i < routeDistance + 1; i++) {
-          const segment = turf.along(line, i, { units: 'miles' });
-
-          if (i !== 0) {
-            markers.push(segment.geometry.coordinates);
-          }
-        }
-        setDistanceMarkers(markers);
-      } else {
-        setDistanceMarkers([]);
-      }
-    }
-  }, [lines]);
-
   return (
     <MapContainer>
       <Controls
@@ -193,11 +170,7 @@ const Map = () => {
             <Pin index={i} size={20} points={points} />
           </Marker>
         ))}
-        {distanceMarkers.map((point, i) => (
-          <Marker key={i} longitude={point[0]} latitude={point[1]}>
-            <DistanceMarker>{i + 1}</DistanceMarker>
-          </Marker>
-        ))}
+        <DistanceMarkers {...{ lines }} />
       </ReactMapGL>
     </MapContainer>
   );
@@ -208,16 +181,6 @@ const MapContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-`;
-
-const DistanceMarker = styled.div`
-  font-size: 1rem;
-  line-height: 1;
-  background-color: #fff;
-  padding: 1px 2px;
-  border-radius: 3px;
-  border: 2px solid ${props => props.theme.colors.indigo[500]};
-  transform: translate3d(-50%, -50%, 0);
 `;
 
 export default Map;
