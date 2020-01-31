@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from 'react';
 import {
   axisLeft,
   axisBottom,
@@ -23,8 +24,10 @@ interface ElevationData {
   elevation: number;
 }
 
-export const renderLineChart = (data: ElevationData[]) => {
-  console.log(data);
+export const renderLineChart = (
+  data: ElevationData[],
+  setDistanceAlongPath: Dispatch<SetStateAction<number | null>>
+) => {
   const container = document.getElementById('elevation-container');
   const margin = { top: 20, right: 20, bottom: 20, left: 50 };
   const height = container.offsetHeight;
@@ -115,6 +118,7 @@ export const renderLineChart = (data: ElevationData[]) => {
       select('.mouse-line').style('opacity', '0');
       select('.mouse circle').style('opacity', '0');
       selectAll('.mouse text').style('opacity', '0');
+      setDistanceAlongPath(null);
     })
     .on('mouseover', function() {
       // on mouse in show line, circles and text
@@ -158,6 +162,8 @@ export const renderLineChart = (data: ElevationData[]) => {
           else break; //position found
         }
 
+        setDistanceAlongPath(+xScale.invert(pos.x).toFixed(1));
+
         select(this)
           .select('.elevation-text')
           .text(yScale.invert(pos.y).toFixed(1));
@@ -171,9 +177,12 @@ export const renderLineChart = (data: ElevationData[]) => {
     });
 };
 
-export const createChart = (data: ElevationData[][]) => {
+export const createChart = (
+  data: ElevationData[][],
+  setDistanceAlongPath: Dispatch<SetStateAction<number | null>>
+) => {
   // renderBarChart(popData);
-  renderLineChart(data.flat());
+  renderLineChart(data.flat(), setDistanceAlongPath);
 };
 
 // invoke functions to draw appropriate changes

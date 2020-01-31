@@ -191,7 +191,7 @@ const Layout = ({ children }) => {
     <>
       <Container>
         <Head>
-          <title>Home</title>
+          <title>Run Tracker</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <Nav />

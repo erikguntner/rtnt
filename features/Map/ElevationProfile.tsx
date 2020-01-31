@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import d3Config from '../../utils/d3/config';
 import { createChart } from '../../utils/d3/utils';
+import { lineSegment } from '@turf/turf';
 
 interface ElevationData {
   distance: number;
@@ -10,19 +11,23 @@ interface ElevationData {
 interface Props {
   showElevation: boolean;
   totalDistance: number;
+  lines: number[][][];
   elevationData: ElevationData[][];
+  setDistanceAlongPath: Dispatch<SetStateAction<number | null>>;
 }
 
 const ElevationProfile: React.FC<Props> = ({
   showElevation,
   totalDistance,
+  lines,
   elevationData,
+  setDistanceAlongPath,
 }) => {
   const handleResize = () => {
     const container = document.getElementsByClassName('line-chart');
     if (container.length > 0) {
       container[0].innerHTML = '';
-      createChart(elevationData);
+      createChart(elevationData, setDistanceAlongPath);
     }
   };
 
@@ -34,7 +39,7 @@ const ElevationProfile: React.FC<Props> = ({
     const container = document.getElementsByClassName('line-chart');
     if (container.length > 0) {
       container[0].innerHTML = '';
-      createChart(elevationData);
+      createChart(elevationData, setDistanceAlongPath);
     }
   }, [elevationData]);
 
@@ -52,7 +57,11 @@ const ElevationProfile: React.FC<Props> = ({
       className="line-chart-container"
       id="elevation-container"
     >
-      <svg className="line-chart" width="100%" height="100%" />
+      {lines.length > 0 ? (
+        <svg className="line-chart" width="100%" height="100%" />
+      ) : (
+        <div>Create a line to see the elvation chart</div>
+      )}
     </ChartContainer>
   );
 };

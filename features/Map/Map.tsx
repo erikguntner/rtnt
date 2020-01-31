@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
 import ReactMapGL, { Marker } from 'react-map-gl';
 import styled from 'styled-components';
+import * as turfHelpers from '@turf/helpers';
 import WebMercatorViewport from 'viewport-mercator-project';
 
 import { RootState } from '../../app/rootReducer';
@@ -43,6 +44,12 @@ const Map = () => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [point, setPoint] = useState<number[]>([]);
   const [index, setIndex] = useState<number>(0);
+
+  // state for syncing mouseevents for chart and map
+  const [distanceAlongPath, setDistanceAlongPath] = useState<number | null>(
+    null
+  );
+  const [pointAlongPath, setPointAlongPath] = useState<number[]>([]);
 
   const dispatch: AppDispatch = useDispatch();
   const { points, totalDistance, lines, elevationData } = useSelector(
@@ -136,12 +143,43 @@ const Map = () => {
     setIndex(index);
   };
 
+  const handleHover = event => {
+    if (event.features) {
+      console.log(event.features);
+    }
+  };
+
+  useEffect(() => {
+    if (distanceAlongPath !== null) {
+      const line = turf.lineString(lines.flat());
+      let currentDistance = turfHelpers.convertLength(
+        distanceAlongPath,
+        'meters',
+        'miles'
+      );
+
+      const segment = turf.along(line, currentDistance, { units: 'miles' });
+
+      setPointAlongPath(segment.geometry.coordinates);
+    } else {
+      setPointAlongPath([]);
+    }
+  }, [distanceAlongPath]);
+
   return (
     <MapContainer>
       <Controls
         {...{ setClipPath, clipPath, showElevation, setShowElevation }}
       />
-      <ElevationProfile {...{ showElevation, elevationData, totalDistance }} />
+      <ElevationProfile
+        {...{
+          showElevation,
+          elevationData,
+          lines,
+          totalDistance,
+          setDistanceAlongPath,
+        }}
+      />
       <ReactMapGL
         {...viewport}
         mapboxApiAccessToken={process.env.MAPBOX_TOKEN}
@@ -152,6 +190,7 @@ const Map = () => {
         onClick={handleClick}
         onViewportChange={viewport => setViewport(viewport)}
         mapStyle="mapbox://styles/mapbox/outdoors-v10"
+        onHover={handleHover}
       >
         {isDragging && (
           <ConnectingLines points={points} index={index} endPoint={point} />
@@ -171,6 +210,11 @@ const Map = () => {
           </Marker>
         ))}
         <DistanceMarkers {...{ lines }} />
+        {pointAlongPath.length && (
+          <Marker longitude={pointAlongPath[0]} latitude={pointAlongPath[1]}>
+            <DistanceMarker>g</DistanceMarker>
+          </Marker>
+        )}
       </ReactMapGL>
     </MapContainer>
   );
@@ -181,6 +225,16 @@ const MapContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+`;
+
+const DistanceMarker = styled.div`
+  font-size: 1rem;
+  line-height: 1;
+  background-color: #fff;
+  padding: 1px 2px;
+  border-radius: 3px;
+  border: 2px solid ${props => props.theme.colors.indigo[500]};
+  transform: translate3d(-50%, -50%, 0);
 `;
 
 export default Map;
