@@ -5,7 +5,7 @@ interface Props {
   points: number[][][];
 }
 
-const SvgOverlay: React.FC<Props> = ({ points }) => {
+const SvgPath: React.FC<Props> = ({ points }) => {
   const redraw = ({ project }) => {
     const path = points.flat().reduce((accum, point, i) => {
       const [x, y] = project([point[0], point[1]]);
@@ -31,4 +31,4 @@ const SvgOverlay: React.FC<Props> = ({ points }) => {
   return <SVGOverlay redraw={redraw} />;
 };
 
-export default SvgOverlay;
+export default SvgPath;

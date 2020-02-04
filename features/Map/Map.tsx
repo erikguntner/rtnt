@@ -16,7 +16,7 @@ import {
   fetchSinglePoint,
 } from './routeSlice';
 
-import SVGOverlay from './SVGOverlay';
+import SvgPath from './SvgPath';
 import ConnectingLines from './ConnectingLines';
 import ElevationProfile from './ElevationProfile';
 import Controls from './Controls';
@@ -143,12 +143,6 @@ const Map = () => {
     setIndex(index);
   };
 
-  const handleHover = event => {
-    if (event.features) {
-      console.log(event.features);
-    }
-  };
-
   useEffect(() => {
     if (distanceAlongPath !== null) {
       const line = turf.lineString(lines.flat());
@@ -190,12 +184,11 @@ const Map = () => {
         onClick={handleClick}
         onViewportChange={viewport => setViewport(viewport)}
         mapStyle="mapbox://styles/mapbox/outdoors-v10"
-        onHover={handleHover}
       >
         {isDragging && (
           <ConnectingLines points={points} index={index} endPoint={point} />
         )}
-        <SVGOverlay points={lines} />
+        <SvgPath points={lines} />
         {points.map((point, i) => (
           <Marker
             key={i}
