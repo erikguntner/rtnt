@@ -49,7 +49,7 @@ const ElevationProfile: React.FC<Props> = ({
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [elevationData]);
 
   return (
     <ChartContainer

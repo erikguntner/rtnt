@@ -79,6 +79,7 @@ const Map = () => {
           newLong,
           startLat,
           startLong,
+          elevationData,
           clipPath,
           totalDistance,
         })

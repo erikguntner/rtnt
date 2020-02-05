@@ -26,6 +26,7 @@ interface RouteParams {
   newLong: number;
   startLat: number;
   startLong: number;
+  elevationData: ElevationData[][];
   totalDistance: number[];
   transportationType?: string;
   clipPath: boolean;
@@ -243,6 +244,7 @@ export const addRoute = ({
   startLat,
   startLong,
   totalDistance,
+  elevationData,
   transportationType,
   clipPath,
 }: RouteParams): AppThunk => async dispatch => {
@@ -256,11 +258,12 @@ export const addRoute = ({
 
     const { coordinates } = data.points;
     const { instructions } = data;
+    const endDistance = elevationData.slice(-1)[0].slice(-1)[0].distance;
 
     const { newElevationSegments } = parseElevationData(
       coordinates,
       instructions,
-      totalDistance[totalDistance.length - 1]
+      endDistance
     );
 
     dispatch(
