@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Dispatch, SetStateAction } from 'react';
 import { AppThunk } from '../../app/store';
 import { fetchRoutes } from '../../utils/fetchRoutes';
+import { point } from '@turf/turf';
 
 interface ElevationData {
   distance: number;
@@ -42,6 +43,7 @@ interface UpdatedRouteResults {
   snappedWaypoints: number[][];
   lineIndices: number[];
   line: number[][][];
+  updatedElevationData: ElevationData[][];
 }
 
 export const initialState: RouteState = {
@@ -90,7 +92,12 @@ const { actions, reducer } = createSlice({
       state,
       action: PayloadAction<UpdatedRouteResults>
     ) => {
-      const { pointIndex, snappedWaypoints, line } = action.payload;
+      const {
+        pointIndex,
+        snappedWaypoints,
+        line,
+        updatedElevationData,
+      } = action.payload;
       if (pointIndex === 0) {
         // drag first point
         state.points[0] = snappedWaypoints[0];
@@ -105,6 +112,8 @@ const { actions, reducer } = createSlice({
         state.lines[pointIndex - 1] = line[0];
         state.lines[pointIndex] = line[1];
       }
+
+      state.elevationData = updatedElevationData;
     },
   },
 });
@@ -123,7 +132,7 @@ interface DragParams {
   waypoints: number[][];
   lineIndices: number[];
   totalDistance: number[];
-  pointsLength: number;
+  numberOfPoints: number;
   elevationData: ElevationData[][];
   setIsDragging: Dispatch<SetStateAction<boolean>>;
   setPoint: Dispatch<SetStateAction<number[]>>;
@@ -133,7 +142,7 @@ export const updateRouteAfterDrag = ({
   pointIndex,
   waypoints,
   lineIndices,
-  pointsLength,
+  numberOfPoints,
   totalDistance,
   elevationData,
   setIsDragging,
@@ -153,32 +162,58 @@ export const updateRouteAfterDrag = ({
     );
 
     // distance to start incrementing from when calculating udpated distances
-    let startDistance;
+    const startDistance =
+      pointIndex == 0
+        ? 0
+        : elevationData[pointIndex - 1][
+            elevationData[pointIndex - 1].length - 1
+          ].distance;
     // index in elevationData array where we need to start looping and updating distances
-    let startingIndexToUpdateElevation;
+    let startingIndexToUpdateElevation =
+      pointIndex === 0
+        ? 1
+        : pointIndex === numberOfPoints
+        ? elevationData.length - 1
+        : pointIndex;
 
-    if (pointIndex === 0) {
-      startDistance = 0;
-      startingIndexToUpdateElevation = 0;
-    } else if (pointIndex === pointsLength) {
-      startDistance =
-        elevationData[pointIndex - 1][elevationData[pointIndex - 1].length - 1];
-      startingIndexToUpdateElevation = elevationData.length - 1;
-    } else {
-      startDistance =
-        elevationData[pointIndex - 2][elevationData[pointIndex - 2].length - 1];
-      startingIndexToUpdateElevation = pointIndex + 1;
-    }
-
+    // get new lines segments and new distance to add to all following points
     const { newElevationSegments, currentDistance } = parseElevationData(
       coordinates,
       instructions,
       startDistance
     );
 
-    const updatedElevationData = [];
+    // create deep copy of object
+    const updatedElevationData = elevationData.map(arr =>
+      arr.map(item => ({ ...item }))
+    );
+    // replace elevation data with updated segments
+    if (pointIndex === 0 || pointIndex === numberOfPoints) {
+      updatedElevationData[startingIndexToUpdateElevation] =
+        newElevationSegments[0];
+    } else {
+      updatedElevationData.splice(
+        startingIndexToUpdateElevation,
+        2,
+        newElevationSegments[0],
+        newElevationSegments[1]
+      );
+    }
 
-    for (let i = 0; i < elevationData.length; i++) {}
+    // loop over following segments and update their distances
+    const index = pointIndex === 0 ? 2 : pointIndex + 2;
+    if (
+      pointIndex !== numberOfPoints &&
+      index <= updatedElevationData.length - 1
+    ) {
+      let newDistance = currentDistance;
+      for (let i = index; i < updatedElevationData.length; i++) {
+        for (let j = 0; j < updatedElevationData[i].length; j++) {
+          newDistance += updatedElevationData[i][j].segDistance;
+          updatedElevationData[i][j].distance = newDistance;
+        }
+      }
+    }
 
     dispatch(
       updateRouteAfterDragSuccess({
@@ -186,6 +221,7 @@ export const updateRouteAfterDrag = ({
         snappedWaypoints: snapped_waypoints.coordinates,
         lineIndices,
         line: lines,
+        updatedElevationData,
       })
     );
   } catch (e) {

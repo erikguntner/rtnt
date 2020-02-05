@@ -124,7 +124,7 @@ const Map = () => {
           pointIndex,
           waypoints,
           lineIndices,
-          pointsLength: points.length - 1,
+          numberOfPoints: points.length - 1,
           elevationData,
           totalDistance,
           setIsDragging,
@@ -178,9 +178,7 @@ const Map = () => {
     }
   };
 
-  const handleMouseLeave = event => {
-    console.log('leaving');
-  };
+  const handleMouseLeave = event => {};
 
   return (
     <MapContainer>
