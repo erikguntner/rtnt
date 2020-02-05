@@ -97,8 +97,9 @@ const { actions, reducer } = createSlice({
         state.lines[state.lines.length - 1] = line[0];
       } else {
         // drag a middle point
-        state.points.splice(pointIndex, 1, snappedWaypoints[1]);
-        state.lines.splice(pointIndex - 1, 2, line[0], line[1]);
+        state.points[pointIndex] = snappedWaypoints[1];
+        state.lines[pointIndex - 1] = line[0];
+        state.lines[pointIndex] = line[1];
       }
     },
   },
@@ -125,13 +126,6 @@ export const updateRouteAfterDrag = (
   try {
     const data = await fetchRoutes(waypoints);
     const { snapped_waypoints, points } = data;
-
-    // first point in data.points.coordinates will be the starting point
-    // last point in data.points.coordinates will be the ending point
-    // You Need to find the index of the middle snapped waypoint and split the coordinates array into two new arrays
-
-    // Use snapped_waypoints to identify center point in coordinates, as well as updated location of marker.
-    // because the marker may be dragged away from a road where the line should nor render
 
     let middlePointIndex: number | undefined = undefined;
     const isMiddlePoint: boolean = snapped_waypoints.coordinates.length === 3;

@@ -17,6 +17,7 @@ import {
 } from './routeSlice';
 
 import SvgPath from './SvgPath';
+import GeoJsonPath from './GeoJsonPath';
 import ConnectingLines from './ConnectingLines';
 import ElevationProfile from './ElevationProfile';
 import Controls from './Controls';
@@ -41,6 +42,7 @@ const Map = () => {
     bearing: 0,
     pitch: 0,
   });
+  const [hoveredPoint, setHoveredPoint] = useState<number[]>()
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [point, setPoint] = useState<number[]>([]);
   const [index, setIndex] = useState<number>(0);
@@ -160,6 +162,27 @@ const Map = () => {
     }
   }, [distanceAlongPath]);
 
+  const hanldeMouseOver = event => {
+    const {
+      features,
+      srcEvent: { offsetX, offsetY },
+    } = event;
+    console.log(features);
+    const hoveredFeature =
+      features && features.find(f => f.layer.id === 'path_layer');
+
+    if (
+      hoveredFeature !== undefined &&
+      hoveredFeature.layer.id === 'path_layer'
+    ) {
+      
+    }
+  };
+
+  const handleMouseLeave = event => {
+    console.log('leaving');
+  };
+
   return (
     <MapContainer>
       <Controls
@@ -184,11 +207,15 @@ const Map = () => {
         onClick={handleClick}
         onViewportChange={viewport => setViewport(viewport)}
         mapStyle="mapbox://styles/mapbox/outdoors-v10"
+        interactiveLayerIds={['path_layer']}
+        onHover={hanldeMouseOver}
+        onMouseEnter={handleMouseLeave}
       >
         {isDragging && (
           <ConnectingLines points={points} index={index} endPoint={point} />
         )}
-        <SvgPath points={lines} />
+        {/* <SvgPath points={lines} /> */}
+        <GeoJsonPath {...{ lines }} />
         {points.map((point, i) => (
           <Marker
             key={i}

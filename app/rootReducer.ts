@@ -3,7 +3,7 @@ import undoable from 'redux-undo';
 import routeReducer from '../features/Map/routeSlice';
 
 const rootReducer = combineReducers({
-  route: undoable(routeReducer),
+  route: undoable(routeReducer, { limit: 10 }),
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
