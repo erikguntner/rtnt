@@ -42,7 +42,6 @@ const Map = () => {
     bearing: 0,
     pitch: 0,
   });
-  const [hoveredPoint, setHoveredPoint] = useState<number[]>()
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [point, setPoint] = useState<number[]>([]);
   const [index, setIndex] = useState<number>(0);
@@ -52,6 +51,7 @@ const Map = () => {
     null
   );
   const [pointAlongPath, setPointAlongPath] = useState<number[]>([]);
+  const [hoveredPoint, setHoveredPoint] = useState<number[]>();
 
   const dispatch: AppDispatch = useDispatch();
   const { points, totalDistance, lines, elevationData } = useSelector(
@@ -126,6 +126,7 @@ const Map = () => {
           pointIndex,
           waypoints,
           lineIndices,
+          totalDistance,
           setIsDragging,
           setPoint
         )
@@ -167,7 +168,6 @@ const Map = () => {
       features,
       srcEvent: { offsetX, offsetY },
     } = event;
-    console.log(features);
     const hoveredFeature =
       features && features.find(f => f.layer.id === 'path_layer');
 
@@ -175,7 +175,6 @@ const Map = () => {
       hoveredFeature !== undefined &&
       hoveredFeature.layer.id === 'path_layer'
     ) {
-      
     }
   };
 

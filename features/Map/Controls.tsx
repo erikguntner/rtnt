@@ -41,19 +41,19 @@ const Controls: React.FC<Props> = ({
         disabled={!points.length}
         handleClick={() => dispatch(ActionCreators.undo())}
         icon={faUndoAlt}
-        tooltip={'Undo Last'}
+        tooltip={'undo'}
       />
       <ControlButton
         disabled={!points.length}
         handleClick={() => dispatch(ActionCreators.redo())}
         icon={faRedoAlt}
-        tooltip={'Redo Last'}
+        tooltip={'redo'}
       />
       <ControlButton
         disabled={!points.length}
         handleClick={() => dispatch(clearRoute())}
         icon={faTimes}
-        tooltip={'Clear Route'}
+        tooltip={'clear route'}
       />
       <ControlButton
         handleClick={() => setShowElevation(!showElevation)}
@@ -86,10 +86,6 @@ const Controls: React.FC<Props> = ({
           routeData={routeData}
         />
       </Modal> */}
-      <style jsx>{`
-        .controls {
-        }
-      `}</style>
     </ControlsContainer>
   );
 };

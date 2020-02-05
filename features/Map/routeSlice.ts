@@ -33,7 +33,7 @@ interface RoutingInfo {
   distance: number;
   coordinates: number[][];
   newPoint: number[];
-  elevationData: ElevationData[];
+  elevationData: ElevationData[][];
 }
 
 interface UpdatedRouteResults {
@@ -77,7 +77,7 @@ const { actions, reducer } = createSlice({
       state.points.push(newPoint);
       state.lines.push(coordinates);
       state.totalDistance += distance;
-      state.elevationData.push(elevationData);
+      state.elevationData.push(elevationData[0]);
     },
     updateStartAfterDrag: (state, action: PayloadAction<number[]>) => {
       state.points[0] = action.payload;
@@ -120,32 +120,42 @@ export const updateRouteAfterDrag = (
   pointIndex: number,
   waypoints: number[][],
   lineIndices: number[],
+  totalDistance: number,
   setIsDragging: Dispatch<SetStateAction<boolean>>,
   setPoint: Dispatch<SetStateAction<number[]>>
 ): AppThunk => async dispatch => {
   try {
     const data = await fetchRoutes(waypoints);
-    const { snapped_waypoints, points } = data;
+    const {
+      snapped_waypoints,
+      points: { coordinates },
+      instructions,
+    } = data;
 
     let middlePointIndex: number | undefined = undefined;
     const isMiddlePoint: boolean = snapped_waypoints.coordinates.length === 3;
     const lines: number[][][] = [];
 
     if (isMiddlePoint) {
-      middlePointIndex = data.points.coordinates.findIndex(
+      middlePointIndex = coordinates.findIndex(
         coord =>
           coord[0] === snapped_waypoints.coordinates[1][0] &&
           coord[1] === snapped_waypoints.coordinates[1][1]
       );
 
-      const leftLine = data.points.coordinates.slice(0, middlePointIndex + 1);
-      const rightLine = data.points.coordinates.slice(middlePointIndex);
+      const leftLine = coordinates.slice(0, middlePointIndex + 1);
+      const rightLine = coordinates.slice(middlePointIndex);
 
       lines.push(leftLine, rightLine);
     } else {
-      const { coordinates } = points;
       lines.push(coordinates);
     }
+
+    const elevationData = parseElevationData(
+      coordinates,
+      instructions,
+      totalDistance
+    );
 
     dispatch(
       updateRouteAfterDragSuccess({
@@ -188,7 +198,7 @@ export const addRoute = ({
     const { coordinates } = data.points;
     const { instructions } = data;
 
-    const elevationData = formatElevationData(
+    const elevationData = parseElevationData(
       coordinates,
       instructions,
       totalDistance
@@ -217,19 +227,27 @@ interface Instructions {
   street_name: string;
 }
 
-const formatElevationData = (
+const parseElevationData = (
   points: number[][],
   instructions: Instructions[],
   distance: number
-) => {
+): ElevationData[][] => {
   let currentDistance = distance;
+  let arr = [];
+  const results = [];
 
-  return instructions.reduce((accum, curr) => {
-    currentDistance += curr.distance;
-    const elevation = points[curr.interval[1]][2];
-    accum.push({ distance: currentDistance, elevation });
-    return accum;
-  }, []);
+  for (let i = 0; i < instructions.length; i++) {
+    if (instructions[i].text === 'Waypoint 1') {
+      results.push(arr);
+      arr = [];
+    }
+    currentDistance += instructions[i].distance;
+    const elevation = points[instructions[i].interval[1]][2];
+    arr.push({ distance: currentDistance, elevation });
+  }
+
+  results.push(arr);
+  return results;
 };
 
 export default reducer;
