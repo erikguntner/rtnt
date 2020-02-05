@@ -120,16 +120,15 @@ const Map = () => {
       }
 
       dispatch(
-        updateRouteAfterDrag(
-          newLngLat,
-          point,
+        updateRouteAfterDrag({
           pointIndex,
           waypoints,
           lineIndices,
+          pointsLength: points.length - 1,
           totalDistance,
           setIsDragging,
-          setPoint
-        )
+          setPoint,
+        })
       );
 
       setIsDragging(false);

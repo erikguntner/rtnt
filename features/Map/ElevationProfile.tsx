@@ -10,7 +10,7 @@ interface ElevationData {
 }
 interface Props {
   showElevation: boolean;
-  totalDistance: number;
+  totalDistance: number[];
   lines: number[][][];
   elevationData: ElevationData[][];
   setDistanceAlongPath: Dispatch<SetStateAction<number | null>>;

@@ -13,7 +13,7 @@ interface RouteState {
   lines: number[][][];
   startPoint: number[];
   endPoint: number[];
-  totalDistance: number;
+  totalDistance: number[];
   segmentDistances: number[][];
   elevationData: ElevationData[][];
 }
@@ -24,7 +24,7 @@ interface RouteParams {
   newLong: number;
   startLat: number;
   startLong: number;
-  totalDistance: number;
+  totalDistance: number[];
   transportationType?: string;
   clipPath: boolean;
 }
@@ -48,7 +48,7 @@ export const initialState: RouteState = {
   lines: [],
   startPoint: [],
   endPoint: [],
-  totalDistance: 0,
+  totalDistance: [0],
   segmentDistances: [],
   elevationData: [],
 };
@@ -76,7 +76,9 @@ const { actions, reducer } = createSlice({
       const { distance, coordinates, newPoint, elevationData } = action.payload;
       state.points.push(newPoint);
       state.lines.push(coordinates);
-      state.totalDistance += distance;
+      state.totalDistance.push(
+        state.totalDistance[state.totalDistance.length - 1] + distance
+      );
       state.elevationData.push(elevationData[0]);
     },
     updateStartAfterDrag: (state, action: PayloadAction<number[]>) => {
@@ -114,16 +116,25 @@ export const {
   updateRouteAfterDragSuccess,
 } = actions;
 
-export const updateRouteAfterDrag = (
-  newLngLat: number[],
-  point: number[],
-  pointIndex: number,
-  waypoints: number[][],
-  lineIndices: number[],
-  totalDistance: number,
-  setIsDragging: Dispatch<SetStateAction<boolean>>,
-  setPoint: Dispatch<SetStateAction<number[]>>
-): AppThunk => async dispatch => {
+interface DragParams {
+  pointIndex: number;
+  waypoints: number[][];
+  lineIndices: number[];
+  totalDistance: number[];
+  pointsLength: number;
+  setIsDragging: Dispatch<SetStateAction<boolean>>;
+  setPoint: Dispatch<SetStateAction<number[]>>;
+}
+
+export const updateRouteAfterDrag = ({
+  pointIndex,
+  waypoints,
+  lineIndices,
+  pointsLength,
+  totalDistance,
+  setIsDragging,
+  setPoint,
+}: DragParams): AppThunk => async dispatch => {
   try {
     const data = await fetchRoutes(waypoints);
     const {
@@ -132,29 +143,25 @@ export const updateRouteAfterDrag = (
       instructions,
     } = data;
 
-    let middlePointIndex: number | undefined = undefined;
-    const isMiddlePoint: boolean = snapped_waypoints.coordinates.length === 3;
-    const lines: number[][][] = [];
+    const lines: number[][][] = createLineSegments(
+      coordinates,
+      snapped_waypoints
+    );
 
-    if (isMiddlePoint) {
-      middlePointIndex = coordinates.findIndex(
-        coord =>
-          coord[0] === snapped_waypoints.coordinates[1][0] &&
-          coord[1] === snapped_waypoints.coordinates[1][1]
-      );
+    let startDistance;
 
-      const leftLine = coordinates.slice(0, middlePointIndex + 1);
-      const rightLine = coordinates.slice(middlePointIndex);
-
-      lines.push(leftLine, rightLine);
+    if (pointIndex === 0) {
+      startDistance = 0;
+    } else if (pointIndex === pointsLength) {
+      startDistance = totalDistance[pointIndex - 1];
     } else {
-      lines.push(coordinates);
+      startDistance = totalDistance[pointIndex - 2];
     }
 
-    const elevationData = parseElevationData(
+    const { newElevationSements, currentDistance } = parseElevationData(
       coordinates,
       instructions,
-      totalDistance
+      startDistance
     );
 
     dispatch(
@@ -198,10 +205,10 @@ export const addRoute = ({
     const { coordinates } = data.points;
     const { instructions } = data;
 
-    const elevationData = parseElevationData(
+    const { newElevationSements } = parseElevationData(
       coordinates,
       instructions,
-      totalDistance
+      totalDistance[totalDistance.length - 1]
     );
 
     dispatch(
@@ -209,7 +216,7 @@ export const addRoute = ({
         distance: data.distance,
         coordinates,
         newPoint: data.snapped_waypoints.coordinates[1],
-        elevationData,
+        elevationData: newElevationSements,
       })
     );
   } catch (e) {
@@ -231,14 +238,14 @@ const parseElevationData = (
   points: number[][],
   instructions: Instructions[],
   distance: number
-): ElevationData[][] => {
+): { newElevationSements: ElevationData[][]; currentDistance: number } => {
   let currentDistance = distance;
   let arr = [];
-  const results = [];
+  const newElevationSements = [];
 
   for (let i = 0; i < instructions.length; i++) {
     if (instructions[i].text === 'Waypoint 1') {
-      results.push(arr);
+      newElevationSements.push(arr);
       arr = [];
     }
     currentDistance += instructions[i].distance;
@@ -246,8 +253,31 @@ const parseElevationData = (
     arr.push({ distance: currentDistance, elevation });
   }
 
-  results.push(arr);
-  return results;
+  newElevationSements.push(arr);
+  return { newElevationSements, currentDistance };
+};
+
+const createLineSegments = (coordinates, waypoints) => {
+  const lines = [];
+  let middlePointIndex: number | undefined = undefined;
+  const isMiddlePoint: boolean = waypoints.coordinates.length === 3;
+
+  if (isMiddlePoint) {
+    middlePointIndex = coordinates.findIndex(
+      coord =>
+        coord[0] === waypoints.coordinates[1][0] &&
+        coord[1] === waypoints.coordinates[1][1]
+    );
+
+    const leftLine = coordinates.slice(0, middlePointIndex + 1);
+    const rightLine = coordinates.slice(middlePointIndex);
+
+    lines.push(leftLine, rightLine);
+  } else {
+    lines.push(coordinates);
+  }
+
+  return lines;
 };
 
 export default reducer;
