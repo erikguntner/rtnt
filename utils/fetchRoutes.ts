@@ -41,7 +41,7 @@ export const fetchRoutes = async (
   try {
     const url =
       process.env.NODE_ENV === 'production'
-        ? 'https://run-tracker-next-typescript.now.sh'
+        ? 'https://rtnt.now.sh'
         : 'http://localhost:3000';
 
     const response = await fetch(`${url}/api/path`, {
