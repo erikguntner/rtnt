@@ -125,6 +125,7 @@ const Map = () => {
           waypoints,
           lineIndices,
           pointsLength: points.length - 1,
+          elevationData,
           totalDistance,
           setIsDragging,
           setPoint,
