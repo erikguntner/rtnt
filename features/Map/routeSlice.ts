@@ -88,6 +88,7 @@ const { actions, reducer } = createSlice({
     },
     updateStartAfterDrag: (state, action: PayloadAction<number[]>) => {
       state.points[0] = action.payload;
+      state.elevationData[0][0].elevation = action.payload[2];
     },
     updateRouteAfterDragSuccess: (
       state,
@@ -192,6 +193,11 @@ export const updateRouteAfterDrag = ({
     if (pointIndex === 0 || pointIndex === numberOfPoints) {
       updatedElevationData[startingIndexToUpdateElevation] =
         newElevationSegments[0];
+
+      if (pointIndex === 0) {
+        updatedElevationData[0][0].elevation =
+          updatedElevationData[1][0].elevation;
+      }
     } else {
       updatedElevationData.splice(
         startingIndexToUpdateElevation,
@@ -231,10 +237,15 @@ export const updateRouteAfterDrag = ({
 };
 
 export const fetchSinglePoint = (
-  newPoint: number[]
+  newPoint: number[],
+  points: number[][]
 ): AppThunk => async dispatch => {
-  const data = await fetchRoutes([newPoint, newPoint]);
-  dispatch(addPoint(data.snapped_waypoints.coordinates[0]));
+  const { snapped_waypoints } = await fetchRoutes([newPoint, newPoint]);
+  if (points.length === 0) {
+    dispatch(addPoint(snapped_waypoints.coordinates[0]));
+  } else {
+    dispatch(updateStartAfterDrag(snapped_waypoints.coordinates[0]));
+  }
 };
 
 export const addRoute = ({

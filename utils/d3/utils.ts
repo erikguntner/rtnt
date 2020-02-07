@@ -16,6 +16,7 @@ import {
   csv,
   max,
 } from 'd3';
+import * as turfHelpers from '@turf/helpers';
 
 import { popData, lineData } from './mockData';
 
@@ -26,7 +27,8 @@ interface ElevationData {
 
 export const renderLineChart = (
   data: ElevationData[],
-  setDistanceAlongPath: Dispatch<SetStateAction<number | null>>
+  setDistanceAlongPath: Dispatch<SetStateAction<number | null>>,
+  units: string
 ) => {
   const container = document.getElementById('elevation-container');
   const margin = { top: 20, right: 20, bottom: 20, left: 50 };
@@ -36,8 +38,10 @@ export const renderLineChart = (
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
-  const xValue = d => d.distance;
-  const yValue = d => d.elevation;
+  //@ts-ignore
+  const xValue = d => turfHelpers.convertLength(d.distance, 'meters', units);
+  //@ts-ignore
+  const yValue = d => turfHelpers.convertLength(d.elevation, 'meters', units === 'miles' ? 'feet' : 'meters');
 
   const xScale = scaleLinear()
     .domain([0, max(data, xValue)])
@@ -118,7 +122,7 @@ export const renderLineChart = (
       select('.mouse-line').style('opacity', '0');
       select('.mouse circle').style('opacity', '0');
       selectAll('.mouse text').style('opacity', '0');
-      setDistanceAlongPath(null);
+      setDistanceAlongPath(0);
     })
     .on('mouseover', function() {
       // on mouse in show line, circles and text
@@ -137,11 +141,11 @@ export const renderLineChart = (
       });
 
       select('.mouse').attr('transform', function(d: ElevationData[]) {
-        const distances = lineData.map(obj => obj.distance);
+        // const distances = lineData.map(obj => obj.distance);
 
         const xDistance = xScale.invert(mouseCoords[0]);
-        const bisect = bisector(xValue).right;
-        const idx = bisect(distances, xDistance);
+        // const bisect = bisector(xValue).right;
+        // const idx = bisect(distances, xDistance);
 
         let beginning = 0;
         let end = linePath.node().getTotalLength();
@@ -162,15 +166,15 @@ export const renderLineChart = (
           else break; //position found
         }
 
-        setDistanceAlongPath(+xScale.invert(pos.x).toFixed(1));
+        setDistanceAlongPath(+xScale.invert(pos.x));
 
         select(this)
           .select('.elevation-text')
-          .text(yScale.invert(pos.y).toFixed(1));
+          .text(yScale.invert(pos.y).toFixed(2));
 
         select(this)
           .select('.distance-text')
-          .text(xScale.invert(pos.x).toFixed(1));
+          .text(xScale.invert(pos.x).toFixed(2));
 
         return `translate(${mouseCoords[0]},${pos.y})`;
       });
@@ -179,10 +183,11 @@ export const renderLineChart = (
 
 export const createChart = (
   data: ElevationData[][],
-  setDistanceAlongPath: Dispatch<SetStateAction<number | null>>
+  setDistanceAlongPath: Dispatch<SetStateAction<number | null>>,
+  units: string
 ) => {
   // renderBarChart(popData);
-  renderLineChart(data.flat(), setDistanceAlongPath);
+  renderLineChart(data.flat(), setDistanceAlongPath, units);
 };
 
 // invoke functions to draw appropriate changes

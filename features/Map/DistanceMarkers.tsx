@@ -5,22 +5,25 @@ import { Marker } from 'react-map-gl';
 
 interface Props {
   lines: number[][][];
+  units: string;
 }
 
-const DistanceMarkers: React.FC<Props> = ({ lines }) => {
+const DistanceMarkers: React.FC<Props> = ({ lines, units }) => {
   const [distanceMarkers, setDistanceMarkers] = useState<number[][]>([]);
 
   useEffect(() => {
     // calculate distance markers
     if (lines.length > 0) {
       const line = turf.lineString(lines.flat());
-      let routeDistance = turf.length(line, { units: 'miles' });
+      // @ts-ignore
+      let routeDistance = turf.length(line, { units });
       routeDistance = Math.floor(routeDistance);
       const markers = [];
 
       if (routeDistance !== 0) {
         for (let i = 0; i < routeDistance + 1; i++) {
-          const segment = turf.along(line, i, { units: 'miles' });
+          // @ts-ignore
+          const segment = turf.along(line, i, { units });
 
           if (i !== 0) {
             markers.push(segment.geometry.coordinates);
@@ -34,7 +37,7 @@ const DistanceMarkers: React.FC<Props> = ({ lines }) => {
       // clear points
       setDistanceMarkers([]);
     }
-  }, [lines]);
+  }, [lines, units]);
 
   return (
     <>

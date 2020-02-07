@@ -23,6 +23,7 @@ import ElevationProfile from './ElevationProfile';
 import Controls from './Controls';
 import Pin from './Pin';
 import DistanceMarkers from './DistanceMarkers';
+import DistanceIndicator from './DistanceIndicator';
 
 interface Viewport {
   latitude: number;
@@ -34,6 +35,7 @@ interface Viewport {
 
 const Map = () => {
   const [clipPath, setClipPath] = useState<boolean>(false);
+  const [units, setUnits] = useState<string>('miles');
   const [showElevation, setShowElevation] = useState<boolean>(false);
   const [viewport, setViewport] = useState<Viewport>({
     latitude: 34.105999576,
@@ -47,9 +49,7 @@ const Map = () => {
   const [index, setIndex] = useState<number>(0);
 
   // state for syncing mouseevents for chart and map
-  const [distanceAlongPath, setDistanceAlongPath] = useState<number | null>(
-    null
-  );
+  const [distanceAlongPath, setDistanceAlongPath] = useState<number>(0);
   const [pointAlongPath, setPointAlongPath] = useState<number[]>([]);
   const [hoveredPoint, setHoveredPoint] = useState<number[]>();
 
@@ -85,7 +85,7 @@ const Map = () => {
         })
       );
     } else {
-      dispatch(fetchSinglePoint([newLong, newLat]));
+      dispatch(fetchSinglePoint([newLong, newLat], points));
     }
   };
 
@@ -99,7 +99,7 @@ const Map = () => {
 
     // If only one point, update that points position
     if (points.length === 1) {
-      dispatch(updateStartAfterDrag(newLngLat));
+      dispatch(fetchSinglePoint(newLngLat, points));
       // else handle cases for for multiple points, beginning, middle, and end
     } else {
       if (pointIndex === 0) {
@@ -133,7 +133,9 @@ const Map = () => {
         })
       );
 
-      setIsDragging(false);
+      if (points.length > 1) {
+        setIsDragging(false);
+      }
       setPoint([]);
     }
   };
@@ -143,20 +145,18 @@ const Map = () => {
   };
 
   const handleDragStart = (event, index: number) => {
-    setIsDragging(true);
+    if (points.length > 1) {
+      setIsDragging(true);
+    }
     setIndex(index);
   };
 
   useEffect(() => {
-    if (distanceAlongPath !== null) {
+    if (distanceAlongPath !== 0) {
       const line = turf.lineString(lines.flat());
-      let currentDistance = turfHelpers.convertLength(
-        distanceAlongPath,
-        'meters',
-        'miles'
-      );
 
-      const segment = turf.along(line, currentDistance, { units: 'miles' });
+      //@ts-ignore
+      const segment = turf.along(line, distanceAlongPath, { units });
 
       setPointAlongPath(segment.geometry.coordinates);
     } else {
@@ -191,7 +191,7 @@ const Map = () => {
           showElevation,
           elevationData,
           lines,
-          totalDistance,
+          units,
           setDistanceAlongPath,
         }}
       />
@@ -227,13 +227,15 @@ const Map = () => {
             <Pin index={i} size={20} points={points} />
           </Marker>
         ))}
-        <DistanceMarkers {...{ lines }} />
+        <DistanceMarkers {...{ lines, units }} />
         {pointAlongPath.length && (
           <Marker longitude={pointAlongPath[0]} latitude={pointAlongPath[1]}>
-            <DistanceMarker>g</DistanceMarker>
+            <Label>{distanceAlongPath.toFixed(2)}</Label>
+            <DistanceMarker />
           </Marker>
         )}
       </ReactMapGL>
+      <DistanceIndicator {...{ elevationData, units, setUnits }} />
     </MapContainer>
   );
 };
@@ -245,12 +247,24 @@ const MapContainer = styled.div`
   flex-direction: column;
 `;
 
+const Label = styled.div`
+  position: absolute;
+  background-color: #333;
+  opacity: 0.9;
+  padding: 2px 6px;
+  color: #fff;
+  font-size: 1rem;
+  border-radius: 5px;
+  transform: translate3d(-50%, -150%, 0);
+`;
+
 const DistanceMarker = styled.div`
   font-size: 1rem;
   line-height: 1;
   background-color: #fff;
-  padding: 1px 2px;
-  border-radius: 3px;
+  height: 1.2rem;
+  width: 1.2rem;
+  border-radius: 10px;
   border: 2px solid ${props => props.theme.colors.indigo[500]};
   transform: translate3d(-50%, -50%, 0);
 `;

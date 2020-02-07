@@ -1,6 +1,5 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
-import d3Config from '../../utils/d3/config';
 import { createChart } from '../../utils/d3/utils';
 import { lineSegment } from '@turf/turf';
 
@@ -10,24 +9,24 @@ interface ElevationData {
 }
 interface Props {
   showElevation: boolean;
-  totalDistance: number[];
   lines: number[][][];
   elevationData: ElevationData[][];
+  units: string;
   setDistanceAlongPath: Dispatch<SetStateAction<number | null>>;
 }
 
 const ElevationProfile: React.FC<Props> = ({
   showElevation,
-  totalDistance,
   lines,
   elevationData,
+  units,
   setDistanceAlongPath,
 }) => {
   const handleResize = () => {
     const container = document.getElementsByClassName('line-chart');
     if (container.length > 0) {
       container[0].innerHTML = '';
-      createChart(elevationData, setDistanceAlongPath);
+      createChart(elevationData, setDistanceAlongPath, units);
     }
   };
 
@@ -39,10 +38,11 @@ const ElevationProfile: React.FC<Props> = ({
     const container = document.getElementsByClassName('line-chart');
     if (container.length > 0) {
       container[0].innerHTML = '';
-      createChart(elevationData, setDistanceAlongPath);
+      createChart(elevationData, setDistanceAlongPath, units);
     }
   }, [elevationData]);
 
+  // trying to pass elevationData into useEffect so that resize reflects updated data
   useEffect(() => {
     window.addEventListener('resize', handleResize);
 
@@ -60,7 +60,7 @@ const ElevationProfile: React.FC<Props> = ({
       {lines.length > 0 ? (
         <svg className="line-chart" width="100%" height="100%" />
       ) : (
-        <div>Create a line to see the elvation chart</div>
+        <Text>Create a line to see the elvation chart</Text>
       )}
     </ChartContainer>
   );
@@ -69,6 +69,16 @@ const ElevationProfile: React.FC<Props> = ({
 interface StyleProps {
   showElevation: boolean;
 }
+
+const Text = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.4rem;
+  color: ${props => props.theme.colors.gray[600]};
+`;
 
 const ChartContainer = styled.div<StyleProps>`
   position: absolute;
@@ -80,7 +90,7 @@ const ChartContainer = styled.div<StyleProps>`
   height: 35%;
   background-color: ${props => props.theme.colors.gray[100]};
   display: block;
-  z-index: 10;
+  z-index: 25;
   transition: all 0.3s ease;
 `;
 
