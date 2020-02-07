@@ -9,7 +9,6 @@ interface ElevationData {
   segDistance: number;
   elevation: number;
 }
-
 interface RouteState {
   points: number[][];
   lines: number[][][];
@@ -56,6 +55,18 @@ export const initialState: RouteState = {
   segmentDistances: [],
   elevationData: [],
 };
+
+const { actions: loadingActions, reducer: loadingReducer } = createSlice({
+  name: 'loading',
+  initialState: { isLoading: false },
+  reducers: {
+    changeLoadingState: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
+    },
+  },
+});
+
+export { loadingReducer };
 
 const { actions, reducer } = createSlice({
   name: 'route',
@@ -120,6 +131,8 @@ const { actions, reducer } = createSlice({
   },
 });
 
+export const { changeLoadingState } = loadingActions;
+
 export const {
   addPoint,
   clearRoute,
@@ -151,6 +164,7 @@ export const updateRouteAfterDrag = ({
   setPoint,
 }: DragParams): AppThunk => async dispatch => {
   try {
+    dispatch(changeLoadingState(true));
     const data = await fetchRoutes(waypoints);
     const {
       snapped_waypoints,
@@ -231,6 +245,7 @@ export const updateRouteAfterDrag = ({
         updatedElevationData,
       })
     );
+    dispatch(changeLoadingState(false));
   } catch (e) {
     console.log(e);
   }
@@ -249,15 +264,11 @@ export const fetchSinglePoint = (
 };
 
 export const addRoute = ({
-  newPoint,
   newLat,
   newLong,
   startLat,
   startLong,
-  totalDistance,
   elevationData,
-  transportationType,
-  clipPath,
 }: RouteParams): AppThunk => async dispatch => {
   const points = [
     [startLong, startLat],
@@ -265,6 +276,7 @@ export const addRoute = ({
   ];
 
   try {
+    dispatch(changeLoadingState(true));
     const data = await fetchRoutes(points);
 
     const { coordinates } = data.points;
@@ -285,6 +297,7 @@ export const addRoute = ({
         elevationData: newElevationSegments,
       })
     );
+    dispatch(changeLoadingState(false));
   } catch (e) {
     console.log(e);
   }
@@ -327,7 +340,7 @@ const parseElevationData = (
   return { newElevationSegments, currentDistance };
 };
 
-const createLineSegments = (coordinates, waypoints) => {
+const createLineSegments = (coordinates, waypoints): number[][][] => {
   const lines = [];
   let middlePointIndex: number | undefined = undefined;
   const isMiddlePoint: boolean = waypoints.coordinates.length === 3;

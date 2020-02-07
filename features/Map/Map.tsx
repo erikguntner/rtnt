@@ -54,14 +54,19 @@ const Map = () => {
   const [hoveredPoint, setHoveredPoint] = useState<number[]>();
 
   const dispatch: AppDispatch = useDispatch();
-  const { points, totalDistance, lines, elevationData } = useSelector(
-    (state: RootState) => ({
-      points: state.route.present.points,
-      totalDistance: state.route.present.totalDistance,
-      lines: state.route.present.lines,
-      elevationData: state.route.present.elevationData,
-    })
-  );
+  const {
+    isLoading,
+    points,
+    totalDistance,
+    lines,
+    elevationData,
+  } = useSelector((state: RootState) => ({
+    isLoading: state.loading.isLoading,
+    points: state.route.present.points,
+    totalDistance: state.route.present.totalDistance,
+    lines: state.route.present.lines,
+    elevationData: state.route.present.elevationData,
+  }));
 
   const handleClick = event => {
     const [newLong, newLat] = event.lngLat;
@@ -235,10 +240,21 @@ const Map = () => {
           </Marker>
         )}
       </ReactMapGL>
+      {isLoading && <LoadingIndicator />}
       <DistanceIndicator {...{ elevationData, units, setUnits }} />
     </MapContainer>
   );
 };
+
+const LoadingIndicator = styled.div`
+  position: absolute;
+  display: flex;
+  right: 2.5rem;
+  top: 8rem;
+  height: 4rem;
+  width: 5rem;
+  background-color: ${props => props.theme.colors.gray[100]};
+`;
 
 const MapContainer = styled.div`
   height: 100%;

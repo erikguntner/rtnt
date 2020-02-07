@@ -70,7 +70,7 @@ interface StyleProps {
   showElevation: boolean;
 }
 
-const Text = styled.div`
+const Text = styled.p`
   width: 100%;
   height: 100%;
   display: flex;

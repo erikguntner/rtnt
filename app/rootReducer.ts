@@ -1,9 +1,12 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import undoable from 'redux-undo';
-import routeReducer from '../features/Map/routeSlice';
+import routeReducer, { loadingReducer } from '../features/Map/routeSlice';
 
 const rootReducer = combineReducers({
-  route: undoable(routeReducer, { limit: 10 }),
+  route: undoable(routeReducer, {
+    limit: 10,
+  }),
+  loading: loadingReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
