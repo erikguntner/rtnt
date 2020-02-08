@@ -18,9 +18,15 @@ const ControlButton: React.FC<Props> = ({
   tooltip,
   activeState = false,
 }) => {
+  const click = () => {
+    if (!disabled) {
+      handleClick();
+    }
+  };
+
   return (
-    <Button {...{ activeState }} disabled={disabled}>
-      <InnerButton {...{ activeState }} onClick={handleClick}>
+    <Button {...{ activeState, disabled }} disabled={disabled}>
+      <InnerButton {...{ activeState, disabled }} onClick={click}>
         <FontAwesomeIcon icon={icon} />
       </InnerButton>
       <Tooltip>{tooltip}</Tooltip>
@@ -30,6 +36,7 @@ const ControlButton: React.FC<Props> = ({
 
 interface ButtonProps {
   activeState: boolean;
+  disabled: boolean;
 }
 
 const Button = styled.button<ButtonProps>`
@@ -91,8 +98,15 @@ const InnerButton = styled.div<ButtonProps>`
   justify-content: center;
   background-color: ${props =>
     props.activeState ? props.theme.colors.indigo[100] : '#fff'};
-  color: ${props =>
-    props.activeState ? props.theme.colors.indigo[600] : 'black'};
+  color: ${props => {
+    if (props.activeState) {
+      return props.theme.colors.indigo[600];
+    } else if (props.disabled) {
+      return props.theme.colors.gray[600];
+    } else {
+      return 'black';
+    }
+  }};
   font-size: 2rem;
   text-transform: uppercase;
   transform: ${props =>

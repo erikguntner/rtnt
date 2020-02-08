@@ -8,13 +8,7 @@ import WebMercatorViewport from 'viewport-mercator-project';
 
 import { RootState } from '../../app/rootReducer';
 import { AppDispatch } from '../../app/store';
-import {
-  addPoint,
-  addRoute,
-  updateRouteAfterDrag,
-  updateStartAfterDrag,
-  fetchSinglePoint,
-} from './routeSlice';
+import { addRoute, updateRouteAfterDrag, fetchSinglePoint } from './routeSlice';
 
 import SvgPath from './SvgPath';
 import GeoJsonPath from './GeoJsonPath';
@@ -24,6 +18,7 @@ import Controls from './Controls';
 import Pin from './Pin';
 import DistanceMarkers from './DistanceMarkers';
 import DistanceIndicator from './DistanceIndicator';
+import LoadingIndicator from './LoadingIndicator';
 
 interface Viewport {
   latitude: number;
@@ -245,16 +240,6 @@ const Map = () => {
     </MapContainer>
   );
 };
-
-const LoadingIndicator = styled.div`
-  position: absolute;
-  display: flex;
-  right: 2.5rem;
-  top: 8rem;
-  height: 4rem;
-  width: 5rem;
-  background-color: ${props => props.theme.colors.gray[100]};
-`;
 
 const MapContainer = styled.div`
   height: 100%;

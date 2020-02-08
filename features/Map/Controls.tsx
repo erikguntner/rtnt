@@ -31,20 +31,24 @@ const Controls: React.FC<Props> = ({
   setShowElevation,
 }) => {
   const dispatch = useDispatch();
-  const { points } = useSelector((state: RootState) => ({
+  const { points, future, past } = useSelector((state: RootState) => ({
     points: state.route.present.points,
+    future: state.route.future,
+    past: state.route.past,
   }));
+
+  console.log(past);
 
   return (
     <ControlsContainer>
       <ControlButton
-        disabled={!points.length}
+        disabled={!past.length}
         handleClick={() => dispatch(ActionCreators.undo())}
         icon={faUndoAlt}
         tooltip={'undo'}
       />
       <ControlButton
-        disabled={!points.length}
+        disabled={!future.length}
         handleClick={() => dispatch(ActionCreators.redo())}
         icon={faRedoAlt}
         tooltip={'redo'}
