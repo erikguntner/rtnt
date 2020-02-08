@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Dispatch, SetStateAction } from 'react';
 import { AppThunk } from '../../app/store';
 import { fetchRoutes } from '../../utils/fetchRoutes';
+import { changeNotificationStatus } from './notificationSlice';
 
 interface ElevationData {
   distance: number;
@@ -246,7 +247,14 @@ export const updateRouteAfterDrag = ({
     );
     dispatch(changeLoadingState(false));
   } catch (e) {
-    console.log(e);
+    dispatch(
+      changeNotificationStatus({
+        isVisible: true,
+        type: 'error',
+        message: 'Looks like there was an error on our end',
+      })
+    );
+    dispatch(changeLoadingState(false));
   }
 };
 
@@ -254,11 +262,21 @@ export const fetchSinglePoint = (
   newPoint: number[],
   points: number[][]
 ): AppThunk => async dispatch => {
-  const { snapped_waypoints } = await fetchRoutes([newPoint, newPoint]);
-  if (points.length === 0) {
-    dispatch(addPoint(snapped_waypoints.coordinates[0]));
-  } else {
-    dispatch(updateStartAfterDrag(snapped_waypoints.coordinates[0]));
+  try {
+    const { snapped_waypoints } = await fetchRoutes([newPoint, newPoint]);
+    if (points.length === 0) {
+      dispatch(addPoint(snapped_waypoints.coordinates[0]));
+    } else {
+      dispatch(updateStartAfterDrag(snapped_waypoints.coordinates[0]));
+    }
+  } catch (e) {
+    dispatch(
+      changeNotificationStatus({
+        isVisible: true,
+        type: 'error',
+        message: 'Looks like there was an error on our end',
+      })
+    );
   }
 };
 
@@ -278,6 +296,7 @@ export const addRoute = ({
     dispatch(changeLoadingState(true));
     const data = await fetchRoutes(points);
 
+    console.log(data);
     const { coordinates } = data.points;
     const { instructions } = data;
     const endDistance = elevationData.slice(-1)[0].slice(-1)[0].distance;
@@ -298,7 +317,14 @@ export const addRoute = ({
     );
     dispatch(changeLoadingState(false));
   } catch (e) {
-    console.log(e);
+    dispatch(
+      changeNotificationStatus({
+        isVisible: true,
+        type: 'error',
+        message: 'Looks like there was an error on our end',
+      })
+    );
+    dispatch(changeLoadingState(false));
   }
 };
 

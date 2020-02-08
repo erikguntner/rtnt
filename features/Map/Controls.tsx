@@ -16,6 +16,7 @@ import ControlButton from './ControlButton';
 
 import { RootState } from '../../app/rootReducer';
 import { clearRoute } from './routeSlice';
+import { changeNotificationStatus } from './notificationSlice';
 
 interface Props {
   clipPath: boolean;
@@ -36,8 +37,6 @@ const Controls: React.FC<Props> = ({
     future: state.route.future,
     past: state.route.past,
   }));
-
-  console.log(past);
 
   return (
     <ControlsContainer>
@@ -65,12 +64,19 @@ const Controls: React.FC<Props> = ({
         activeState={showElevation}
         tooltip={'elevation'}
       />
-      {/* <ControlButton
-        click={() => changeToClipPath(true)}
+      <ControlButton
+        handleClick={() =>
+          dispatch(
+            changeNotificationStatus({
+              isVisible: true,
+              type: 'success',
+              message: 'this is a message',
+            })
+          )
+        }
         icon={faRoute}
-        activeState={clipPath}
         tooltip={'clip path'}
-      /> */}
+      />
       {/* <ControlButton
         click={() => changeToClipPath(false)}
         icon={faDrawPolygon}
