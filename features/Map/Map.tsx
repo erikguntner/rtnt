@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
 import ReactMapGL, { Marker } from 'react-map-gl';
 import styled from 'styled-components';
-import * as turfHelpers from '@turf/helpers';
 import WebMercatorViewport from 'viewport-mercator-project';
 
 import { RootState } from '../../app/rootReducer';

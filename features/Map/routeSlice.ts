@@ -2,7 +2,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Dispatch, SetStateAction } from 'react';
 import { AppThunk } from '../../app/store';
 import { fetchRoutes } from '../../utils/fetchRoutes';
-import { point } from '@turf/turf';
 
 interface ElevationData {
   distance: number;
