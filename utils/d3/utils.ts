@@ -28,20 +28,29 @@ interface ElevationData {
 export const renderLineChart = (
   data: ElevationData[],
   setDistanceAlongPath: Dispatch<SetStateAction<number | null>>,
-  units: string
+  units: string,
+  dimensions: {
+    width: number;
+    height: number;
+  }
 ) => {
   const container = document.getElementById('elevation-container');
   const margin = { top: 20, right: 20, bottom: 20, left: 50 };
-  const height = container.offsetHeight;
-  const width = container.offsetWidth;
+  const height = dimensions.height;
+  const width = dimensions.width;
   const svg = select('.line-chart');
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
   //@ts-ignore
   const xValue = d => turfHelpers.convertLength(d.distance, 'meters', units);
-  //@ts-ignore
-  const yValue = d => turfHelpers.convertLength(d.elevation, 'meters', units === 'miles' ? 'feet' : 'meters');
+  const yValue = d =>
+    turfHelpers.convertLength(
+      d.elevation,
+      'meters',
+      //@ts-ignore
+      units === 'miles' ? 'feet' : 'meters'
+    );
 
   const xScale = scaleLinear()
     .domain([0, max(data, xValue)])
@@ -184,10 +193,14 @@ export const renderLineChart = (
 export const createChart = (
   data: ElevationData[][],
   setDistanceAlongPath: Dispatch<SetStateAction<number | null>>,
-  units: string
+  units: string,
+  dimensions: {
+    width: number;
+    height: number;
+  }
 ) => {
   // renderBarChart(popData);
-  renderLineChart(data.flat(), setDistanceAlongPath, units);
+  renderLineChart(data.flat(), setDistanceAlongPath, units, dimensions);
 };
 
 // invoke functions to draw appropriate changes

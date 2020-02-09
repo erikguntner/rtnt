@@ -1,4 +1,11 @@
-import React, { useEffect, Dispatch, SetStateAction } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  Dispatch,
+  SetStateAction,
+  MutableRefObject,
+} from 'react';
 import styled from 'styled-components';
 import { createChart } from '../../utils/d3/utils';
 import { lineSegment } from '@turf/turf';
@@ -15,6 +22,30 @@ interface Props {
   setDistanceAlongPath: Dispatch<SetStateAction<number | null>>;
 }
 
+interface Dimensions {
+  width: number;
+  height: number;
+}
+
+const useResizeObserver = (
+  ref: MutableRefObject<HTMLDivElement>
+): Dimensions => {
+  const [dimensions, setDimensions] = useState<Dimensions | null>(null);
+
+  useEffect(() => {
+    const observerTarget = ref.current;
+    const resizeObserver = new ResizeObserver(entries => {
+      const { width, height } = entries[0].contentRect;
+      setDimensions({ width, height });
+    });
+    resizeObserver.observe(observerTarget);
+    return () => {
+      resizeObserver.unobserve(observerTarget);
+    };
+  }, [ref]);
+  return dimensions;
+};
+
 const ElevationProfile: React.FC<Props> = ({
   showElevation,
   lines,
@@ -22,43 +53,35 @@ const ElevationProfile: React.FC<Props> = ({
   units,
   setDistanceAlongPath,
 }) => {
-  const handleResize = () => {
-    const container = document.getElementsByClassName('line-chart');
-    if (container.length > 0) {
-      container[0].innerHTML = '';
-      createChart(elevationData, setDistanceAlongPath, units);
-    }
-  };
-
   if (!showElevation) {
     return null;
   }
 
-  useEffect(() => {
-    const container = document.getElementsByClassName('line-chart');
-    if (container.length > 0) {
-      container[0].innerHTML = '';
-      createChart(elevationData, setDistanceAlongPath, units);
+  const containerRef = useRef<HTMLDivElement>();
+  const svgRef = useRef();
+  const dimensions = useResizeObserver(containerRef);
+
+  const removePreviousChart = () => {
+    if (containerRef.current.firstElementChild.tagName !== 'P') {
+      containerRef.current.firstElementChild.innerHTML = '';
     }
-  }, [elevationData]);
+  };
 
-  // trying to pass elevationData into useEffect so that resize reflects updated data
   useEffect(() => {
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [elevationData]);
+    if (dimensions === null) return;
+    removePreviousChart();
+    createChart(elevationData, setDistanceAlongPath, units, dimensions);
+  }, [elevationData, dimensions]);
 
   return (
     <ChartContainer
       {...{ showElevation }}
       className="line-chart-container"
       id="elevation-container"
+      ref={containerRef}
     >
       {lines.length > 0 ? (
-        <svg className="line-chart" width="100%" height="100%" />
+        <svg ref={svgRef} className="line-chart" width="100%" height="100%" />
       ) : (
         <Text>Create a line to see the elvation chart</Text>
       )}
