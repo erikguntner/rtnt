@@ -16,7 +16,6 @@ import { RootState } from '../../app/rootReducer';
 interface Props {}
 
 const Notifications: React.FC<Props> = () => {
-  let timeout;
   const dispatch: AppDispatch = useDispatch();
   const { isVisible, type, message } = useSelector((state: RootState) => ({
     isVisible: state.notifications.isVisible,
@@ -24,17 +23,13 @@ const Notifications: React.FC<Props> = () => {
     message: state.notifications.message,
   }));
 
-  const icon = {
-    error: faTimes,
-    warning: faExclamationTriangle,
-    success: faCheck,
+  const notification = {
+    error: { icon: faTimes, color: 'red' },
+    warning: { icon: faExclamationTriangle, color: 'orange' },
+    success: { icon: faCheck, color: 'green' },
   };
-
-  const notificationColor = {
-    error: 'red',
-    warning: 'orange',
-    success: 'green',
-  };
+  // timeout variable
+  let timeout;
 
   const handleClose = () => {
     clearTimeout(timeout);
@@ -49,7 +44,6 @@ const Notifications: React.FC<Props> = () => {
 
   useEffect(() => {
     if (isVisible) {
-      console.log('timeout');
       timeout = setTimeout(() => {
         dispatch(
           changeNotificationStatus({
@@ -65,9 +59,9 @@ const Notifications: React.FC<Props> = () => {
   return (
     <>
       {isVisible && (
-        <Notification {...{ type, color: notificationColor[type] }}>
-          <Icon {...{ type, color: notificationColor[type] }}>
-            <FontAwesomeIcon icon={icon[type]} />
+        <Notification {...{ type, color: notification[type].color }}>
+          <Icon {...{ type, color: notification[type].color }}>
+            <FontAwesomeIcon icon={notification[type].icon} />
           </Icon>
           <Text>
             <p>{message}</p>
@@ -94,6 +88,7 @@ const Notification = styled.div<NotificationProps>`
   display: flex;
   z-index: 1000;
   background: #fff;
+  border-radius: 5px;
 
   &::before {
     position: absolute;
@@ -101,6 +96,8 @@ const Notification = styled.div<NotificationProps>`
     top: 0;
     left: 0;
     height: 100%;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
     width: 4px;
     background-color: ${props => props.theme.colors[props.color][600]};
   }
