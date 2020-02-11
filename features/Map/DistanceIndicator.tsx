@@ -87,9 +87,17 @@ const Display = styled.div`
     font-size: 1.8rem;
     align-self: baseline;
 
+    @media screen and (max-width: 600px) {
+      font-size: 1.2rem;
+    }
+
     &:first-child {
       margin-right: 3px;
       font-size: 3.2rem;
+
+      @media screen and (max-width: 600px) {
+        font-size: 2.4rem;
+      }
     }
   }
 `;
@@ -97,11 +105,18 @@ const Display = styled.div`
 const DistanceContainer = styled.div`
   position: absolute;
   display: flex;
-  right: 2.5rem;
+  right: 1.6rem;
   bottom: 2.5rem;
   height: 5rem;
   width: 10rem;
   border-radius: 3px;
+
+  @media screen and (max-width: 600px) {
+    height: 4rem;
+    width: 8rem;
+    right: 1.2rem;
+    bottom: 1.2rem;
+  }
 `;
 
 export default DistanceIndicator;

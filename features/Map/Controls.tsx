@@ -64,7 +64,7 @@ const Controls: React.FC<Props> = ({
         activeState={showElevation}
         tooltip={'elevation'}
       />
-      <ControlButton
+      {/* <ControlButton
         handleClick={() =>
           dispatch(
             changeNotificationStatus({
@@ -76,7 +76,7 @@ const Controls: React.FC<Props> = ({
         }
         icon={faRoute}
         tooltip={'clip path'}
-      />
+      /> */}
       {/* <ControlButton
         click={() => changeToClipPath(false)}
         icon={faDrawPolygon}
@@ -113,6 +113,12 @@ const ControlsContainer = styled.div`
 
   @media screen and (max-width: 800px) {
     max-width: 90%;
+  }
+
+  @media screen and (max-width: 600px) {
+    max-width: calc(100% - 2.4rem);
+    padding: 0 1.2px;
+    top: calc(1.2rem + ${props => props.theme.navHeight});
   }
 `;
 

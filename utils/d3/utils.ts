@@ -203,19 +203,6 @@ export const createChart = (
   renderLineChart(data.flat(), setDistanceAlongPath, units, dimensions);
 };
 
-// invoke functions to draw appropriate changes
-// const renderChanges = (points, distance) => {
-//   drawAxes(points, distance);
-//   // drawLine(data);
-// };
-
-// export const initializeChart = (points, distance) => {
-//   buildAxes();
-//   // buildLine();
-//   // renderChanges(data);
-//   renderChanges(points, distance);
-// };
-
 interface BarData {
   country: string;
   population: number;

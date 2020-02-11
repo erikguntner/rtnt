@@ -16,6 +16,7 @@ const theme = {
     lg: '1024px',
     xl: '1280px',
   },
+  navHeight: '6.4rem',
   colors: {
     primary: '#0070f3',
     lightGrey: '#e4e7eb',
@@ -117,6 +118,15 @@ const theme = {
     extrabold: '800',
     black: '900',
   },
+  spacing: {
+    xs: '4px',
+    sm: '8px',
+    md: '1.2rem',
+    lg: '1.6rem',
+    xl: '2.4rem',
+    '2xl': '3.2rem',
+    '3xl': '4.8rem',
+  },
 };
 
 type ThemeType = typeof theme;
@@ -183,7 +193,7 @@ const Container = styled.div`
   height: 100vh;
   width: 100vw;
   display: grid;
-  grid-template-rows: 50px 1fr;
+  grid-template-rows: ${props => props.theme.navHeight} 1fr;
 `;
 
 const Layout = ({ children }) => {

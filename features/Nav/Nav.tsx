@@ -2,6 +2,8 @@ import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 
+import { DarkButtonLink, PrimaryButtonLink } from '../Button';
+
 interface Links {
   href: string;
   label: string;
@@ -12,41 +14,44 @@ const Nav = () => (
   <NavContainer>
     <ul>
       <li>
-        <Link href="/">
-          <a>Home</a>
-        </Link>
+        <DarkButtonLink href="/">Home</DarkButtonLink>
       </li>
       <li>
-        <Link href="/about">
-          <a>About</a>
-        </Link>
+        <DarkButtonLink href="/about">About</DarkButtonLink>
+      </li>
+    </ul>
+    <ul>
+      <li>
+        <DarkButtonLink href="/login">Login</DarkButtonLink>
+      </li>
+      <li>
+        <PrimaryButtonLink href="/signup">Sign Up</PrimaryButtonLink>
       </li>
     </ul>
   </NavContainer>
 );
 
 const NavContainer = styled.nav`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background-color: ${props => props.theme.colors.gray[800]};
   text-align: center;
 
   & ul {
     display: flex;
     justify-content: flex-start;
+    list-style: none;
   }
 
   & > ul {
-    padding: 4px 16px;
+    padding: 4px 1.6rem;
   }
 
   & li {
-    display: flex;
-    padding: 6px 8px;
-  }
-
-  & a {
-    color: ${props => props.theme.colors.gray[100]};
-    text-decoration: none;
-    font-size: 13px;
+    &:not(:last-of-type) {
+      margin-right: 1.2rem;
+    }
   }
 `;
 

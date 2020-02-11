@@ -227,12 +227,12 @@ const Map = () => {
           </Marker>
         ))}
         <DistanceMarkers {...{ lines, units }} />
-        {pointAlongPath.length && (
+        {pointAlongPath.length ? (
           <Marker longitude={pointAlongPath[0]} latitude={pointAlongPath[1]}>
             <Label>{distanceAlongPath.toFixed(2)}</Label>
             <DistanceMarker />
           </Marker>
-        )}
+        ) : null}
       </ReactMapGL>
       {isLoading && <LoadingIndicator />}
       <DistanceIndicator {...{ elevationData, units, setUnits }} />
