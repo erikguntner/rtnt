@@ -54,12 +54,14 @@ const Map = () => {
     totalDistance,
     lines,
     elevationData,
+    authenticated,
   } = useSelector((state: RootState) => ({
     isLoading: state.loading.isLoading,
     points: state.route.present.points,
     totalDistance: state.route.present.totalDistance,
     lines: state.route.present.lines,
     elevationData: state.route.present.elevationData,
+    authenticated: state.auth.authenticated,
   }));
 
   const handleClick = event => {

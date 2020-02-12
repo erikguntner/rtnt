@@ -1,8 +1,11 @@
 import React from 'react';
-import Link from 'next/link';
+import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import { DarkButtonLink, PrimaryButtonLink } from '../Button';
+import { RootState } from '../../app/rootReducer';
+import { removeCookieOnLogout } from '../../utils/auth';
+import { authenticateUser } from '../Auth/authSlice';
 
 interface Links {
   href: string;
@@ -10,23 +13,59 @@ interface Links {
   key?: string;
 }
 
-const Nav = () => (
-  <NavContainer>
-    <ul>
-      <li>
-        <DarkButtonLink href="/">Home</DarkButtonLink>
-      </li>
-    </ul>
-    <ul>
-      <li>
-        <DarkButtonLink href="/login">Login</DarkButtonLink>
-      </li>
-      <li>
-        <PrimaryButtonLink href="/signup">Sign Up</PrimaryButtonLink>
-      </li>
-    </ul>
-  </NavContainer>
-);
+const Nav = () => {
+  const dispatch = useDispatch();
+
+  const { authenticated, user, points } = useSelector((state: RootState) => ({
+    authenticated: state.auth.authenticated,
+    user: state.auth.user,
+    points: state.route.present.points,
+  }));
+
+  const logout = () => {
+    dispatch(
+      authenticateUser({
+        authenticated: '',
+        user: {
+          username: '',
+          email: '',
+        },
+      })
+    );
+
+    removeCookieOnLogout();
+  };
+
+  return (
+    <NavContainer>
+      <ul>
+        <li>
+          <DarkButtonLink href="/">Home</DarkButtonLink>
+        </li>
+      </ul>
+      <ul>
+        {!authenticated && (
+          <li>
+            <DarkButtonLink href="/login">Login</DarkButtonLink>
+          </li>
+        )}
+        {!authenticated && (
+          <li>
+            <PrimaryButtonLink href="/signup">Sign Up</PrimaryButtonLink>
+          </li>
+        )}
+        {!!authenticated && (
+          <>
+            <li>{user.username}</li>
+            <li>
+              <button onClick={logout}>Sign Out</button>
+            </li>
+          </>
+        )}
+      </ul>
+    </NavContainer>
+  );
+};
 
 const NavContainer = styled.nav`
   display: flex;

@@ -12,7 +12,7 @@ const Wrapper = (Component, props: Props) => {
   const { href, children, disabled, ...rest } = props;
   const button = <Component {...{ disabled, ...rest }}>{children}</Component>;
 
-  if (href) return <StyledLink href={href}>{button}</StyledLink>;
+  if (href) return <Link href={href}>{button}</Link>;
   return button;
 };
 

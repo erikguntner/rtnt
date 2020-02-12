@@ -9,18 +9,17 @@ export const initializeStore = (preloadedState = {}) => {
     preloadedState,
   });
 
-  if (process.env.NODE_ENV === 'development' && module.hot) {
-    module.hot.accept('./rootReducer', () => {
-      const newRootReducer = require('./rootReducer').default;
-      storeInit.replaceReducer(newRootReducer);
-    });
-  }
+  // if (process.env.NODE_ENV === 'development' && module.hot) {
+  //   module.hot.accept('./rootReducer', () => {
+  //     const newRootReducer = require('./rootReducer').default;
+  //     storeInit.replaceReducer(newRootReducer);
+  //   });
+  // }
 
   return storeInit;
 };
 
 const store = initializeStore();
-
 
 export type AppDispatch = typeof store.dispatch;
 

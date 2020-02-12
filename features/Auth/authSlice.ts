@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../../app/store';
+import { setCookieOnLogin } from '../../utils/auth';
 
 const url =
   process.env.NODE_ENV === 'production'
@@ -12,12 +13,12 @@ interface UserI {
 }
 
 interface AuthState {
-  authenticated: boolean;
+  authenticated: string;
   user: UserI;
 }
 
 const initialState: AuthState = {
-  authenticated: false,
+  authenticated: '',
   user: {
     email: '',
     username: '',
@@ -29,7 +30,12 @@ const { actions, reducer } = createSlice({
   initialState,
   reducers: {
     authenticateUser: (state, action: PayloadAction<AuthState>) => {
-      const { authenticated, user } = action.payload;
+      const {
+        authenticated,
+        user: { username },
+      } = action.payload;
+      state.authenticated = authenticated;
+      state.user = { username, email: 'me@gmail.com' };
     },
   },
 });
@@ -57,9 +63,11 @@ export const login = ({
 
     const { token, user } = await res.json();
 
-    dispatch(authenticateUser({ authenticated: true, user }));
+    dispatch(authenticateUser({ authenticated: token, user }));
+
+    await setCookieOnLogin({ token });
   } catch (e) {
-    console.log(e);
+    console.log('error logging in', e);
   }
 };
 
@@ -84,8 +92,15 @@ export const signup = ({
       body: JSON.stringify({ email, username, password }),
     });
 
-    const data = await res.json();
-  } catch (e) {}
+    const { token, user } = await res.json();
+
+    if (token) {
+      await setCookieOnLogin({ token });
+      dispatch(authenticateUser({ authenticated: token, user }));
+    }
+  } catch (e) {
+    console.log('error signing up', e);
+  }
 };
 
 export default reducer;

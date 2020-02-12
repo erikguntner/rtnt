@@ -2,7 +2,7 @@ import React from 'react';
 import { NextPage } from 'next';
 import styled from 'styled-components';
 import LoginForm from '../features/Forms/LoginForm';
-import { withRedux } from '../utils/redux';
+// import { withRedux } from '../utils/redux';
 
 interface Props {}
 
@@ -22,4 +22,4 @@ const Container = styled.div`
   background-color: ${props => props.theme.colors.gray[100]};
 `;
 
-export default withRedux(Login);
+export default Login;

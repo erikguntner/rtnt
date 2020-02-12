@@ -16,13 +16,13 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
 
       if (!username || !password) {
         return res
-          .status(422)
+          .status(400)
           .json({ error: 'You must provide and username and password' });
       }
       const existingUser = await User.findOne({ username: username });
 
       if (existingUser) {
-        return res.status(422).json({ error: 'Username is in use' });
+        return res.status(400).json({ error: 'Username is in use' });
       }
 
       const user = new User({
@@ -35,8 +35,8 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
       user.password = hashedPassword;
 
       await user.save();
-
       const token = tokenForUser(user);
+
       return res.status(200).json({
         token,
         user: user,

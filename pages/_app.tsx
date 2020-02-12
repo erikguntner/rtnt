@@ -1,4 +1,5 @@
 import React from 'react';
+import { Provider } from 'react-redux';
 import Head from 'next/head';
 import Nav from '../features/Nav/Nav';
 import App from 'next/app';
@@ -6,6 +7,8 @@ import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'mapbox-gl/src/css/mapbox-gl.css';
+import withReduxStore from '../utils/withReduxStore';
+import { RootState } from '../app/rootReducer';
 
 config.autoAddCss = false;
 
@@ -211,16 +214,23 @@ const Layout = ({ children }) => {
   );
 };
 
-export default class MyApp extends App {
+class MyApp extends App {
   render() {
-    const { Component, pageProps } = this.props;
+    //@ts-ignore
+    const { Component, pageProps, reduxStore } = this.props;
+    // const { Component, pageProps } = this.props;
+
     return (
       <ThemeProvider theme={theme}>
         <GlobalStyle />
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <Provider store={reduxStore}>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </Provider>
       </ThemeProvider>
     );
   }
 }
+
+export default withReduxStore(MyApp);

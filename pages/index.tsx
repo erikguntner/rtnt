@@ -1,17 +1,16 @@
 import React from 'react';
 import { NextPage } from 'next';
-import fetch from 'isomorphic-unfetch';
-import { withRedux } from '../utils/redux';
+import Router from 'next/router';
+import nextCookie from 'next-cookies';
+import { withAuthSync } from '../utils/auth';
 
 import Map from '../features/Map/Map';
 import Notifications from '../features/Map/Notifications';
+import { authenticateUser } from '../features/Auth/authSlice';
 
-interface Props {
-  title?: string;
-  name?: string;
-}
+interface Props {}
 
-const Home: NextPage<Props> = ({ title, name }) => {
+const Home: NextPage<Props> = () => {
   return (
     <>
       <Map />
@@ -20,4 +19,62 @@ const Home: NextPage<Props> = ({ title, name }) => {
   );
 };
 
-export default withRedux(Home);
+Home.getInitialProps = async ctx => {
+  const {
+    reduxStore: { dispatch },
+  } = ctx;
+  const url =
+    process.env.NODE_ENV === 'production'
+      ? 'https://run-tracker-next-typescript.now.sh'
+      : 'http://localhost:3000';
+
+  const redirectOnError = () =>
+    //@ts-ignore
+    typeof window !== 'undefined'
+      ? Router.push('/')
+      : ctx.res.writeHead(302, { Location: '/' }).end();
+
+  const { token } = nextCookie(ctx);
+
+  if (token) {
+    try {
+      const response = await fetch(`${url}/api/user`, {
+        credentials: 'include',
+        headers: {
+          Authorization: JSON.stringify({ token }),
+        },
+      });
+
+      const { user } = await response.json();
+      return dispatch(authenticateUser({ authenticated: token, user }));
+    } catch (error) {
+      // Implementation or Network error
+      console.log(error);
+      return dispatch(
+        authenticateUser({
+          authenticated: '',
+          user: {
+            username: '',
+            email: '',
+          },
+        })
+      );
+      // return redirectOnError();
+    }
+  } else {
+    console.log('no token');
+    return dispatch(
+      authenticateUser({
+        authenticated: '',
+        user: {
+          username: '',
+          email: '',
+        },
+      })
+    );
+
+    // return redirectOnError();
+  }
+};
+
+export default Home;

@@ -70,9 +70,7 @@ const SignupForm: React.FC<Props> = () => {
             <Error>{formik.errors.password}</Error>
           ) : null}
         </InputWrapper>
-        <button type="submit" disabled={formik.isSubmitting}>
-          Log in
-        </button>
+        <button type="submit">Log in</button>
       </Form>
     </FormWrapper>
   );
