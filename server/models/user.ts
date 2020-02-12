@@ -13,8 +13,6 @@ const userSchema = new Schema({
   goal: { type: Number, default: 0 },
 });
 
-//On save hook, encrypt password
-// Run before saving a a model to the datbase
 
 userSchema.methods.comparePassword = function(candidatePassword, callback) {
   bcyrpt.compare(candidatePassword, this.password, (err, isMatch) => {

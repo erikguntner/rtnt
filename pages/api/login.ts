@@ -37,6 +37,7 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
 
       return res.status(200).json({
         token,
+        user,
       });
     } catch (e) {
       console.log(e);

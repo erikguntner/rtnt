@@ -16,9 +16,6 @@ const Nav = () => (
       <li>
         <DarkButtonLink href="/">Home</DarkButtonLink>
       </li>
-      <li>
-        <DarkButtonLink href="/about">About</DarkButtonLink>
-      </li>
     </ul>
     <ul>
       <li>

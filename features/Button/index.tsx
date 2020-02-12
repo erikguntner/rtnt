@@ -26,12 +26,24 @@ const StyledLink = styled(Link)`
   display: flex;
   flex: none;
   align-items: center;
+  outline: none;
+
+  &:focus {
+    outline: none;
+    box-shadow: ${props => props.theme.boxShadow.outline};
+  }
 `;
 
 const StyledButton = styled.button`
   display: flex;
   flex: none;
   align-items: center;
+  outline: none;
+
+  &:focus {
+    outline: none;
+    box-shadow: ${props => props.theme.boxShadow.outline};
+  }
 `;
 
 const StyledDarkButton = styled.button`
@@ -60,6 +72,10 @@ const StyledPrimaryButton = styled.button`
   &:hover {
     cursor: pointer;
     background-color: ${props => props.theme.colors.indigo[600]};
+  }
+
+  &:active {
+    background-color: ${props => props.theme.colors.indigo[800]};
   }
 `;
 
