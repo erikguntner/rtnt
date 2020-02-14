@@ -282,8 +282,10 @@ class MyApp extends App {
     const { reduxStore } = ctx;
 
     const { token } = nextCookie(ctx);
+
     // if token exists, use token to log user in serverside when app loads
     if (token) {
+      console.log(token);
       try {
         const response = await fetch(`${url}/api/user`, {
           credentials: 'include',
@@ -296,6 +298,12 @@ class MyApp extends App {
         reduxStore.dispatch(authenticateUser({ authenticated: token, user }));
       } catch (error) {
         // Implementation or Network error
+        console.log(error);
+        return {
+          pageProps: Component.getInitialProps
+            ? await Component.getInitialProps(ctx)
+            : {},
+        };
       }
     }
 

@@ -8,14 +8,29 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(401).send('Authorization header missing');
   }
 
-  const { token } = await JSON.parse(req.headers.authorization);
-  const { sub } = await jwt.decode(token, process.env.JWT_SECRET);
-  const user = await User.findById(sub);
+  try {
+    const { token } = await JSON.parse(req.headers.authorization);
 
-  return res.status(200).json({
-    token,
-    user,
-  });
+    if (token) {
+      const { sub } = await jwt.decode(token, process.env.JWT_SECRET);
+      const user = await User.findById(sub);
+
+      return res.status(200).json({
+        token,
+        user,
+      });
+    } else {
+      return res.status(401).json({
+        message: 'could not retrieve token',
+      });
+    }
+  } catch (err) {
+    console.log(err);
+
+    return res.status(400).json({
+      message: 'error retrieving user',
+    });
+  }
 };
 
 export default connectDb(request);
