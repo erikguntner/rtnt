@@ -285,7 +285,6 @@ class MyApp extends App {
 
     // if token exists, use token to log user in serverside when app loads
     if (token) {
-      console.log(token);
       try {
         const response = await fetch(`${url}/api/user`, {
           credentials: 'include',
