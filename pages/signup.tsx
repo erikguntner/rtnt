@@ -1,7 +1,6 @@
 import React from 'react';
 import { NextPage } from 'next';
 import SignupForm from '../features/Forms/SignupForm';
-import fetch from 'isomorphic-unfetch';
 import styled from 'styled-components';
 import { withRedux } from '../utils/redux';
 

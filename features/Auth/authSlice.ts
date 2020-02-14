@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../../app/store';
+import fetch from 'isomorphic-unfetch';
 import { setCookieOnLogin } from '../../utils/auth';
 
 const url =

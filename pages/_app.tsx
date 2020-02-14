@@ -4,6 +4,7 @@ import Head from 'next/head';
 import nextCookie from 'next-cookies';
 import Nav from '../features/Nav/Nav';
 import App, { AppContext } from 'next/app';
+import fetch from 'isomorphic-unfetch';
 import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
