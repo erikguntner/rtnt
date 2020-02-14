@@ -2,7 +2,9 @@
   "build": {
     "env": {
       "GRAPH_HOPPER_KEY": "@graph-hopper-key",
-      "MAPBOX_TOKEN": "@mapbox-token"
+      "MAPBOX_TOKEN": "@mapbox-token",
+      "JWT_SECRET": "@jwt-secret",
+      "MONGO_URI": "@mongo-uri"
     }
   }
 }

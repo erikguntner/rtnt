@@ -42,9 +42,6 @@ const Nav = () => {
         <li>
           <DarkButtonLink href="/">Home</DarkButtonLink>
         </li>
-        <li>
-          <DarkButtonLink href="/profile">Profile</DarkButtonLink>
-        </li>
       </ul>
       <ul>
         {!authenticated && (
@@ -168,6 +165,6 @@ const SignOut = styled.button`
     background-color: #071735;
     color: #fff;
   }
-`
+`;
 
 export default Nav;
