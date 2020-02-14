@@ -11,6 +11,7 @@ import {
   InputWrapper,
   Label,
   Title,
+  SubmitButton,
 } from './styles';
 
 import { login } from '../Auth/authSlice';
@@ -70,7 +71,7 @@ const SignupForm: React.FC<Props> = () => {
             <Error>{formik.errors.password}</Error>
           ) : null}
         </InputWrapper>
-        <button type="submit">Log in</button>
+        <SubmitButton type="submit">Log in</SubmitButton>
       </Form>
     </FormWrapper>
   );

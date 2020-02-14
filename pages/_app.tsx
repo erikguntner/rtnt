@@ -1,13 +1,15 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import Head from 'next/head';
+import nextCookie from 'next-cookies';
 import Nav from '../features/Nav/Nav';
-import App from 'next/app';
+import App, { AppContext } from 'next/app';
 import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'mapbox-gl/src/css/mapbox-gl.css';
 import withReduxStore from '../utils/withReduxStore';
+import { authenticateUser } from '../features/Auth/authSlice';
 import { RootState } from '../app/rootReducer';
 
 config.autoAddCss = false;
@@ -34,6 +36,39 @@ const theme = {
       800: '#2d3748',
       900: '#1a202c',
     },
+    red: {
+      100: '#fff5f5',
+      200: '#fed7d7',
+      300: '#feb2b2',
+      400: '#fc8181',
+      500: '#f56565',
+      600: '#e53e3e',
+      700: '#c53030',
+      800: '#9b2c2c',
+      900: '#742a2a',
+    },
+    orange: {
+      100: '#fffaf0',
+      200: '#feebc8',
+      300: '#fbd38d',
+      400: '#f6ad55',
+      500: '#ed8936',
+      600: '#dd6b20',
+      700: '#c05621',
+      800: '#9c4221',
+      900: '#7b341e',
+    },
+    yellow: {
+      100: '#fffff0',
+      200: '#fefcbf',
+      300: '#faf089',
+      400: '#f6e05e',
+      500: '#ecc94b',
+      600: '#d69e2e',
+      700: '#b7791f',
+      800: '#975a16',
+      900: '#744210',
+    },
     green: {
       100: '#f0fff4',
       200: '#c6f6d5',
@@ -45,16 +80,16 @@ const theme = {
       800: '#276749',
       900: '#22543d',
     },
-    red: {
-      100: '#fff5f5',
-      200: '#fed7d7',
-      300: '#feb2b2',
-      400: '#fc8181',
-      500: '#f56565',
-      600: '#e53e3e',
-      700: '#c53030',
-      800: '#9b2c2c',
-      900: '#742a2a',
+    teal: {
+      100: '#e6fffa',
+      200: '#b2f5ea',
+      300: '#81e6d9',
+      400: '#4fd1c5',
+      500: '#38b2ac',
+      600: '#319795',
+      700: '#2c7a7b',
+      800: '#285e61',
+      900: '#234e52',
     },
     blue: {
       100: '#ebf8ff',
@@ -77,6 +112,28 @@ const theme = {
       700: '#4c51bf',
       800: '#434190',
       900: '#3c366b',
+    },
+    purple: {
+      100: '#faf5ff',
+      200: '#e9d8fd',
+      300: '#d6bcfa',
+      400: '#b794f4',
+      500: '#9f7aea',
+      600: '#805ad5',
+      700: '#6b46c1',
+      800: '#553c9a',
+      900: '#44337a',
+    },
+    pink: {
+      100: '#fff5f7',
+      200: '#fed7e2',
+      300: '#fbb6ce',
+      400: '#f687b3',
+      500: '#ed64a6',
+      600: '#d53f8c',
+      700: '#b83280',
+      800: '#97266d',
+      900: '#702459',
     },
   },
   boxShadow: {
@@ -215,10 +272,42 @@ const Layout = ({ children }) => {
 };
 
 class MyApp extends App {
+  static async getInitialProps({ Component, ctx }: AppContext) {
+    const url =
+      process.env.NODE_ENV === 'production'
+        ? 'https://run-tracker-next-typescript.now.sh'
+        : 'http://localhost:3000';
+
+    const { reduxStore } = ctx;
+
+    const { token } = nextCookie(ctx);
+    // if token exists, use token to log user in serverside when app loads
+    if (token) {
+      try {
+        const response = await fetch(`${url}/api/user`, {
+          credentials: 'include',
+          headers: {
+            Authorization: JSON.stringify({ token }),
+          },
+        });
+
+        const { user } = await response.json();
+        reduxStore.dispatch(authenticateUser({ authenticated: token, user }));
+      } catch (error) {
+        // Implementation or Network error
+      }
+    }
+
+    return {
+      pageProps: Component.getInitialProps
+        ? await Component.getInitialProps(ctx)
+        : {},
+    };
+  }
+
   render() {
     //@ts-ignore
     const { Component, pageProps, reduxStore } = this.props;
-    // const { Component, pageProps } = this.props;
 
     return (
       <ThemeProvider theme={theme}>

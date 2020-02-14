@@ -1,7 +1,8 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import styled from 'styled-components';
-
+import styled, { keyframes } from 'styled-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { DarkButtonLink, PrimaryButtonLink } from '../Button';
 import { RootState } from '../../app/rootReducer';
 import { removeCookieOnLogout } from '../../utils/auth';
@@ -16,10 +17,9 @@ interface Links {
 const Nav = () => {
   const dispatch = useDispatch();
 
-  const { authenticated, user, points } = useSelector((state: RootState) => ({
+  const { authenticated, user } = useSelector((state: RootState) => ({
     authenticated: state.auth.authenticated,
     user: state.auth.user,
-    points: state.route.present.points,
   }));
 
   const logout = () => {
@@ -42,6 +42,9 @@ const Nav = () => {
         <li>
           <DarkButtonLink href="/">Home</DarkButtonLink>
         </li>
+        <li>
+          <DarkButtonLink href="/profile">Profile</DarkButtonLink>
+        </li>
       </ul>
       <ul>
         {!authenticated && (
@@ -56,9 +59,16 @@ const Nav = () => {
         )}
         {!!authenticated && (
           <>
-            <li>{user.username}</li>
             <li>
-              <button onClick={logout}>Sign Out</button>
+              <Avatar>
+                <Username>{user.username}</Username>
+                <AvatarIcon>
+                  <FontAwesomeIcon icon={faUserCircle} />
+                </AvatarIcon>
+              </Avatar>
+            </li>
+            <li>
+              <SignOut onClick={logout}>Sign Out</SignOut>
             </li>
           </>
         )}
@@ -90,5 +100,74 @@ const NavContainer = styled.nav`
     }
   }
 `;
+
+const Avatar = styled.button`
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  font-size: 1.4rem;
+  color: #fff;
+`;
+
+const Username = styled.span`
+  margin-right: 6px;
+`;
+
+const scaleDot = keyframes`
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(3);
+  }
+`;
+
+const AvatarIcon = styled.span`
+  position: relative;
+  font-size: 2.4rem;
+
+  &::before {
+    content: '';
+    background-color: ${props => props.theme.colors.teal[400]};
+    position: absolute;
+    top: 5px;
+    right: -3px;
+    height: 8px;
+    width: 8px;
+    border-radius: 50%;
+    animation: ${scaleDot} 1s infinite;
+  }
+
+  &::after {
+    content: '';
+    background-color: ${props => props.theme.colors.teal[400]};
+    position: absolute;
+    top: 5px;
+    right: -3px;
+    height: 8px;
+    width: 8px;
+    border-radius: 50%;
+  }
+`;
+
+const SignOut = styled.button`
+  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+  border: none;
+  border-radius: 2px;
+  background-color: transparent;
+  color: ${props => props.theme.colors.gray[400]};
+  font-size: 1.4rem;
+
+  &:hover {
+    cursor: pointer;
+    background-color: #071735;
+    color: #fff;
+  }
+`
 
 export default Nav;

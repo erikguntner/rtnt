@@ -1,6 +1,5 @@
 import React from 'react';
 import Router from 'next/router';
-import fetch from 'isomorphic-unfetch';
 import nextCookie from 'next-cookies';
 import { withAuthSync } from '../utils/auth';
 
@@ -13,13 +12,14 @@ Profile.getInitialProps = async ctx => {
 
   const redirectOnError = () =>
     typeof window !== 'undefined'
-      ? Router.push('/login')
-      : ctx.res.writeHead(302, { Location: '/login' }).end();
+      ? Router.push('/')
+      : ctx.res.writeHead(302, { Location: '/' }).end();
 
   if (token) {
-    console.log(token);
+    return { token };
   } else {
     console.log('there is no token');
+    redirectOnError();
   }
 
   try {

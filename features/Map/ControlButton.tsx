@@ -152,7 +152,7 @@ const Tooltip = styled.span`
   height: 2.5rem;
   margin-top: 1rem;
   background-color: #333;
-  border-radius: 0.5rem;
+  border-radius: 2px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05), 0 1px 2rem rgba(0, 0, 0, 0.04);
   color: #fff;
   font-size: 1.2rem;

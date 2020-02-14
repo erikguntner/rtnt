@@ -19,7 +19,7 @@ const Container = styled.div`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${props => props.theme.colors.gray[100]};
+  background-color: #fff;
 `;
 
 export default Login;

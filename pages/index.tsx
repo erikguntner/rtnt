@@ -19,62 +19,54 @@ const Home: NextPage<Props> = () => {
   );
 };
 
-Home.getInitialProps = async ctx => {
-  const {
-    reduxStore: { dispatch },
-  } = ctx;
-  const url =
-    process.env.NODE_ENV === 'production'
-      ? 'https://run-tracker-next-typescript.now.sh'
-      : 'http://localhost:3000';
+// Home.getInitialProps = async ctx => {
+//   const {
+//     reduxStore: { dispatch },
+//   } = ctx;
+//   const url =
+//     process.env.NODE_ENV === 'production'
+//       ? 'https://run-tracker-next-typescript.now.sh'
+//       : 'http://localhost:3000';
 
-  const redirectOnError = () =>
-    //@ts-ignore
-    typeof window !== 'undefined'
-      ? Router.push('/')
-      : ctx.res.writeHead(302, { Location: '/' }).end();
+//   const { token } = nextCookie(ctx);
 
-  const { token } = nextCookie(ctx);
+//   if (token) {
+//     try {
+//       const response = await fetch(`${url}/api/user`, {
+//         credentials: 'include',
+//         headers: {
+//           Authorization: JSON.stringify({ token }),
+//         },
+//       });
 
-  if (token) {
-    try {
-      const response = await fetch(`${url}/api/user`, {
-        credentials: 'include',
-        headers: {
-          Authorization: JSON.stringify({ token }),
-        },
-      });
+//       const { user } = await response.json();
+//       return dispatch(authenticateUser({ authenticated: token, user }));
+//     } catch (error) {
+//       // Implementation or Network error
+//       return dispatch(
+//         authenticateUser({
+//           authenticated: '',
+//           user: {
+//             username: '',
+//             email: '',
+//           },
+//         })
+//       );
+//       // return redirectOnError();
+//     }
+//   } else {
+//     return dispatch(
+//       authenticateUser({
+//         authenticated: '',
+//         user: {
+//           username: '',
+//           email: '',
+//         },
+//       })
+//     );
 
-      const { user } = await response.json();
-      return dispatch(authenticateUser({ authenticated: token, user }));
-    } catch (error) {
-      // Implementation or Network error
-      console.log(error);
-      return dispatch(
-        authenticateUser({
-          authenticated: '',
-          user: {
-            username: '',
-            email: '',
-          },
-        })
-      );
-      // return redirectOnError();
-    }
-  } else {
-    console.log('no token');
-    return dispatch(
-      authenticateUser({
-        authenticated: '',
-        user: {
-          username: '',
-          email: '',
-        },
-      })
-    );
-
-    // return redirectOnError();
-  }
-};
+//     // return redirectOnError();
+//   }
+// };
 
 export default Home;

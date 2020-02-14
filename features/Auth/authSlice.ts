@@ -63,9 +63,8 @@ export const login = ({
 
     const { token, user } = await res.json();
 
-    dispatch(authenticateUser({ authenticated: token, user }));
-
     await setCookieOnLogin({ token });
+    dispatch(authenticateUser({ authenticated: token, user }));
   } catch (e) {
     console.log('error logging in', e);
   }

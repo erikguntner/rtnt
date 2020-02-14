@@ -49,7 +49,7 @@ const StyledButton = styled.button`
 const StyledDarkButton = styled.button`
   padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
   border: none;
-  border-radius: 3px;
+  border-radius: 2px;
   background-color: transparent;
   color: ${props => props.theme.colors.gray[400]};
   font-size: 1.4rem;
@@ -64,7 +64,7 @@ const StyledDarkButton = styled.button`
 const StyledPrimaryButton = styled.button`
   padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
   border: none;
-  border-radius: 3px;
+  border-radius: 2px;
   background-color: ${props => props.theme.colors.indigo[700]};
   color: #fff;
   font-size: 1.4rem;
