@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { useState, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { ActionCreators } from 'redux-undo';
@@ -13,6 +13,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import ControlButton from './ControlButton';
+import Modal from '../Utilities/Modal';
 
 import { RootState } from '../../app/rootReducer';
 import { clearRoute } from './routeSlice';
@@ -31,12 +32,19 @@ const Controls: React.FC<Props> = ({
   showElevation,
   setShowElevation,
 }) => {
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+
   const dispatch = useDispatch();
-  const { points, future, past } = useSelector((state: RootState) => ({
-    points: state.route.present.points,
-    future: state.route.future,
-    past: state.route.past,
-  }));
+  const { points, future, past, authenticated } = useSelector(
+    (state: RootState) => ({
+      points: state.route.present.points,
+      future: state.route.future,
+      past: state.route.past,
+      authenticated: state.auth.authenticated,
+    })
+  );
+
+  const isAuthenticated: boolean = authenticated === 'true';
 
   return (
     <ControlsContainer>
@@ -62,6 +70,13 @@ const Controls: React.FC<Props> = ({
         handleClick={() => setShowElevation(!showElevation)}
         icon={faMountain}
         activeState={showElevation}
+        tooltip={'elevation'}
+      />
+      <ControlButton
+        handleClick={() => setModalOpen(!modalOpen)}
+        icon={faSave}
+        disabled={isAuthenticated}
+        activeState={isAuthenticated}
         tooltip={'elevation'}
       />
       {/* <ControlButton
@@ -96,6 +111,9 @@ const Controls: React.FC<Props> = ({
           routeData={routeData}
         />
       </Modal> */}
+      <Modal open={modalOpen} toggle={setModalOpen}>
+        <div>These are modal children</div>
+      </Modal>
     </ControlsContainer>
   );
 };

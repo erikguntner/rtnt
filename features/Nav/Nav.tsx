@@ -62,10 +62,10 @@ const Nav = () => {
                 <AvatarIcon>
                   <FontAwesomeIcon icon={faUserCircle} />
                 </AvatarIcon>
+                <Dropdown>
+                  <button onClick={logout}>Sign Out</button>
+                </Dropdown>
               </Avatar>
-            </li>
-            <li>
-              <SignOut onClick={logout}>Sign Out</SignOut>
             </li>
           </>
         )}
@@ -106,6 +106,12 @@ const Avatar = styled.button`
   border: none;
   font-size: 1.4rem;
   color: #fff;
+
+  &:hover {
+    & > div {
+      display: block;
+    }
+  }
 `;
 
 const Username = styled.span`
@@ -149,6 +155,37 @@ const AvatarIcon = styled.span`
     height: 8px;
     width: 8px;
     border-radius: 50%;
+  }
+`;
+
+const Dropdown = styled.div`
+  display: none;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 15rem;
+  transform: translateY(100%);
+  background-color: #fff;
+  border-radius: 2px;
+  z-index: 20;
+  color: black;
+  box-shadow: ${props => props.theme.boxShadow.lg};
+  overflow: hidden;
+
+  & a,
+  button {
+    display: block;
+    border: none;
+    background-color: transparent;
+    width: 100%;
+    text-align: left;
+    padding: 4px 12px;
+    color: ${props => props.theme.colors.gray[600]};
+    font-size: 1.4rem;
+
+    &:hover {
+      background-color: ${props => props.theme.colors.gray[300]};
+    }
   }
 `;
 
