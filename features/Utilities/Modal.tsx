@@ -16,7 +16,7 @@ const Modal: React.FC<Props> = ({ children, toggle, open }) => {
         <ModalWrapper>
           <Background onClick={() => toggle(!open)} />
           <ModalCard>
-            <div>{children}</div>
+            <ModalContent>{children}</ModalContent>
             <Controls>
               <CancelButton onClick={() => toggle(!open)}>Close</CancelButton>
               <AcceptButton>Save</AcceptButton>
@@ -52,10 +52,13 @@ const Background = styled.div`
 
 const ModalCard = styled.article`
   width: 40rem;
-  padding: 2.4rem;
   border-radius: 2px;
   background-color: #fff;
   z-index: 1010;
+`;
+
+const ModalContent = styled.div`
+  padding: 2.4rem;
 `;
 
 const Controls = styled.div`

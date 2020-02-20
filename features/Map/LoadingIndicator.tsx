@@ -23,6 +23,13 @@ const Container = styled.div`
   background-color: ${props => props.theme.colors.gray[100]};
   border-radius: 3px;
   box-shadow: ${props => props.theme.boxShadow.md};
+
+  @media screen and (max-width: ${props => props.theme.screens.md}) {
+    top: initial;
+    right: initial;
+    bottom: 1.2rem;
+    left: 1.2rem;
+  }
 `;
 
 const rotate = keyframes`

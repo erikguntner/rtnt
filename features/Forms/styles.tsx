@@ -6,6 +6,11 @@ export const FormWrapper = styled.div`
   box-shadow: ${props => props.theme.boxShadow.md};
   padding: 3.2rem;
   background-color: #fff;
+
+  @media screen and (max-width: ${props => props.theme.screens.sm}) {
+    padding: 1.6rem;
+    margin-top: -4rem;
+  }
 `;
 
 export const Title = styled.h1`
@@ -13,12 +18,21 @@ export const Title = styled.h1`
   font-size: 3.6rem;
   text-align: center;
   margin-bottom: 3.6rem;
+
+  @media screen and (max-width: ${props => props.theme.screens.sm}) {
+    font-size: 2.4rem;
+    margin-bottom: 2.4rem;
+  }
 `;
 
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
   width: 40rem;
+
+  @media screen and (max-width: ${props => props.theme.screens.sm}) {
+    width: 80vw;
+  }
 `;
 
 export const InputWrapper = styled.div`
@@ -26,6 +40,10 @@ export const InputWrapper = styled.div`
   flex: 1;
   flex-direction: column;
   margin-bottom: 2.4rem;
+
+  @media screen and (max-width: ${props => props.theme.screens.sm}) {
+    margin-bottom: 1.6rem;
+  }
 `;
 
 export const Input = styled.input`
