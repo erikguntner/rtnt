@@ -1,19 +1,30 @@
 import jwt from 'jwt-simple';
-import User from '../models/user';
+import query from '../db';
 
 const requireAuth = handler => async (req, res) => {
+  if (!('authorization' in req.headers)) {
+    return res.status(401).send('Authorization header missing');
+  }
+
+  let user;
+
   try {
     const token = req.headers.authorization;
 
+    if (!token) {
+      return res.status(422).json({ message: 'No token provided' });
+    }
+
     const { sub } = jwt.decode(token, process.env.JWT_SECRET);
 
-    const user = await User.findById(sub);
-    console.log(user);
+    const results = await query('select * from users where id = $1', [sub]);
+
+    user = results.rows[0];
   } catch (e) {
-    console.log('user is not authenticated', e);
+    return res.status(422).json({ message: 'user is not authneticated' });
   }
 
-  return handler(req, res);
+  return handler(req, res, user);
 };
 
 export default requireAuth;

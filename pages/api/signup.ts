@@ -1,8 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import User from '../../server/models/user';
-import connectDb from '../../server/middleware/connectDb';
 import bcrypt from 'bcrypt';
 import jwt from 'jwt-simple';
+import query from '../../server/db';
 
 const tokenForUser = user => {
   const timestamp = new Date().getTime();
@@ -12,34 +11,35 @@ const tokenForUser = user => {
 const request = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     try {
-      const { username, password } = req.body;
+      const { email, username, password } = req.body;
 
-      if (!username || !password) {
+      if (!email || !username || !password) {
         return res
           .status(400)
           .json({ error: 'You must provide and username and password' });
       }
-      const existingUser = await User.findOne({ username: username });
+      // const existingUser = await User.findOne({ username: username });
+      const existingUser = await query(
+        'select * from users where username = $1',
+        [username]
+      );
 
-      if (existingUser) {
+      if (existingUser.rows.length > 0) {
         return res.status(400).json({ error: 'Username is in use' });
       }
 
-      const user = new User({
-        username,
-        password,
-      });
-
       const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(user.password, salt);
-      user.password = hashedPassword;
+      const hashedPassword = await bcrypt.hash(password, salt);
 
-      await user.save();
-      const token = tokenForUser(user);
+      const user = await query(
+        'insert into users (email, username, password) values ($1, $2, $3) returning *',
+        [email, username, hashedPassword]
+      );
+      const token = tokenForUser(user.rows[0]);
 
       return res.status(200).json({
         token,
-        user: user,
+        user: user.rows[0],
       });
     } catch (e) {
       return res.status(400).json({ message: 'There was an error ' });
@@ -48,4 +48,4 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default connectDb(request);
+export default request;

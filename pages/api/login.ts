@@ -1,13 +1,18 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import User from '../../server/models/user';
-import connectDb from '../../server/middleware/connectDb';
 import bcrypt from 'bcrypt';
 import jwt from 'jwt-simple';
+import query from '../../server/db';
 
 const tokenForUser = user => {
   const timestamp = new Date().getTime();
   return jwt.encode({ sub: user.id, iat: timestamp }, process.env.JWT_SECRET);
 };
+
+interface User {
+  email: string;
+  username: string;
+  password: string;
+}
 
 const request = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
@@ -20,24 +25,25 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
           .json({ error: 'You must provide and username and password' });
       }
 
-      const user = await User.findOne({ username: username });
+      const user = await query('select * from users where username = $1', [
+        username,
+      ]);
 
-      if (!user) {
-        console.log('no user');
+      if (user.rows.length === 0) {
         return res.status(422).json({ error: 'Could not find user' });
       }
-
-      const isMatch = await bcrypt.compare(password, user.password);
+      //@ts-ignore
+      const isMatch = await bcrypt.compare(password, user.rows[0].password);
 
       if (!isMatch) {
         return res.status(422).json({ message: 'password was not a match' });
       }
 
-      const token = tokenForUser(user);
+      const token = tokenForUser(user.rows[0]);
 
       return res.status(200).json({
         token,
-        user,
+        user: user.rows[0],
       });
     } catch (e) {
       console.log(e);
@@ -47,4 +53,4 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default connectDb(request);
+export default request;

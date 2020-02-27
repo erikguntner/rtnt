@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import User from '../../server/models/user';
-import connectDb from '../../server/middleware/connectDb';
 import jwt from 'jwt-simple';
+import query from '../../server/db';
 
 const request = async (req: NextApiRequest, res: NextApiResponse) => {
   if (!('authorization' in req.headers)) {
@@ -13,11 +12,11 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
 
     if (token) {
       const { sub } = await jwt.decode(token, process.env.JWT_SECRET);
-      const user = await User.findById(sub);
+      const user = await query('select * from users where id = $1', [sub]);
 
       return res.status(200).json({
         token,
-        user,
+        user: user.rows[0],
       });
     } else {
       return res.status(401).json({
@@ -33,4 +32,4 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default connectDb(request);
+export default request;
