@@ -4,7 +4,10 @@
       "GRAPH_HOPPER_KEY": "@graph-hopper-key",
       "MAPBOX_TOKEN": "@mapbox-token",
       "JWT_SECRET": "@jwt-secret",
-      "MONGO_URI": "@mongo-uri"
+      "MONGO_URI": "@mongo-uri",
+      "PG_CONN_STRING": "@pg-conn-string",
+      "S3_ACCESS_KEY_ID": "@s3-access-key-id",
+      "S3_SECRET_ACCESS_KEY": "@s3-secret-access-key"
     }
   }
 }

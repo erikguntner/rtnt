@@ -2,7 +2,7 @@ import { Pool, Client } from 'pg';
 require('dotenv').config();
 
 const pool = new Pool({
-  connectionString: process.env.CONN_STRING,
+  connectionString: process.env.PG_CONN_STRING,
   ssl: true,
 });
 

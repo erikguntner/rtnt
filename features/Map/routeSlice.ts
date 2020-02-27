@@ -283,6 +283,31 @@ export const fetchSinglePoint = (
   }
 };
 
+export const postRoute = (
+  newPoint: number[],
+  points: number[][]
+): AppThunk => async dispatch => {
+  try {
+    dispatch(changeLoadingState(true));
+    const { snapped_waypoints } = await fetchRoutes([newPoint, newPoint]);
+    if (points.length === 0) {
+      dispatch(addPoint(snapped_waypoints.coordinates[0]));
+    } else {
+      dispatch(updateStartAfterDrag(snapped_waypoints.coordinates[0]));
+    }
+    dispatch(changeLoadingState(false));
+  } catch (e) {
+    dispatch(
+      changeNotificationStatus({
+        isVisible: true,
+        type: 'error',
+        message: 'Looks like there was an error on our end',
+      })
+    );
+    dispatch(changeLoadingState(false));
+  }
+};
+
 export const addRoute = ({
   newLat,
   newLong,
