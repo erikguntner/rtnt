@@ -11,6 +11,7 @@ import {
   faDrawPolygon,
   faSave,
 } from '@fortawesome/free-solid-svg-icons';
+import { InputWrapper, Input, Label } from '../Forms/styles';
 
 import ControlButton from './ControlButton';
 import Modal from '../Utilities/Modal';
@@ -26,13 +27,9 @@ interface Props {
   setShowElevation: Dispatch<SetStateAction<boolean>>;
 }
 
-const Controls: React.FC<Props> = ({
-  setClipPath,
-  clipPath,
-  showElevation,
-  setShowElevation,
-}) => {
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
+const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
+  const [open, setOpen] = useState<boolean>(false);
+  const [value, setValue] = useState<string>('');
 
   const dispatch = useDispatch();
   const { points, future, past, authenticated } = useSelector(
@@ -45,6 +42,10 @@ const Controls: React.FC<Props> = ({
   );
 
   const isAuthenticated: boolean = authenticated === 'true';
+
+  const postRoute = () => {
+    console.log(value);
+  };
 
   return (
     <ControlsContainer>
@@ -73,7 +74,7 @@ const Controls: React.FC<Props> = ({
         tooltip={'elevation'}
       />
       <ControlButton
-        handleClick={() => setModalOpen(!modalOpen)}
+        handleClick={() => setOpen(!open)}
         icon={faSave}
         disabled={isAuthenticated}
         activeState={isAuthenticated}
@@ -98,21 +99,18 @@ const Controls: React.FC<Props> = ({
         activeState={!clipPath}
         tooltip={'linear'}
       /> */}
-      {/* <ControlButton
-        disabled={!geoJSONLines.features.length}
-        click={e => this.checkForDisabled(e, this.toggleModal)}
-        icon={faSave}
-        tooltip={'save route'}
-      /> */}
-      {/* <Modal open={this.state.open} toggle={this.toggleModal}>
-        <SaveRoute
-          toggleModal={this.toggleModal}
-          saveRoute={saveRoute}
-          routeData={routeData}
-        />
-      </Modal> */}
-      <Modal open={modalOpen} toggle={setModalOpen}>
-        <div>These are modal children</div>
+      <Modal {...{ open }} toggle={setOpen}>
+        <InputWrapper>
+          <Label htmlFor="routeName">Route Name</Label>
+          <Input
+            id="routeName"
+            name="routeName"
+            type="text"
+            placeholder="name"
+            value={value}
+            onChange={e => setValue(e.target.value)}
+          />
+        </InputWrapper>
       </Modal>
     </ControlsContainer>
   );

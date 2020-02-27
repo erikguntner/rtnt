@@ -7,9 +7,10 @@ interface Props {
   children: React.ReactNode;
   toggle: Dispatch<SetStateAction<boolean>>;
   open: boolean;
+  onSuccess?: () => void;
 }
 
-const Modal: React.FC<Props> = ({ children, toggle, open }) => {
+const Modal: React.FC<Props> = ({ children, toggle, open, onSuccess }) => {
   return (
     <Portal selector={'#portal'}>
       {open && (
