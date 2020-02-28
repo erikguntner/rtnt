@@ -19,6 +19,7 @@
 .DS_Store
 .env*
 .env
+/server/db/tables.sql
 
 # debug
 npm-debug.log*

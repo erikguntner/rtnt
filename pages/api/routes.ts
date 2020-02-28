@@ -19,6 +19,7 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   if (req.method === 'GET') {
     try {
       const { id } = req.user;
+      console.log('id for routes', id);
       const results = await query('select * from routes where user_id = $1', [
         id,
       ]);
@@ -27,6 +28,7 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
 
       return res.status(200).json({ routes });
     } catch (err) {
+      console.log(err);
       return res
         .status(422)
         .json({ message: 'there was an error returning all routes' });

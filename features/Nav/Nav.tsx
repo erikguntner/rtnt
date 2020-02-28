@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
 import styled, { keyframes } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -63,6 +64,9 @@ const Nav = () => {
                   <FontAwesomeIcon icon={faUserCircle} />
                 </AvatarIcon>
                 <Dropdown>
+                  <Link href="/myroutes">
+                    <a>My Routes</a>
+                  </Link>
                   <button onClick={logout}>Sign Out</button>
                 </Dropdown>
               </Avatar>
@@ -171,6 +175,10 @@ const Dropdown = styled.div`
   color: black;
   box-shadow: ${props => props.theme.boxShadow.lg};
   overflow: hidden;
+
+  & a {
+    text-decoration: none;
+  }
 
   & a,
   button {

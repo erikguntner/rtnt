@@ -292,7 +292,7 @@ class MyApp extends App {
             Authorization: JSON.stringify({ token }),
           },
         });
-
+        
         const { user } = await response.json();
         reduxStore.dispatch(authenticateUser({ authenticated: token, user }));
       } catch (error) {

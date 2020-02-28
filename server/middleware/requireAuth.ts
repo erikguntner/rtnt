@@ -3,6 +3,7 @@ import query from '../db';
 
 const requireAuth = handler => async (req, res) => {
   if (!('authorization' in req.headers)) {
+    console.log('auth header missing');
     return res.status(401).send('Authorization header missing');
   }
 
@@ -14,7 +15,6 @@ const requireAuth = handler => async (req, res) => {
     }
 
     const { sub } = jwt.decode(token, process.env.JWT_SECRET);
-    console.log(sub);
 
     const results = await query('select * from users where id = $1', [sub]);
     req.user = results.rows[0];
