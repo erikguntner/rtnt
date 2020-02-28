@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Dispatch, SetStateAction } from 'react';
+import fetch from 'isomorphic-unfetch';
+
 import { AppThunk } from '../../app/store';
 import { fetchRoutes } from '../../utils/fetchRoutes';
 import { changeNotificationStatus } from './notificationSlice';
@@ -45,6 +47,11 @@ interface UpdatedRouteResults {
   line: number[][][];
   updatedElevationData: ElevationData[][];
 }
+
+const url =
+  process.env.NODE_ENV === 'production'
+    ? 'https://rtnt.now.sh'
+    : 'http://localhost:3000';
 
 export const initialState: RouteState = {
   points: [],
@@ -283,25 +290,57 @@ export const fetchSinglePoint = (
   }
 };
 
-export const postRoute = (
-  newPoint: number[],
-  points: number[][]
-): AppThunk => async dispatch => {
+interface PostRouteI {
+  authenticated: string;
+  name: string;
+  lines: number[][][];
+  elevationData: ElevationData[][];
+  points: number[][];
+  totalDistance: number[];
+}
+
+export const postRoute = ({
+  authenticated,
+  name,
+  lines,
+  elevationData,
+  points,
+  totalDistance,
+}: PostRouteI): AppThunk => async dispatch => {
+  console.log('posting route');
   try {
     dispatch(changeLoadingState(true));
-    const { snapped_waypoints } = await fetchRoutes([newPoint, newPoint]);
-    if (points.length === 0) {
-      dispatch(addPoint(snapped_waypoints.coordinates[0]));
-    } else {
-      dispatch(updateStartAfterDrag(snapped_waypoints.coordinates[0]));
-    }
+    // Make fetch request
+    const body = { name, lines, elevationData, points, totalDistance };
+    const response = await fetch(`${url}/api/route`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json, text/plain, */*',
+        'Content-Type': 'application/json',
+        Authorization: JSON.stringify(authenticated),
+      },
+      body: JSON.stringify(body),
+    });
+
+    const route = await response.json();
+    console.log('route', route);
+
     dispatch(changeLoadingState(false));
+    dispatch(
+      changeNotificationStatus({
+        isVisible: true,
+        type: 'success',
+        message: 'We successfully saved your route',
+      })
+    );
   } catch (e) {
+    console.log(e);
     dispatch(
       changeNotificationStatus({
         isVisible: true,
         type: 'error',
-        message: 'Looks like there was an error on our end',
+        message: 'Looks like there was an error saving your route',
       })
     );
     dispatch(changeLoadingState(false));

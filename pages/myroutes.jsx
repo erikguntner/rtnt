@@ -1,8 +1,8 @@
 import React from 'react';
 import fetch from 'isomorphic-unfetch';
 
-const About = ({ title, name }) => {
-  return <div>This is the about page</div>;
+const MyRoutes = ({ title, name }) => {
+  return <div>This is the MyRoutes page page</div>;
 };
 
 // About.getInitialProps = async () => {
@@ -24,4 +24,4 @@ const About = ({ title, name }) => {
 //   return { title, name };
 // };
 
-export default About;
+export default MyRoutes;

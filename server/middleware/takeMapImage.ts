@@ -5,6 +5,7 @@ import puppeteer from 'puppeteer';
 const takeMapImage = handler => async (req, res) => {
   try {
     const { lines } = req.body;
+    console.log(lines);
 
     console.log('launching browser');
     const browser = await puppeteer.launch({

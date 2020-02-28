@@ -20,7 +20,7 @@ const Modal: React.FC<Props> = ({ children, toggle, open, onSuccess }) => {
             <ModalContent>{children}</ModalContent>
             <Controls>
               <CancelButton onClick={() => toggle(!open)}>Close</CancelButton>
-              <AcceptButton>Save</AcceptButton>
+              <AcceptButton onClick={onSuccess}>Save</AcceptButton>
             </Controls>
           </ModalCard>
         </ModalWrapper>

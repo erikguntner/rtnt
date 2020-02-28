@@ -17,7 +17,7 @@ import ControlButton from './ControlButton';
 import Modal from '../Utilities/Modal';
 
 import { RootState } from '../../app/rootReducer';
-import { clearRoute } from './routeSlice';
+import { clearRoute, postRoute } from './routeSlice';
 import { changeNotificationStatus } from './notificationSlice';
 
 interface Props {
@@ -32,20 +32,25 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
   const [value, setValue] = useState<string>('');
 
   const dispatch = useDispatch();
-  const { points, future, past, authenticated } = useSelector(
-    (state: RootState) => ({
-      points: state.route.present.points,
-      future: state.route.future,
-      past: state.route.past,
-      authenticated: state.auth.authenticated,
-    })
-  );
+  const {
+    points,
+    lines,
+    elevationData,
+    totalDistance,
+    future,
+    past,
+    authenticated,
+  } = useSelector((state: RootState) => ({
+    points: state.route.present.points,
+    lines: state.route.present.lines,
+    elevationData: state.route.present.elevationData,
+    totalDistance: state.route.present.totalDistance,
+    future: state.route.future,
+    past: state.route.past,
+    authenticated: state.auth.authenticated,
+  }));
 
   const isAuthenticated: boolean = authenticated === 'true';
-
-  const postRoute = () => {
-    console.log(value);
-  };
 
   return (
     <ControlsContainer>
@@ -99,7 +104,22 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
         activeState={!clipPath}
         tooltip={'linear'}
       /> */}
-      <Modal {...{ open }} toggle={setOpen}>
+      <Modal
+        {...{ open }}
+        toggle={setOpen}
+        onSuccess={() =>
+          dispatch(
+            postRoute({
+              authenticated,
+              name: value,
+              lines,
+              elevationData,
+              points,
+              totalDistance,
+            })
+          )
+        }
+      >
         <InputWrapper>
           <Label htmlFor="routeName">Route Name</Label>
           <Input
