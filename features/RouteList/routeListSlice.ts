@@ -9,20 +9,24 @@ interface ElevationData {
   elevation: number;
 }
 interface Route {
+  id: number;
   name: string;
   image: string;
   points: number[][];
   lines: number[][][];
-  totalDistance: number[];
-  elevationData: ElevationData[][];
+  total_distance: number[];
+  elevation_data: ElevationData[][];
+  created_on: string;
 }
 
 interface State {
   routes: Route[];
+  filter: string;
 }
 
 export const initialState: State = {
   routes: [],
+  filter: 'shortest',
 };
 
 const { actions, reducer } = createSlice({
@@ -32,9 +36,12 @@ const { actions, reducer } = createSlice({
     addRoutes: (state, action: PayloadAction<Route[]>) => {
       state.routes = action.payload;
     },
+    updateFilterTerm: (state, action: PayloadAction<string>) => {
+      state.filter = action.payload;
+    },
   },
 });
 
-export const { addRoutes } = actions;
+export const { addRoutes, updateFilterTerm } = actions;
 
 export default reducer;

@@ -168,6 +168,7 @@ const Dropdown = styled.div`
   bottom: 0;
   right: 0;
   width: 15rem;
+  padding: 1.4rem 0;
   transform: translateY(100%);
   background-color: #fff;
   border-radius: 2px;

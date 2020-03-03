@@ -83,7 +83,7 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
         icon={faSave}
         disabled={isAuthenticated}
         activeState={isAuthenticated}
-        tooltip={'elevation'}
+        tooltip={'save route'}
       />
       {/* <ControlButton
         handleClick={() =>

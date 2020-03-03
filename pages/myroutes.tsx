@@ -1,21 +1,14 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import Router from 'next/router';
 import nextCookie from 'next-cookies';
 import fetch from 'isomorphic-unfetch';
-import { RootState } from '../app/rootReducer';
 import { addRoutes } from '../features/RouteList/routeListSlice';
+import RouteList from '../features/RouteList/RouteList';
 
 const MyRoutes = () => {
-  const { routes } = useSelector((state: RootState) => ({
-    routes: state.routeList.routes,
-  }));
-
   return (
     <div>
-      <div>
-        {routes.length && routes.map(route => <article>{route.name}</article>)}
-      </div>
+      <RouteList />
     </div>
   );
 };
