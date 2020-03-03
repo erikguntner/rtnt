@@ -19,7 +19,6 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   if (req.method === 'GET') {
     try {
       const { id } = req.user;
-      console.log('id for routes', id);
       const results = await query('select * from routes where user_id = $1', [
         id,
       ]);

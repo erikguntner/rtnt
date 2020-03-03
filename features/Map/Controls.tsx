@@ -11,10 +11,9 @@ import {
   faDrawPolygon,
   faSave,
 } from '@fortawesome/free-solid-svg-icons';
-import { InputWrapper, Input, Label } from '../Forms/styles';
 
 import ControlButton from './ControlButton';
-import Modal from '../Utilities/Modal';
+import SaveRouteModal from './SaveRouteModal';
 
 import { RootState } from '../../app/rootReducer';
 import { clearRoute, postRoute } from './routeSlice';
@@ -29,26 +28,16 @@ interface Props {
 
 const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
   const [open, setOpen] = useState<boolean>(false);
-  const [value, setValue] = useState<string>('');
 
   const dispatch = useDispatch();
-  const {
-    points,
-    lines,
-    elevationData,
-    totalDistance,
-    future,
-    past,
-    authenticated,
-  } = useSelector((state: RootState) => ({
-    points: state.route.present.points,
-    lines: state.route.present.lines,
-    elevationData: state.route.present.elevationData,
-    totalDistance: state.route.present.totalDistance,
-    future: state.route.future,
-    past: state.route.past,
-    authenticated: state.auth.authenticated,
-  }));
+  const { points, future, past, authenticated } = useSelector(
+    (state: RootState) => ({
+      points: state.route.present.points,
+      future: state.route.future,
+      past: state.route.past,
+      authenticated: state.auth.authenticated,
+    })
+  );
 
   const isAuthenticated: boolean = authenticated === 'true';
 
@@ -104,34 +93,7 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
         activeState={!clipPath}
         tooltip={'linear'}
       /> */}
-      <Modal
-        {...{ open }}
-        toggle={setOpen}
-        onSuccess={() =>
-          dispatch(
-            postRoute({
-              authenticated,
-              name: value,
-              lines,
-              elevationData,
-              points,
-              totalDistance,
-            })
-          )
-        }
-      >
-        <InputWrapper>
-          <Label htmlFor="routeName">Route Name</Label>
-          <Input
-            id="routeName"
-            name="routeName"
-            type="text"
-            placeholder="name"
-            value={value}
-            onChange={e => setValue(e.target.value)}
-          />
-        </InputWrapper>
-      </Modal>
+      <SaveRouteModal {...{ open, setOpen }} />
     </ControlsContainer>
   );
 };
