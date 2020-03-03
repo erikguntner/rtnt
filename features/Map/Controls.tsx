@@ -16,8 +16,7 @@ import ControlButton from './ControlButton';
 import SaveRouteModal from './SaveRouteModal';
 
 import { RootState } from '../../app/rootReducer';
-import { clearRoute, postRoute } from './routeSlice';
-import { changeNotificationStatus } from './notificationSlice';
+import { clearRoute } from './routeSlice';
 
 interface Props {
   clipPath: boolean;

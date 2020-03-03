@@ -291,71 +291,6 @@ export const fetchSinglePoint = (
   }
 };
 
-interface PostRouteI {
-  authenticated: string;
-  name: string;
-  lines: number[][][];
-  elevationData: ElevationData[][];
-  points: number[][];
-  totalDistance: number[];
-  setSaving: React.Dispatch<React.SetStateAction<boolean>>;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-export const postRoute = ({
-  authenticated,
-  name,
-  lines,
-  elevationData,
-  points,
-  totalDistance,
-  setSaving,
-  setOpen,
-}: PostRouteI): AppThunk => async dispatch => {
-  console.log('posting route');
-  try {
-    dispatch(changeLoadingState(true));
-    // Make fetch request
-    const body = { name, lines, elevationData, points, totalDistance };
-    const response = await fetch(`${url}/api/route`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        Accept: 'application/json, text/plain, */*',
-        'Content-Type': 'application/json',
-        Authorization: JSON.stringify(authenticated),
-      },
-      body: JSON.stringify(body),
-    });
-
-    const route = await response.json();
-    console.log('route', route);
-
-    dispatch(changeLoadingState(false));
-    setOpen(false);
-    setSaving(false);
-    dispatch(
-      changeNotificationStatus({
-        isVisible: true,
-        type: 'success',
-        message: 'We successfully saved your route',
-      })
-    );
-  } catch (e) {
-    console.log(e);
-    setOpen(false);
-    setSaving(false);
-    dispatch(
-      changeNotificationStatus({
-        isVisible: true,
-        type: 'error',
-        message: 'Looks like there was an error saving your route',
-      })
-    );
-    dispatch(changeLoadingState(false));
-  }
-};
-
 export const addRoute = ({
   newLat,
   newLong,
@@ -372,7 +307,6 @@ export const addRoute = ({
     dispatch(changeLoadingState(true));
     const data = await fetchRoutes(points);
 
-    console.log(data);
     const { coordinates } = data.points;
     const { instructions } = data;
     const endDistance = elevationData.slice(-1)[0].slice(-1)[0].distance;

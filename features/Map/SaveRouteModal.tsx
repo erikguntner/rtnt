@@ -1,25 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import styled from 'styled-components';
 import Pusher from 'pusher-js';
 
-import { InputWrapper, Input, Label } from '../Forms/styles';
+import { Input, Label } from '../Forms/styles';
 import Modal from '../Utilities/Modal';
-import { postRoute } from './routeSlice';
 import { RootState } from '../../app/rootReducer';
+import { changeNotificationStatus } from './notificationSlice';
 
 interface Props {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-interface MessageI {
+interface StatusI {
   message: string;
+  progress: number;
 }
+
+const url =
+  process.env.NODE_ENV === 'production'
+    ? 'https://rtnt.now.sh'
+    : 'http://localhost:3000';
 
 const SaveRouteModal: React.FC<Props> = ({ open, setOpen }) => {
   const [value, setValue] = useState<string>('');
   const [saving, setSaving] = useState<boolean>(false);
-  const [status, setStatus] = useState<string>('');
+  const [status, setStatus] = useState<string>('beginning save process');
+  const [progress, setProgress] = useState<number>(-90);
 
   const dispatch = useDispatch();
   const {
@@ -44,46 +52,202 @@ const SaveRouteModal: React.FC<Props> = ({ open, setOpen }) => {
 
     const channel = pusher.subscribe('save-route');
 
-    channel.bind('status-update', (data: MessageI) => {
-      setStatus(data.message);
+    channel.bind('status-update', ({ message, progress }: StatusI) => {
+      setStatus(message);
+      setProgress(-progress);
     });
   }, []);
 
-  const handleSaveRoute = () => {
+  const handleSaveRoute = async () => {
     setSaving(true);
-    dispatch(
-      postRoute({
-        authenticated,
-        name: value,
-        lines,
-        elevationData,
-        points,
-        totalDistance,
-        setSaving,
-        setOpen,
-      })
-    );
+    setValue('');
+    try {
+      // Make fetch request
+      const body = { name: value, lines, elevationData, points, totalDistance };
+      const response = await fetch(`${url}/api/route`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          Accept: 'application/json, text/plain, */*',
+          'Content-Type': 'application/json',
+          Authorization: JSON.stringify(authenticated),
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) {
+        const route = await response.json();
+
+        setOpen(false);
+        setSaving(false);
+        setProgress(-90);
+        dispatch(
+          changeNotificationStatus({
+            isVisible: true,
+            type: 'success',
+            message: 'We successfully saved your route',
+          })
+        );
+      } else {
+        setOpen(false);
+        setSaving(false);
+        setProgress(-90);
+        dispatch(
+          changeNotificationStatus({
+            isVisible: true,
+            type: 'error',
+            message: 'Looks like there was an error saving your route',
+          })
+        );
+      }
+    } catch (e) {
+      console.log(e);
+      setOpen(false);
+      setSaving(false);
+      dispatch(
+        changeNotificationStatus({
+          isVisible: true,
+          type: 'error',
+          message: 'Looks like there was an error saving your route',
+        })
+      );
+    }
   };
 
   return (
-    <Modal {...{ open }} toggle={setOpen} onSuccess={handleSaveRoute}>
+    <Modal {...{ open }} toggle={setOpen}>
       {!saving ? (
-        <InputWrapper>
-          <Label htmlFor="routeName">Route Name</Label>
-          <Input
-            id="routeName"
-            name="routeName"
-            type="text"
-            placeholder="name"
-            value={value}
-            onChange={e => setValue(e.target.value)}
-          />
-        </InputWrapper>
+        <Container>
+          <InputWrapper>
+            <Label htmlFor="routeName">Route Name</Label>
+            <Input
+              id="routeName"
+              name="routeName"
+              type="text"
+              placeholder="name"
+              value={value}
+              onChange={e => setValue(e.target.value)}
+            />
+          </InputWrapper>
+          <Controls>
+            <CancelButton onClick={() => setOpen(!open)}>Cancel</CancelButton>
+            <AcceptButton onClick={handleSaveRoute}>Save Route</AcceptButton>
+          </Controls>
+        </Container>
       ) : (
-        <h3>{status}</h3>
+        <StatusContainer>
+          <h3>{status}...</h3>
+          <StatusBar {...{ progress }} />
+        </StatusContainer>
       )}
     </Modal>
   );
 };
+
+const Container = styled.div`
+  width: 40rem;
+`;
+
+const Controls = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 2.4rem;
+  border-radius: 0 0 2px 2px;
+  background-color: ${props => props.theme.colors.gray[100]};
+`;
+
+const InputWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 2.4rem;
+
+  @media screen and (max-width: ${props => props.theme.screens.sm}) {
+    margin-bottom: 1.6rem;
+  }
+`;
+
+const CancelButton = styled.button`
+  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+  margin-right: 1rem;
+  border: 1px solid ${props => props.theme.colors.gray[400]};
+  border-radius: 2px;
+  background-color: #fff;
+  font-size: 1.4rem;
+  box-shadow: ${props => props.theme.boxShadow.sm};
+
+  &:hover {
+    cursor: pointer;
+    background-color: ${props => props.theme.colors.red[300]};
+  }
+
+  &:active {
+    border: 1px solid ${props => props.theme.colors.red[600]};
+  }
+`;
+
+const AcceptButton = styled.button`
+  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+  border: none;
+  border-radius: 2px;
+  background-color: ${props => props.theme.colors.green[500]};
+  color: #fff;
+  font-size: 1.4rem;
+  box-shadow: ${props => props.theme.boxShadow.sm};
+
+  &:hover {
+    cursor: pointer;
+    background-color: ${props => props.theme.colors.green[400]};
+  }
+
+  &:active {
+    background-color: ${props => props.theme.colors.green[500]};
+  }
+`;
+
+const StatusContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3.6rem;
+  background-color: #fff;
+
+  & > h3 {
+    max-width: 30rem;
+    font-size: 2.4rem;
+    color: ${props => props.theme.colors.gray[800]};
+    margin-bottom: 2.4rem;
+  }
+`;
+
+interface ProgressI {
+  progress: number;
+}
+
+const StatusBar = styled.div<ProgressI>`
+  position: relative;
+  width: 40rem;
+  height: 2.6rem;
+  border-radius: 50px;
+  background-color: ${props => props.theme.colors.gray[500]};
+  box-shadow: ${props => props.theme.boxShadow.sm};
+  overflow: hidden;
+
+  &::before {
+    position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    border-radius: 50px;
+    background-color: ${props => props.theme.colors.green[600]};
+    transform: translateX(${props => props.progress}%);
+    transition: all ease 0.2s;
+  }
+`;
 
 export default SaveRouteModal;

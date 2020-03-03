@@ -26,6 +26,7 @@ const saveImageToS3 = handler => async (req, res) => {
 
     pusher.trigger('save-route', 'status-update', {
       message: 'Saving image',
+      progress: 30,
     });
 
     const response = await s3.upload(params).promise();

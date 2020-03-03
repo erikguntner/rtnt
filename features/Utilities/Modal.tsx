@@ -16,13 +16,7 @@ const Modal: React.FC<Props> = ({ children, toggle, open, onSuccess }) => {
       {open && (
         <ModalWrapper>
           <Background onClick={() => toggle(!open)} />
-          <ModalCard>
-            <ModalContent>{children}</ModalContent>
-            <Controls>
-              <CancelButton onClick={() => toggle(!open)}>Close</CancelButton>
-              <AcceptButton onClick={onSuccess}>Save</AcceptButton>
-            </Controls>
-          </ModalCard>
+          <ModalCard>{children}</ModalCard>
         </ModalWrapper>
       )}
     </Portal>
@@ -52,61 +46,9 @@ const Background = styled.div`
 `;
 
 const ModalCard = styled.article`
-  width: 40rem;
   border-radius: 2px;
   background-color: #fff;
   z-index: 1010;
-`;
-
-const ModalContent = styled.div`
-  padding: 2.4rem;
-`;
-
-const Controls = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 2.4rem;
-  border-radius: 0 0 2px 2px;
-  background-color: ${props => props.theme.colors.gray[200]};
-`;
-
-const CancelButton = styled.button`
-  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
-  margin-right: 1rem;
-  border: none;
-  border-radius: 2px;
-  background-color: transparent;
-  color: ${props => props.theme.colors.red[600]};
-  font-size: 1.4rem;
-
-  &:hover {
-    cursor: pointer;
-    background-color: ${props => props.theme.colors.red[300]};
-  }
-
-  &:active {
-    border: 1px solid ${props => props.theme.colors.red[600]};
-  }
-`;
-
-const AcceptButton = styled.button`
-  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
-  border: none;
-  border-radius: 2px;
-  background-color: ${props => props.theme.colors.green[500]};
-  color: #fff;
-  font-size: 1.4rem;
-
-  &:hover {
-    cursor: pointer;
-    background-color: ${props => props.theme.colors.green[400]};
-  }
-
-  &:active {
-    background-color: ${props => props.theme.colors.green[500]};
-  }
 `;
 
 export default Modal;

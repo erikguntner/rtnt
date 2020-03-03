@@ -48,10 +48,11 @@ export const InputWrapper = styled.div`
 
 export const Input = styled.input`
   padding: 1rem;
-  background-color: ${props => props.theme.colors.gray[200]};
-  border: 1px solid ${props => props.theme.colors.gray[300]};
+  background-color: #fff;
+  border: 1px solid ${props => props.theme.colors.gray[400]};
   border-radius: 2px;
   font-size: 1.4rem;
+  box-shadow: ${props => props.theme.boxShadow.sm};
 
   &:focus {
     outline: none;
@@ -80,7 +81,9 @@ export const SubmitButton = styled.button`
 
 export const Label = styled.label`
   margin-bottom: 8px;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: ${props => props.theme.colors.gray[700]};
 `;
 
 export const Error = styled.div`

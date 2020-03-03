@@ -29,6 +29,7 @@ const saveRoute = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
 
       pusher.trigger('save-route', 'status-update', {
         message: 'Saving route',
+        progress: 15,
       });
 
       const results = await query(
@@ -45,6 +46,11 @@ const saveRoute = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       );
 
       const route = results.rows[0];
+
+      pusher.trigger('save-route', 'status-update', {
+        message: 'Saving route',
+        progress: 0,
+      });
 
       return res.status(200).json({
         message: 'this is was a success',
