@@ -96,8 +96,8 @@ const RouteList: React.FC<Props> = () => {
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-gap: 2.4rem;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 3.6rem;
   margin: 3.6rem;
 `;
 

@@ -255,6 +255,7 @@ const Container = styled.div`
   width: 100vw;
   display: grid;
   grid-template-rows: ${props => props.theme.navHeight} 1fr;
+  background-color: ${props => props.theme.colors.gray[100]};
 `;
 
 const Layout = ({ children }) => {
@@ -292,7 +293,7 @@ class MyApp extends App {
             Authorization: JSON.stringify({ token }),
           },
         });
-        
+
         const { user } = await response.json();
         reduxStore.dispatch(authenticateUser({ authenticated: token, user }));
       } catch (error) {
