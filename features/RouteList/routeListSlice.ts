@@ -26,7 +26,7 @@ interface State {
 
 export const initialState: State = {
   routes: [],
-  filter: 'shortest',
+  filter: 'most recent',
 };
 
 const { actions, reducer } = createSlice({
