@@ -1,11 +1,15 @@
 import fs from 'fs';
 import path from 'path';
 import puppeteer from 'puppeteer';
+import pusher from '../services/pusher';
 
 const takeMapImage = handler => async (req, res) => {
   try {
     const { lines } = req.body;
-    console.log(lines);
+
+    pusher.trigger('save-route', 'status-update', {
+      message: 'beginning save process',
+    });
 
     console.log('launching browser');
     const browser = await puppeteer.launch({
@@ -28,6 +32,10 @@ const takeMapImage = handler => async (req, res) => {
 
     console.log('navigating to url');
     // goto page with map sending coordintaes along
+    pusher.trigger('save-route', 'status-update', {
+      message: 'Creating map image. This may take a few seconds',
+    });
+
     await page.goto(
       `https://pacific-crag-45485.herokuapp.com/test?coords=${coordsStr}`,
       {

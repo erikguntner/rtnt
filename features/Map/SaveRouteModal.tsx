@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Pusher from 'pusher-js';
 
 import { InputWrapper, Input, Label } from '../Forms/styles';
 import Modal from '../Utilities/Modal';
@@ -11,8 +12,14 @@ interface Props {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+interface MessageI {
+  message: string;
+}
+
 const SaveRouteModal: React.FC<Props> = ({ open, setOpen }) => {
   const [value, setValue] = useState<string>('');
+  const [saving, setSaving] = useState<boolean>(false);
+  const [status, setStatus] = useState<string>('');
 
   const dispatch = useDispatch();
   const {
@@ -29,34 +36,52 @@ const SaveRouteModal: React.FC<Props> = ({ open, setOpen }) => {
     authenticated: state.auth.authenticated,
   }));
 
+  useEffect(() => {
+    const pusher = new Pusher(process.env.PUSHER_KEY, {
+      cluster: process.env.PUSHER_CLUSTER,
+      encrypted: true,
+    });
+
+    const channel = pusher.subscribe('save-route');
+
+    channel.bind('status-update', (data: MessageI) => {
+      setStatus(data.message);
+    });
+  }, []);
+
+  const handleSaveRoute = () => {
+    setSaving(true);
+    dispatch(
+      postRoute({
+        authenticated,
+        name: value,
+        lines,
+        elevationData,
+        points,
+        totalDistance,
+        setSaving,
+        setOpen,
+      })
+    );
+  };
+
   return (
-    <Modal
-      {...{ open }}
-      toggle={setOpen}
-      onSuccess={() =>
-        dispatch(
-          postRoute({
-            authenticated,
-            name: value,
-            lines,
-            elevationData,
-            points,
-            totalDistance,
-          })
-        )
-      }
-    >
-      <InputWrapper>
-        <Label htmlFor="routeName">Route Name</Label>
-        <Input
-          id="routeName"
-          name="routeName"
-          type="text"
-          placeholder="name"
-          value={value}
-          onChange={e => setValue(e.target.value)}
-        />
-      </InputWrapper>
+    <Modal {...{ open }} toggle={setOpen} onSuccess={handleSaveRoute}>
+      {!saving ? (
+        <InputWrapper>
+          <Label htmlFor="routeName">Route Name</Label>
+          <Input
+            id="routeName"
+            name="routeName"
+            type="text"
+            placeholder="name"
+            value={value}
+            onChange={e => setValue(e.target.value)}
+          />
+        </InputWrapper>
+      ) : (
+        <h3>{status}</h3>
+      )}
     </Modal>
   );
 };

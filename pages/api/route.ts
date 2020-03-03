@@ -3,6 +3,7 @@ import query from '../../server/db';
 import requireAuth from '../../server/middleware/requireAuth';
 import takeMapImage from '../../server/middleware/takeMapImage';
 import saveImageToS3 from '../../server/middleware/saveImageToS3';
+import pusher from '../../server/services/pusher';
 
 interface UserI {
   id: number;
@@ -25,6 +26,10 @@ const saveRoute = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       const { name, lines, elevationData, points, totalDistance } = req.body;
       const { image } = req;
       console.log('image', image);
+
+      pusher.trigger('save-route', 'status-update', {
+        message: 'Saving route',
+      });
 
       const results = await query(
         'insert into routes (name, image, user_id, lines, elevation_data, points, total_distance) values ($1, $2, $3, $4, $5, $6, $7) returning *',

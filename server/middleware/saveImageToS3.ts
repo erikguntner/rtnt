@@ -1,5 +1,6 @@
-const AWS = require('aws-sdk');
-const uuid = require('uuid/v1');
+import AWS from 'aws-sdk';
+import uuid from 'uuid/v1';
+import pusher from '../services/pusher';
 require('dotenv').config();
 
 const s3 = new AWS.S3({
@@ -22,6 +23,10 @@ const saveImageToS3 = handler => async (req, res) => {
       ContentEncoding: 'base64',
       ContentType: 'image/jpeg',
     };
+
+    pusher.trigger('save-route', 'status-update', {
+      message: 'Saving image',
+    });
 
     const response = await s3.upload(params).promise();
     req.image = response.Location;

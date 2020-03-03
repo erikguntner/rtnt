@@ -1,3 +1,4 @@
+import React from 'react';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Dispatch, SetStateAction } from 'react';
 import fetch from 'isomorphic-unfetch';
@@ -297,6 +298,8 @@ interface PostRouteI {
   elevationData: ElevationData[][];
   points: number[][];
   totalDistance: number[];
+  setSaving: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const postRoute = ({
@@ -306,6 +309,8 @@ export const postRoute = ({
   elevationData,
   points,
   totalDistance,
+  setSaving,
+  setOpen,
 }: PostRouteI): AppThunk => async dispatch => {
   console.log('posting route');
   try {
@@ -327,6 +332,8 @@ export const postRoute = ({
     console.log('route', route);
 
     dispatch(changeLoadingState(false));
+    setOpen(false);
+    setSaving(false);
     dispatch(
       changeNotificationStatus({
         isVisible: true,
@@ -336,6 +343,8 @@ export const postRoute = ({
     );
   } catch (e) {
     console.log(e);
+    setOpen(false);
+    setSaving(false);
     dispatch(
       changeNotificationStatus({
         isVisible: true,
