@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import * as turf from '@turf/turf';
+import { Units } from '@turf/helpers';
 import styled from 'styled-components';
 import { Marker } from 'react-map-gl';
 
 interface Props {
   lines: number[][][];
-  units: string;
+  units: Units;
 }
 
 const DistanceMarkers: React.FC<Props> = ({ lines, units }) => {
@@ -15,14 +16,12 @@ const DistanceMarkers: React.FC<Props> = ({ lines, units }) => {
     // calculate distance markers
     if (lines.length > 0) {
       const line = turf.lineString(lines.flat());
-      // @ts-ignore
       let routeDistance = turf.length(line, { units });
       routeDistance = Math.floor(routeDistance);
       const markers = [];
 
       if (routeDistance !== 0) {
         for (let i = 0; i < routeDistance + 1; i++) {
-          // @ts-ignore
           const segment = turf.along(line, i, { units });
 
           if (i !== 0) {

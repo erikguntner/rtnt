@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcrypt';
 import jwt from 'jwt-simple';
 import query from '../../server/db';
+import { QueryArrayResult } from 'pg';
 
 const tokenForUser = user => {
   const timestamp = new Date().getTime();
@@ -25,14 +26,15 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
           .json({ error: 'You must provide and username and password' });
       }
 
-      const user = await query('select * from users where username = $1', [
-        username,
-      ]);
+      const user: QueryArrayResult<User[]> = await query(
+        'select * from users where username = $1',
+        [username]
+      );
 
       if (user.rows.length === 0) {
         return res.status(422).json({ error: 'Could not find user' });
       }
-      //@ts-ignore
+
       const isMatch = await bcrypt.compare(password, user.rows[0].password);
 
       if (!isMatch) {

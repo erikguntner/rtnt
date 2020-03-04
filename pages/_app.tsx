@@ -11,7 +11,6 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'mapbox-gl/src/css/mapbox-gl.css';
 import withReduxStore from '../utils/withReduxStore';
 import { authenticateUser } from '../features/Auth/authSlice';
-import { RootState } from '../app/rootReducer';
 
 config.autoAddCss = false;
 
@@ -315,6 +314,7 @@ class MyApp extends App {
   }
 
   render() {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     //@ts-ignore
     const { Component, pageProps, reduxStore } = this.props;
 

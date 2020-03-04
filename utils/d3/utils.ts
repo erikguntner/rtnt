@@ -1,24 +1,21 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
 import { Dispatch, SetStateAction } from 'react';
 import {
   axisLeft,
   axisBottom,
-  format,
-  area,
   scaleLinear,
   scaleBand,
   extent,
   select,
   selectAll,
-  bisector,
   curveMonotoneX,
   line,
   mouse,
-  csv,
   max,
 } from 'd3';
 import * as turfHelpers from '@turf/helpers';
 
-import { popData, lineData } from './mockData';
+// import { popData, lineData } from './mockData';
 
 interface ElevationData {
   distance: number;
@@ -34,7 +31,6 @@ export const renderLineChart = (
     height: number;
   }
 ) => {
-  const container = document.getElementById('elevation-container');
   const margin = { top: 20, right: 20, bottom: 20, left: 50 };
   const height = dimensions.height;
   const width = dimensions.width;
@@ -84,7 +80,7 @@ export const renderLineChart = (
     .attr('d', lineGenerator(data));
 
   // black vertical line to follow mouse
-  var mouseG = svg.append('g');
+  const mouseG = svg.append('g');
   mouseG
     .attr('transform', `translate(${margin.left} ${margin.top})`)
     .attr('class', 'mouse-over-effects');
@@ -149,17 +145,18 @@ export const renderLineChart = (
         return d;
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       select('.mouse').attr('transform', function(d: ElevationData[]) {
         // const distances = lineData.map(obj => obj.distance);
 
-        const xDistance = xScale.invert(mouseCoords[0]);
+        // const xDistance = xScale.invert(mouseCoords[0]);
         // const bisect = bisector(xValue).right;
         // const idx = bisect(distances, xDistance);
 
         let beginning = 0;
         let end = linePath.node().getTotalLength();
         let pos = null;
-        const target = null;
+        // const target = null;
 
         while (true) {
           const target = Math.floor((beginning + end) / 2);

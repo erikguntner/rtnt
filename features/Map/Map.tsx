@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
+import { Units } from '@turf/helpers';
 import ReactMapGL, { Marker } from 'react-map-gl';
 import styled from 'styled-components';
 
@@ -27,7 +28,7 @@ interface Viewport {
 
 const Map = () => {
   const [clipPath, setClipPath] = useState<boolean>(false);
-  const [units, setUnits] = useState<string>('miles');
+  const [units, setUnits] = useState<Units>('miles');
   const [showElevation, setShowElevation] = useState<boolean>(false);
   const [viewport, setViewport] = useState<Viewport>({
     latitude: 34.105999576,
@@ -151,7 +152,6 @@ const Map = () => {
     if (distanceAlongPath !== 0) {
       const line = turf.lineString(lines.flat());
 
-      //@ts-ignore
       const segment = turf.along(line, distanceAlongPath, { units });
 
       setPointAlongPath(segment.geometry.coordinates);
