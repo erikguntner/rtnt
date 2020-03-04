@@ -2,7 +2,6 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import fetch from 'isomorphic-unfetch';
 import {
   Error,
   FormWrapper,
@@ -24,14 +23,13 @@ const SignupSchema = Yup.object().shape({
   password: Yup.string().required('password is required'),
 });
 
-interface Props {}
-
-const SignupForm: React.FC<Props> = () => {
+const SignupForm: React.FC<{}> = () => {
   const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: { username: '', password: '' },
     validationSchema: SignupSchema,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onSubmit: ({ username, password }, { setSubmitting }) => {
       dispatch(login({ username, password }));
     },

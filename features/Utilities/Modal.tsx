@@ -1,16 +1,14 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
-import { createPortal } from 'react-dom';
 import Portal from './Portal';
 
 interface Props {
   children: React.ReactNode;
   toggle: Dispatch<SetStateAction<boolean>>;
   open: boolean;
-  onSuccess?: () => void;
 }
 
-const Modal: React.FC<Props> = ({ children, toggle, open, onSuccess }) => {
+const Modal: React.FC<Props> = ({ children, toggle, open }) => {
   return (
     <Portal selector={'#portal'}>
       {open && (

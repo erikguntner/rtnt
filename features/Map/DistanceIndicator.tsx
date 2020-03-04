@@ -1,7 +1,6 @@
 import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import * as turfHelpers from '@turf/helpers';
-import { convertDistance } from '@turf/turf';
 
 interface ElevationData {
   distance: number;

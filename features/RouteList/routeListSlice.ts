@@ -1,7 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Dispatch, SetStateAction } from 'react';
-import { AppThunk } from '../../app/store';
-import fetch from 'isomorphic-unfetch';
 
 interface ElevationData {
   distance: number;

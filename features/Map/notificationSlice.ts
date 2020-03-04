@@ -25,8 +25,7 @@ const { actions, reducer } = createSlice({
       state.type = type;
       state.message = message;
     },
-    closeNotification: (state, action) => {
-      console.log('closing');
+    closeNotification: state => {
       state.isVisible = false;
       state.type = '';
       state.message = '';

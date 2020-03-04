@@ -1,7 +1,4 @@
-import React from 'react';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Dispatch, SetStateAction } from 'react';
-import fetch from 'isomorphic-unfetch';
 
 import { AppThunk } from '../../app/store';
 import { fetchRoutes } from '../../utils/fetchRoutes';
@@ -49,11 +46,6 @@ interface UpdatedRouteResults {
   updatedElevationData: ElevationData[][];
 }
 
-const url =
-  process.env.NODE_ENV === 'production'
-    ? 'https://rtnt.now.sh'
-    : 'http://localhost:3000';
-
 export const initialState: RouteState = {
   points: [],
   lines: [],
@@ -90,7 +82,7 @@ const { actions, reducer } = createSlice({
         },
       ]);
     },
-    clearRoute: state => {
+    clearRoute: () => {
       return initialState;
     },
     removeLastPoint: state => {
@@ -150,15 +142,97 @@ export const {
   updateRouteAfterDragSuccess,
 } = actions;
 
+export const fetchSinglePoint = (
+  newPoint: number[],
+  points: number[][]
+): AppThunk => async dispatch => {
+  try {
+    dispatch(changeLoadingState(true));
+    const { snapped_waypoints } = await fetchRoutes([newPoint, newPoint]);
+    if (points.length === 0) {
+      dispatch(addPoint(snapped_waypoints.coordinates[0]));
+    } else {
+      dispatch(updateStartAfterDrag(snapped_waypoints.coordinates[0]));
+    }
+    dispatch(changeLoadingState(false));
+  } catch (e) {
+    dispatch(
+      changeNotificationStatus({
+        isVisible: true,
+        type: 'error',
+        message: 'Looks like there was an error on our end',
+      })
+    );
+    dispatch(changeLoadingState(false));
+  }
+};
+
+interface Instructions {
+  distance: number;
+  heading: number;
+  sign: number;
+  interval: number[];
+  text: string;
+  time: number;
+  street_name: string;
+}
+
+const parseElevationData = (
+  points: number[][],
+  instructions: Instructions[],
+  distance: number
+): { newElevationSegments: ElevationData[][]; currentDistance: number } => {
+  let currentDistance = distance;
+  let arr = [];
+  const newElevationSegments = [];
+
+  for (let i = 0; i < instructions.length; i++) {
+    if (instructions[i].text === 'Waypoint 1') {
+      newElevationSegments.push(arr);
+      arr = [];
+    }
+    currentDistance += instructions[i].distance;
+    const elevation = points[instructions[i].interval[1]][2];
+    arr.push({
+      distance: currentDistance,
+      segDistance: instructions[i].distance,
+      elevation,
+    });
+  }
+
+  newElevationSegments.push(arr);
+  return { newElevationSegments, currentDistance };
+};
+
+const createLineSegments = (coordinates, waypoints): number[][][] => {
+  const lines = [];
+  let middlePointIndex: number | undefined = undefined;
+  const isMiddlePoint: boolean = waypoints.coordinates.length === 3;
+
+  if (isMiddlePoint) {
+    middlePointIndex = coordinates.findIndex(
+      coord =>
+        coord[0] === waypoints.coordinates[1][0] &&
+        coord[1] === waypoints.coordinates[1][1]
+    );
+
+    const leftLine = coordinates.slice(0, middlePointIndex + 1);
+    const rightLine = coordinates.slice(middlePointIndex);
+
+    lines.push(leftLine, rightLine);
+  } else {
+    lines.push(coordinates);
+  }
+
+  return lines;
+};
+
 interface DragParams {
   pointIndex: number;
   waypoints: number[][];
   lineIndices: number[];
-  totalDistance: number[];
   numberOfPoints: number;
   elevationData: ElevationData[][];
-  setIsDragging: Dispatch<SetStateAction<boolean>>;
-  setPoint: Dispatch<SetStateAction<number[]>>;
 }
 
 export const updateRouteAfterDrag = ({
@@ -166,10 +240,7 @@ export const updateRouteAfterDrag = ({
   waypoints,
   lineIndices,
   numberOfPoints,
-  totalDistance,
   elevationData,
-  setIsDragging,
-  setPoint,
 }: DragParams): AppThunk => async dispatch => {
   try {
     dispatch(changeLoadingState(true));
@@ -193,7 +264,7 @@ export const updateRouteAfterDrag = ({
             elevationData[pointIndex - 1].length - 1
           ].distance;
     // index in elevationData array where we need to start looping and updating distances
-    let startingIndexToUpdateElevation =
+    const startingIndexToUpdateElevation =
       pointIndex === 0
         ? 1
         : pointIndex === numberOfPoints
@@ -266,31 +337,6 @@ export const updateRouteAfterDrag = ({
   }
 };
 
-export const fetchSinglePoint = (
-  newPoint: number[],
-  points: number[][]
-): AppThunk => async dispatch => {
-  try {
-    dispatch(changeLoadingState(true));
-    const { snapped_waypoints } = await fetchRoutes([newPoint, newPoint]);
-    if (points.length === 0) {
-      dispatch(addPoint(snapped_waypoints.coordinates[0]));
-    } else {
-      dispatch(updateStartAfterDrag(snapped_waypoints.coordinates[0]));
-    }
-    dispatch(changeLoadingState(false));
-  } catch (e) {
-    dispatch(
-      changeNotificationStatus({
-        isVisible: true,
-        type: 'error',
-        message: 'Looks like there was an error on our end',
-      })
-    );
-    dispatch(changeLoadingState(false));
-  }
-};
-
 export const addRoute = ({
   newLat,
   newLong,
@@ -336,66 +382,6 @@ export const addRoute = ({
     );
     dispatch(changeLoadingState(false));
   }
-};
-
-interface Instructions {
-  distance: number;
-  heading: number;
-  sign: number;
-  interval: number[];
-  text: string;
-  time: number;
-  street_name: string;
-}
-
-const parseElevationData = (
-  points: number[][],
-  instructions: Instructions[],
-  distance: number
-): { newElevationSegments: ElevationData[][]; currentDistance: number } => {
-  let currentDistance = distance;
-  let arr = [];
-  const newElevationSegments = [];
-
-  for (let i = 0; i < instructions.length; i++) {
-    if (instructions[i].text === 'Waypoint 1') {
-      newElevationSegments.push(arr);
-      arr = [];
-    }
-    currentDistance += instructions[i].distance;
-    const elevation = points[instructions[i].interval[1]][2];
-    arr.push({
-      distance: currentDistance,
-      segDistance: instructions[i].distance,
-      elevation,
-    });
-  }
-
-  newElevationSegments.push(arr);
-  return { newElevationSegments, currentDistance };
-};
-
-const createLineSegments = (coordinates, waypoints): number[][][] => {
-  const lines = [];
-  let middlePointIndex: number | undefined = undefined;
-  const isMiddlePoint: boolean = waypoints.coordinates.length === 3;
-
-  if (isMiddlePoint) {
-    middlePointIndex = coordinates.findIndex(
-      coord =>
-        coord[0] === waypoints.coordinates[1][0] &&
-        coord[1] === waypoints.coordinates[1][1]
-    );
-
-    const leftLine = coordinates.slice(0, middlePointIndex + 1);
-    const rightLine = coordinates.slice(middlePointIndex);
-
-    lines.push(leftLine, rightLine);
-  } else {
-    lines.push(coordinates);
-  }
-
-  return lines;
 };
 
 export default reducer;

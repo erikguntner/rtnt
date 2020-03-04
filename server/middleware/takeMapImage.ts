@@ -17,6 +17,10 @@ const takeMapImage = handler => async (req, res) => {
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
 
+    pusher.trigger('save-route', 'status-update', {
+      progress: 65,
+    });
+
     console.log('awaiting page');
     // open new browser
     const page = await browser.newPage();
@@ -26,13 +30,11 @@ const takeMapImage = handler => async (req, res) => {
     // Stringify coords before using them as query string
     const coordsStr = JSON.stringify(flattenedCoords);
 
-    const URL =
-      process.env.NODE_ENV === 'production'
-        ? 'https://pacific-crag-45485.herokuapp.com/test'
-        : 'http://localhost:3000/test';
-
     console.log('navigating to url');
     // goto page with map sending coordintaes along
+    pusher.trigger('save-route', 'status-update', {
+      progress: 55,
+    });
 
     await page.goto(
       `https://pacific-crag-45485.herokuapp.com/test?coords=${coordsStr}`,
@@ -59,6 +61,9 @@ const takeMapImage = handler => async (req, res) => {
     });
 
     await browser.close();
+    pusher.trigger('save-route', 'status-update', {
+      progress: 45,
+    });
     // convert buffer to base64 string
     // const base64Image = await image.toString('base64');
     // attach to request object to be used in the next middleware
@@ -76,6 +81,7 @@ const takeMapImage = handler => async (req, res) => {
   return handler(req, res);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const writeFileToDesktop = (image, res) => {
   try {
     const homedir = require('os').homedir();

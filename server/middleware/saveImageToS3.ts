@@ -16,7 +16,7 @@ const saveImageToS3 = handler => async (req, res) => {
 
     const key = `${id}/${uuid()}.jpeg`;
 
-    var params = {
+    const params = {
       Bucket: 'run-tracker-bucket',
       Key: key,
       Body: buffer,

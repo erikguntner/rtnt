@@ -6,7 +6,7 @@ interface Props extends FieldInputProps<''> {
 }
 
 const Input: React.FC<Props> = ({ label, ...props }) => {
-  const [field, meta, helpers] = useField(props);
+  const [field, meta] = useField(props);
 
   return (
     <>

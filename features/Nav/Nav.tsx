@@ -198,19 +198,4 @@ const Dropdown = styled.div`
   }
 `;
 
-const SignOut = styled.button`
-  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
-  border: none;
-  border-radius: 2px;
-  background-color: transparent;
-  color: ${props => props.theme.colors.gray[400]};
-  font-size: 1.4rem;
-
-  &:hover {
-    cursor: pointer;
-    background-color: #071735;
-    color: #fff;
-  }
-`;
-
 export default Nav;

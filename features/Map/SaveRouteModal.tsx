@@ -14,7 +14,7 @@ interface Props {
 }
 
 interface StatusI {
-  message: string;
+  message?: string;
   progress: number;
 }
 
@@ -53,7 +53,9 @@ const SaveRouteModal: React.FC<Props> = ({ open, setOpen }) => {
     const channel = pusher.subscribe('save-route');
 
     channel.bind('status-update', ({ message, progress }: StatusI) => {
-      setStatus(message);
+      if (message) {
+        setStatus(message);
+      }
       setProgress(-progress);
     });
   }, []);
@@ -76,8 +78,6 @@ const SaveRouteModal: React.FC<Props> = ({ open, setOpen }) => {
       });
 
       if (response.ok) {
-        const route = await response.json();
-
         setOpen(false);
         setSaving(false);
         setProgress(-90);
@@ -232,7 +232,7 @@ const StatusBar = styled.div<ProgressI>`
   width: 40rem;
   height: 2.6rem;
   border-radius: 50px;
-  background-color: ${props => props.theme.colors.gray[500]};
+  background-color: ${props => props.theme.colors.gray[300]};
   box-shadow: ${props => props.theme.boxShadow.sm};
   overflow: hidden;
 

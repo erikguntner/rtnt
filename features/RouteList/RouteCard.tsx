@@ -8,6 +8,7 @@ interface Props {
   totalDistance: number[];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const RouteCard: React.FC<Props> = ({ id, name, image, totalDistance }) => {
   return (
     <Card>

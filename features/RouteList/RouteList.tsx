@@ -7,9 +7,6 @@ import compareAsc from 'date-fns/compareAsc';
 import { RootState } from '../../app/rootReducer';
 import { updateFilterTerm } from './routeListSlice';
 import RouteCard from './RouteCard';
-
-interface Props {}
-
 interface ElevationData {
   distance: number;
   segDistance: number;
@@ -27,7 +24,7 @@ interface RouteI {
   created_on: string;
 }
 
-const filterRoutes = (filterTerm: string, routes: RouteI[]) => {
+const filterRoutes = (filterTerm: string, routes: RouteI[]): RouteI[] => {
   switch (filterTerm) {
     case 'most recent':
       return routes.sort((a, b) =>
@@ -61,7 +58,7 @@ const options = [
   { value: 'longest', label: 'Longest' },
 ];
 
-const RouteList: React.FC<Props> = () => {
+const RouteList: React.FC<{}> = () => {
   const { filteredRoutes, filter } = useSelector((state: RootState) => ({
     filteredRoutes: filterRoutes(state.routeList.filter, [
       ...state.routeList.routes,

@@ -8,7 +8,6 @@ import React, {
 } from 'react';
 import styled from 'styled-components';
 import { createChart } from '../../utils/d3/utils';
-import { lineSegment } from '@turf/turf';
 
 interface ElevationData {
   distance: number;

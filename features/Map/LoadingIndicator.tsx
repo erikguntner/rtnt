@@ -1,9 +1,7 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
-interface Props {}
-
-const LoadingIndicator: React.FC<Props> = () => {
+const LoadingIndicator: React.FC<{}> = () => {
   return (
     <Container>
       <Circle />

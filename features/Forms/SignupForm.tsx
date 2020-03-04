@@ -25,14 +25,13 @@ const SignupSchema = Yup.object().shape({
   password: Yup.string().required('password is required'),
 });
 
-interface Props {}
-
-const SignupForm: React.FC<Props> = () => {
+const SignupForm: React.FC<{}> = () => {
   const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: { email: '', username: '', password: '' },
     validationSchema: SignupSchema,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onSubmit: ({ email, username, password }, { setSubmitting }) => {
       dispatch(signup({ email, username, password }));
     },

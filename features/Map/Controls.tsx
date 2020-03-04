@@ -7,8 +7,6 @@ import {
   faTimes,
   faRedoAlt,
   faMountain,
-  faRoute,
-  faDrawPolygon,
   faSave,
 } from '@fortawesome/free-solid-svg-icons';
 

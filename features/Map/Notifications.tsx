@@ -13,9 +13,7 @@ import { changeNotificationStatus } from './notificationSlice';
 import { AppDispatch } from '../../app/store';
 import { RootState } from '../../app/rootReducer';
 
-interface Props {}
-
-const Notifications: React.FC<Props> = () => {
+const Notifications: React.FC<{}> = () => {
   const dispatch: AppDispatch = useDispatch();
   const { isVisible, type, message } = useSelector((state: RootState) => ({
     isVisible: state.notifications.isVisible,

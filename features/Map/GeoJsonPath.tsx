@@ -16,7 +16,7 @@ const dataLayer = {
 };
 
 const GeoJsonPath: React.FC<Props> = ({ lines }) => {
-  var multiLine = turf.multiLineString(lines);
+  const multiLine = turf.multiLineString(lines);
 
   return (
     <Source type="geojson" data={multiLine}>

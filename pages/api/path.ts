@@ -3,7 +3,7 @@ import fetch from 'isomorphic-unfetch';
 
 const request = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
-    const { points, transportationType } = req.body;
+    const { points } = req.body;
     const pointString = points
       .map(point => `point=${point[1]},${point[0]}&`)
       .join('');

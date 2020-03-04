@@ -3,11 +3,10 @@ import styled from 'styled-components';
 
 interface Props {
   index: number;
-  size: number;
   points: number[][];
 }
 
-const Pin: React.FC<Props> = ({ size = 20, index, points }) => {
+const Pin: React.FC<Props> = ({ index, points }) => {
   return (
     <SVG index={index} coordinates={points} width="11" height="11">
       <circle cx="50%" cy="50%" r="5" />

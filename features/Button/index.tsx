@@ -1,4 +1,4 @@
-import React, { ReactNode, ComponentType, PropsWithChildren } from 'react';
+import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 
@@ -16,12 +16,7 @@ const Wrapper = (Component, props: Props) => {
   return button;
 };
 
-export const Button = props => Wrapper(StyledButton, props);
-
-export const DarkButtonLink = props => Wrapper(StyledDarkButton, props);
-
-export const PrimaryButtonLink = props => Wrapper(StyledPrimaryButton, props);
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const StyledLink = styled(Link)`
   display: flex;
   flex: none;
@@ -78,5 +73,11 @@ const StyledPrimaryButton = styled.button`
     background-color: ${props => props.theme.colors.indigo[800]};
   }
 `;
+
+export const Button = props => Wrapper(StyledButton, props);
+
+export const DarkButtonLink = props => Wrapper(StyledDarkButton, props);
+
+export const PrimaryButtonLink = props => Wrapper(StyledPrimaryButton, props);
 
 export default Wrapper;

@@ -3,14 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
 import ReactMapGL, { Marker } from 'react-map-gl';
 import styled from 'styled-components';
-import WebMercatorViewport from 'viewport-mercator-project';
 
 import { RootState } from '../../app/rootReducer';
 import { AppDispatch } from '../../app/store';
 import { addRoute, updateRouteAfterDrag, fetchSinglePoint } from './routeSlice';
 
 import SvgPath from './SvgPath';
-import GeoJsonPath from './GeoJsonPath';
 import ConnectingLines from './ConnectingLines';
 import ElevationProfile from './ElevationProfile';
 import Controls from './Controls';
@@ -45,6 +43,7 @@ const Map = () => {
   // state for syncing mouseevents for chart and map
   const [distanceAlongPath, setDistanceAlongPath] = useState<number>(0);
   const [pointAlongPath, setPointAlongPath] = useState<number[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [hoveredPoint, setHoveredPoint] = useState<number[]>();
 
   const dispatch: AppDispatch = useDispatch();
@@ -54,7 +53,6 @@ const Map = () => {
     totalDistance,
     lines,
     elevationData,
-    authenticated,
   } = useSelector((state: RootState) => ({
     isLoading: state.loading.isLoading,
     points: state.route.present.points,
@@ -128,9 +126,6 @@ const Map = () => {
           lineIndices,
           numberOfPoints: points.length - 1,
           elevationData,
-          totalDistance,
-          setIsDragging,
-          setPoint,
         })
       );
 
@@ -141,7 +136,7 @@ const Map = () => {
     }
   };
 
-  const handleDrag = (event, index: number) => {
+  const handleDrag = event => {
     setPoint(event.lngLat);
   };
 
@@ -164,23 +159,6 @@ const Map = () => {
       setPointAlongPath([]);
     }
   }, [distanceAlongPath]);
-
-  const hanldeMouseOver = event => {
-    const {
-      features,
-      srcEvent: { offsetX, offsetY },
-    } = event;
-    const hoveredFeature =
-      features && features.find(f => f.layer.id === 'path_layer');
-
-    if (
-      hoveredFeature !== undefined &&
-      hoveredFeature.layer.id === 'path_layer'
-    ) {
-    }
-  };
-
-  const handleMouseLeave = event => {};
 
   return (
     <MapContainer>
@@ -219,10 +197,10 @@ const Map = () => {
             latitude={point[1]}
             draggable
             onDragStart={event => handleDragStart(event, i)}
-            onDrag={event => handleDrag(event, i)}
+            onDrag={event => handleDrag(event)}
             onDragEnd={event => handleDragEnd(event.lngLat, point, i)}
           >
-            <Pin index={i} size={20} points={points} />
+            <Pin index={i} points={points} />
           </Marker>
         ))}
         <DistanceMarkers {...{ lines, units }} />
