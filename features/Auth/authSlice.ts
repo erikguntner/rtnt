@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AppThunk } from '../../app/store';
 import fetch from 'isomorphic-unfetch';
+import { AppThunk } from '../../app/store';
 import { setCookieOnLogin } from '../../utils/auth';
+import { changeNotificationStatus } from '../Map/notificationSlice';
 
 const url =
   process.env.NODE_ENV === 'production'
@@ -11,6 +12,7 @@ const url =
 interface UserI {
   email: string;
   username: string;
+  units: 'miles' | 'kilometers';
 }
 
 interface AuthState {
@@ -23,6 +25,7 @@ const initialState: AuthState = {
   user: {
     email: '',
     username: '',
+    units: 'miles',
   },
 };
 
@@ -31,17 +34,20 @@ const { actions, reducer } = createSlice({
   initialState,
   reducers: {
     authenticateUser: (state, action: PayloadAction<AuthState>) => {
-      const {
-        authenticated,
-        user: { username },
-      } = action.payload;
+      const { authenticated, user } = action.payload;
       state.authenticated = authenticated;
-      state.user = { username, email: 'me@gmail.com' };
+      state.user = user;
+    },
+    changeUsersUnits: (
+      state,
+      action: PayloadAction<'miles' | 'kilometers'>
+    ) => {
+      state.user.units = action.payload;
     },
   },
 });
 
-export const { authenticateUser } = actions;
+export const { authenticateUser, changeUsersUnits } = actions;
 
 interface LoginI {
   username: string;
@@ -100,6 +106,47 @@ export const signup = ({
     }
   } catch (e) {
     console.log('error signing up', e);
+  }
+};
+
+export const updateUnits = (
+  units: 'miles' | 'kilometers',
+  authenticated: string
+): AppThunk => async dispatch => {
+
+  if(!authenticated) {
+    dispatch(changeUsersUnits(units));
+    return;
+  }
+
+  try {
+    const response = await fetch(`${url}/api/units`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json, text/plain, */*',
+        'Content-Type': 'application/json',
+        Authorization: JSON.stringify(authenticated),
+      },
+      body: JSON.stringify({ units }),
+    });
+
+    if (response.ok) {
+      dispatch(changeUsersUnits(units));
+    } else {
+      changeNotificationStatus({
+        isVisible: true,
+        type: 'error',
+        message: 'Looks like there was an error on our end. Please try again.',
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    changeNotificationStatus({
+      isVisible: true,
+      type: 'error',
+      message: 'Looks like there was an error on our end. Please try again.',
+    });
   }
 };
 

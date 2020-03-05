@@ -10,6 +10,7 @@ interface UserI {
   email: string;
   username: string;
   password: string;
+  units: string;
 }
 
 interface AdditionalTypes {

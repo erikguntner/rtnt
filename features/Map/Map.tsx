@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
-import { Units } from '@turf/helpers';
 import ReactMapGL, { Marker } from 'react-map-gl';
 import styled from 'styled-components';
 
@@ -28,7 +27,6 @@ interface Viewport {
 
 const Map = () => {
   const [clipPath, setClipPath] = useState<boolean>(false);
-  const [units, setUnits] = useState<Units>('miles');
   const [showElevation, setShowElevation] = useState<boolean>(false);
   const [viewport, setViewport] = useState<Viewport>({
     latitude: 34.105999576,
@@ -54,6 +52,8 @@ const Map = () => {
     totalDistance,
     lines,
     elevationData,
+    authenticated,
+    user: { units },
   } = useSelector((state: RootState) => ({
     isLoading: state.loading.isLoading,
     points: state.route.present.points,
@@ -61,6 +61,7 @@ const Map = () => {
     lines: state.route.present.lines,
     elevationData: state.route.present.elevationData,
     authenticated: state.auth.authenticated,
+    user: state.auth.user,
   }));
 
   const handleClick = event => {
@@ -212,7 +213,7 @@ const Map = () => {
         ) : null}
       </ReactMapGL>
       {isLoading && <LoadingIndicator />}
-      <DistanceIndicator {...{ elevationData, units, setUnits }} />
+      <DistanceIndicator {...{ elevationData, units, authenticated }} />
     </MapContainer>
   );
 };

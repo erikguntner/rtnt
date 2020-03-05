@@ -30,6 +30,7 @@ const Nav = () => {
         user: {
           username: '',
           email: '',
+          units: user.units,
         },
       })
     );

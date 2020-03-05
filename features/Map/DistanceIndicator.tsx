@@ -1,6 +1,9 @@
-import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import * as turfHelpers from '@turf/helpers';
+
+import { updateUnits } from '../Auth/authSlice';
 
 interface ElevationData {
   distance: number;
@@ -10,11 +13,11 @@ interface ElevationData {
 
 interface Props {
   elevationData: ElevationData[][];
-  units: string;
-  setUnits: Dispatch<SetStateAction<string>>;
+  units: turfHelpers.Units;
+  authenticated: string;
 }
 
-const calculateDistance = (data, units) => {
+const calculateDistance = (data, units): string => {
   const arrLength = data[data.length - 1].length;
   const distance = data[data.length - 1][arrLength - 1].distance;
   return turfHelpers.convertLength(distance, 'meters', units).toFixed(1);
@@ -23,15 +26,18 @@ const calculateDistance = (data, units) => {
 const DistanceIndicator: React.FC<Props> = ({
   elevationData,
   units,
-  setUnits,
+  authenticated,
 }) => {
   const [distance, setDistance] = useState<number>(0);
+  const dispatch = useDispatch();
 
   const handleClick = () => {
-    setUnits(() => (units === 'miles' ? 'kilometers' : 'miles'));
+    const newUnits = units === 'miles' ? 'kilometers' : 'miles';
+    // setUnits(() => (units === 'miles' ? 'kilometers' : 'miles'));
+    dispatch(updateUnits(newUnits, authenticated));
   };
 
-  const abbreviatedDistance = units => {
+  const abbreviatedDistance = (units: string): string => {
     if (units === 'miles') {
       return 'mi';
     } else {

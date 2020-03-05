@@ -36,7 +36,10 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
     })
   );
 
-  const isAuthenticated: boolean = authenticated === 'true';
+  console.log(authenticated);
+
+  const isAuthenticated: boolean = authenticated === '';
+  console.log(isAuthenticated);
 
   return (
     <ControlsContainer>
@@ -65,10 +68,9 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
         tooltip={'elevation'}
       />
       <ControlButton
+        disabled={isAuthenticated}
         handleClick={() => setOpen(!open)}
         icon={faSave}
-        disabled={isAuthenticated}
-        activeState={isAuthenticated}
         tooltip={'save route'}
       />
       {/* <ControlButton
