@@ -1,18 +1,39 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import Head from 'next/head';
+import Router from 'next/router';
 import nextCookie from 'next-cookies';
-import Nav from '../features/Nav/Nav';
-import App, { AppContext } from 'next/app';
 import fetch from 'isomorphic-unfetch';
+import App, { AppContext } from 'next/app';
 import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
+import debounce from 'lodash/debounce';
+
+import Nav from '../features/Nav/Nav';
 import 'mapbox-gl/src/css/mapbox-gl.css';
 import withReduxStore from '../utils/withReduxStore';
 import { authenticateUser } from '../features/Auth/authSlice';
 
 config.autoAddCss = false;
+
+let NProgress;
+let start;
+
+if (typeof window !== 'undefined') {
+  NProgress = require('nprogress');
+  start = debounce(NProgress.start, 200);
+}
+
+Router.events.on('routeChangeStart', start);
+Router.events.on('routeChangeComplete', () => {
+  start.cancel();
+  NProgress.done();
+});
+Router.events.on('routeChangeError', () => {
+  start.cancel();
+  NProgress.done();
+});
 
 const theme = {
   screens: {
@@ -246,6 +267,27 @@ const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     .mapboxgl-ctrl-top-right {
       top: 19.2rem;
     }
+  }
+
+  #nprogress {
+    pointer-events: none;
+  }
+
+  #nprogress .bar {
+    position: fixed;
+    z-index: 2000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+  }
+
+  #nprogress .bar {
+    background-color: ${props => props.theme.colors.green[400]};
+  }
+
+  #nprogress .peg {
+    box-shadow: 0 0 10px #fff, 0 0 5px #fff;
   }
 `;
 
