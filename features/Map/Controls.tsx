@@ -36,10 +36,7 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
     })
   );
 
-  console.log(authenticated);
-
   const isAuthenticated: boolean = authenticated === '';
-  console.log(isAuthenticated);
 
   return (
     <ControlsContainer>

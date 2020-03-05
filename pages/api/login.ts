@@ -32,13 +32,17 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
       );
 
       if (user.rows.length === 0) {
-        return res.status(422).json({ error: 'Could not find user' });
+        return res
+          .status(422)
+          .json({ error: 'could not find a matching username and password' });
       }
 
       const isMatch = await bcrypt.compare(password, user.rows[0].password);
 
       if (!isMatch) {
-        return res.status(422).json({ message: 'password was not a match' });
+        return res
+          .status(422)
+          .json({ error: 'could not find a matching username and password' });
       }
 
       const token = tokenForUser(user.rows[0]);
@@ -49,7 +53,7 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     } catch (e) {
       console.log(e);
-      return res.status(400).json({ message: 'There was an error ' });
+      return res.status(400).json({ error: 'could not find user' });
     }
   } else {
   }

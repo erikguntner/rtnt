@@ -21,8 +21,6 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   if (req.method === 'PUT') {
     const { id } = req.user;
     const { units } = req.body;
-    console.log('id for user', id);
-    console.log('new units', units);
     try {
       const result = await query(
         'UPDATE users SET units=($1) WHERE id=($2) RETURNING *',

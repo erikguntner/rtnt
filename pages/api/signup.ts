@@ -25,7 +25,7 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
       );
 
       if (existingUser.rows.length > 0) {
-        return res.status(400).json({ error: 'Username is in use' });
+        return res.status(400).json({ error: 'username already exists' });
       }
 
       const salt = await bcrypt.genSalt(10);
@@ -42,7 +42,7 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
         user: user.rows[0],
       });
     } catch (e) {
-      return res.status(400).json({ message: 'There was an error ' });
+      return res.status(400).json({ message: 'There was an error signing in' });
     }
   } else {
   }

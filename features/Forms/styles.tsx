@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 export const FormWrapper = styled.div`
   border-radius: 2px;
@@ -46,13 +46,21 @@ export const InputWrapper = styled.div`
   }
 `;
 
-export const Input = styled.input`
+interface InputProps {
+  error?: boolean | string;
+}
+
+export const Input = styled.input<InputProps>`
   padding: 1rem;
   background-color: #fff;
-  border: 1px solid ${props => props.theme.colors.gray[400]};
+  border: 1px solid
+    ${props =>
+      props.error ? props.theme.colors.red[400] : props.theme.colors.gray[400]};
   border-radius: 2px;
   font-size: 1.4rem;
   box-shadow: ${props => props.theme.boxShadow.sm};
+  color: ${props =>
+    props.error ? props.theme.colors.red[900] : props.theme.colors.gray[900]};
 
   &:focus {
     outline: none;
@@ -88,10 +96,42 @@ export const Label = styled.label`
 
 export const Error = styled.div`
   margin-top: 6px;
-  padding: 6px;
+  /* padding: 6px;
   border: 1px solid ${props => props.theme.colors.red[600]};
   border-radius: 2px;
-  background-color: ${props => props.theme.colors.red[200]};
-  font-size: 1rem;
+  background-color: ${props => props.theme.colors.red[200]}; */
+  font-size: 1.2rem;
   color: ${props => props.theme.colors.red[600]};
+`;
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+export const Spinner = styled.div`
+  display: block;
+  height: 2rem;
+  width: 2rem;
+  border-radius: 50%;
+  border-right: 3px solid ${props => props.theme.colors.indigo[600]};
+  border-left: 3px solid ${props => props.theme.colors.gray[100]};
+  border-top: 3px solid ${props => props.theme.colors.gray[100]};
+  border-bottom: 3px solid ${props => props.theme.colors.gray[100]};
+  animation: ${rotate} 2s linear infinite;
+`;
+
+export const WithSpinner = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  & div:first-of-type {
+    margin-right: 1.6rem;
+  }
 `;
