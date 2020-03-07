@@ -2,11 +2,8 @@ import React from 'react';
 import { NextPage } from 'next';
 import SignupForm from '../features/Forms/SignupForm';
 import styled from 'styled-components';
-import { withRedux } from '../utils/redux';
 
-interface Props {}
-
-const Signup: NextPage<Props> = () => {
+const Signup: NextPage<{}> = () => {
   return (
     <Container>
       <SignupForm />

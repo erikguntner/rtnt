@@ -4,9 +4,7 @@ import styled from 'styled-components';
 import LoginForm from '../features/Forms/LoginForm';
 // import { withRedux } from '../utils/redux';
 
-interface Props {}
-
-const Login: NextPage<Props> = () => {
+const Login: NextPage<{}> = () => {
   return (
     <Container>
       <LoginForm />

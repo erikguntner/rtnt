@@ -55,7 +55,7 @@ export const login = ({
   password,
 }: LoginI): AppThunk => async dispatch => {
   try {
-    const res = await fetch(`${API_URL}/api/login`, {
+    const response = await fetch(`${API_URL}/api/login`, {
       method: 'POST',
       headers: {
         Accept: 'application/json, text/plain, */*',
@@ -64,10 +64,14 @@ export const login = ({
       body: JSON.stringify({ username, password }),
     });
 
-    const { token, user } = await res.json();
+    if (response.ok) {
+      const { token, user } = await response.json();
 
-    await setCookieOnLogin({ token });
-    dispatch(authenticateUser({ authenticated: token, user }));
+      await setCookieOnLogin({ token });
+      dispatch(authenticateUser({ authenticated: token, user }));
+    } else {
+      console.log('there was an error');
+    }
   } catch (e) {
     console.log('error logging in', e);
   }

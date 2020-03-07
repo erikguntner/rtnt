@@ -17,7 +17,7 @@ import {
 } from './styles';
 import { setCookieOnLogin } from '../../utils/auth';
 import { authenticateUser } from '../Auth/authSlice';
-import API_URL from '../../util/url';
+import API_URL from '../../utils/url';
 
 const SignupSchema = Yup.object().shape({
   username: Yup.string()
