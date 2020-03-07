@@ -7,6 +7,7 @@ import { Input, Label } from '../Forms/styles';
 import Modal from '../Utilities/Modal';
 import { RootState } from '../../app/rootReducer';
 import { changeNotificationStatus } from './notificationSlice';
+import API_URL from '../../utils/url';
 
 interface Props {
   open: boolean;
@@ -17,11 +18,6 @@ interface StatusI {
   message?: string;
   progress: number;
 }
-
-const url =
-  process.env.NODE_ENV === 'production'
-    ? 'https://rtnt.now.sh'
-    : 'http://localhost:3000';
 
 const SaveRouteModal: React.FC<Props> = ({ open, setOpen }) => {
   const [value, setValue] = useState<string>('');
@@ -66,7 +62,7 @@ const SaveRouteModal: React.FC<Props> = ({ open, setOpen }) => {
     try {
       // Make fetch request
       const body = { name: value, lines, elevationData, points, totalDistance };
-      const response = await fetch(`${url}/api/route`, {
+      const response = await fetch(`${API_URL}/api/route`, {
         method: 'POST',
         credentials: 'include',
         headers: {

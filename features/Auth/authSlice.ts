@@ -3,11 +3,7 @@ import fetch from 'isomorphic-unfetch';
 import { AppThunk } from '../../app/store';
 import { setCookieOnLogin } from '../../utils/auth';
 import { changeNotificationStatus } from '../Map/notificationSlice';
-
-const url =
-  process.env.NODE_ENV === 'production'
-    ? 'https://rtnt.now.sh'
-    : 'http://localhost:3000';
+import API_URL from '../../utils/url';
 
 interface UserI {
   email: string;
@@ -59,7 +55,7 @@ export const login = ({
   password,
 }: LoginI): AppThunk => async dispatch => {
   try {
-    const res = await fetch(`${url}/api/login`, {
+    const res = await fetch(`${API_URL}/api/login`, {
       method: 'POST',
       headers: {
         Accept: 'application/json, text/plain, */*',
@@ -89,7 +85,7 @@ export const signup = ({
   password,
 }: NewUser): AppThunk => async dispatch => {
   try {
-    const res = await fetch(`${url}/api/signup`, {
+    const res = await fetch(`${API_URL}/api/signup`, {
       method: 'POST',
       headers: {
         Accept: 'application/json, text/plain, */*',
@@ -113,14 +109,13 @@ export const updateUnits = (
   units: 'miles' | 'kilometers',
   authenticated: string
 ): AppThunk => async dispatch => {
-
-  if(!authenticated) {
+  if (!authenticated) {
     dispatch(changeUsersUnits(units));
     return;
   }
 
   try {
-    const response = await fetch(`${url}/api/units`, {
+    const response = await fetch(`${API_URL}/api/units`, {
       method: 'PUT',
       credentials: 'include',
       headers: {

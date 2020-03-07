@@ -4,6 +4,7 @@ import nextCookie from 'next-cookies';
 import fetch from 'isomorphic-unfetch';
 import { addRoutes } from '../features/RouteList/routeListSlice';
 import RouteList from '../features/RouteList/RouteList';
+import API_URL from '../utils/url';
 
 const MyRoutes = () => {
   return (
@@ -24,12 +25,7 @@ MyRoutes.getInitialProps = async ctx => {
 
   if (token) {
     try {
-      const url =
-        process.env.NODE_ENV === 'production'
-          ? 'https://rtnt.now.sh'
-          : 'http://localhost:3000';
-
-      const response = await fetch(`${url}/api/routes`, {
+      const response = await fetch(`${API_URL}/api/routes`, {
         credentials: 'include',
         headers: {
           Authorization: JSON.stringify(token),

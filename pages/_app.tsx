@@ -15,6 +15,7 @@ import 'mapbox-gl/src/css/mapbox-gl.css';
 import withReduxStore from '../utils/withReduxStore';
 import { authenticateUser } from '../features/Auth/authSlice';
 import { theme, GlobalStyle } from '../utils/theme';
+import API_URL from '../utils/url';
 
 config.autoAddCss = false;
 
@@ -61,11 +62,6 @@ const Layout = ({ children }) => {
 
 class MyApp extends App {
   static async getInitialProps({ Component, ctx }: AppContext) {
-    const url =
-      process.env.NODE_ENV === 'production'
-        ? 'https://rtnt.now.sh'
-        : 'http://localhost:3000';
-
     const { reduxStore } = ctx;
 
     const { token } = nextCookie(ctx);
@@ -73,7 +69,7 @@ class MyApp extends App {
     // if token exists, use token to log user in serverside when app loads
     if (token) {
       try {
-        const response = await fetch(`${url}/api/user`, {
+        const response = await fetch(`${API_URL}/api/user`, {
           credentials: 'include',
           headers: {
             Authorization: JSON.stringify({ token }),

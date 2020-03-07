@@ -17,6 +17,7 @@ import {
 } from './styles';
 import { setCookieOnLogin } from '../../utils/auth';
 import { authenticateUser } from '../Auth/authSlice';
+import API_URL from '../../util/url';
 
 const SignupSchema = Yup.object().shape({
   username: Yup.string()
@@ -25,11 +26,6 @@ const SignupSchema = Yup.object().shape({
     .max(25, 'Username must be between 4-25 characters'),
   password: Yup.string().required('Password is required'),
 });
-
-const url =
-  process.env.NODE_ENV === 'production'
-    ? 'https://rtnt.now.sh'
-    : 'http://localhost:3000';
 
 const SignupForm: React.FC<{}> = () => {
   const [error, setError] = useState('');
@@ -43,7 +39,7 @@ const SignupForm: React.FC<{}> = () => {
     onSubmit: async ({ username, password }, { setSubmitting, resetForm }) => {
       setSubmitting(true);
       try {
-        const response = await fetch(`${url}/api/login`, {
+        const response = await fetch(`${API_URL}/api/login`, {
           method: 'POST',
           headers: {
             Accept: 'application/json, text/plain, */*',

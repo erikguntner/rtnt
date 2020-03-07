@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-unfetch';
+import API_URL from './url';
 
 interface Points {
   type: string;
@@ -39,12 +40,7 @@ export const fetchRoutes = async (
   points: number[][]
 ): Promise<ResponseData> => {
   try {
-    const url =
-      process.env.NODE_ENV === 'production'
-        ? 'https://rtnt.now.sh'
-        : 'http://localhost:3000';
-
-    const response = await fetch(`${url}/api/path`, {
+    const response = await fetch(`${API_URL}/api/path`, {
       method: 'POST',
       headers: {
         Accept: 'application/json, text/plain, */*',
