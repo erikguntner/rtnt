@@ -23,7 +23,7 @@ interface State {
 
 export const initialState: State = {
   routes: [],
-  filter: 'most recent',
+  filter: 'newest',
 };
 
 const { actions, reducer } = createSlice({

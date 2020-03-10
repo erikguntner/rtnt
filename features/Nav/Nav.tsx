@@ -83,6 +83,7 @@ const NavContainer = styled.nav`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 0 2.4rem;
   height: ${props => props.theme.navHeight};
   background-color: ${props => props.theme.colors.gray[800]};
   text-align: center;
@@ -91,10 +92,6 @@ const NavContainer = styled.nav`
     display: flex;
     justify-content: flex-start;
     list-style: none;
-  }
-
-  & > ul {
-    padding: 4px 1.6rem;
   }
 
   & li {

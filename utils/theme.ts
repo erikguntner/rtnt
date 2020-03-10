@@ -248,7 +248,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
   }
 
   #nprogress .bar {
-    background-color: ${props => props.theme.colors.green[400]};
+    background-color: ${props => props.theme.colors.teal[400]};
   }
 
   #nprogress .peg {

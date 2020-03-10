@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import Select from 'react-select';
 import compareAsc from 'date-fns/compareAsc';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 import { RootState } from '../../app/rootReducer';
 import { updateFilterTerm } from './routeListSlice';
@@ -26,7 +28,7 @@ interface RouteI {
 
 const filterRoutes = (filterTerm: string, routes: RouteI[]): RouteI[] => {
   switch (filterTerm) {
-    case 'most recent':
+    case 'newest':
       return routes.sort((a, b) =>
         compareAsc(new Date(b.created_on), new Date(a.created_on))
       );
@@ -52,17 +54,17 @@ const filterRoutes = (filterTerm: string, routes: RouteI[]): RouteI[] => {
 };
 
 const options = [
-  { value: 'most recent', label: 'Most Recent' },
-  { value: 'oldest', label: 'Oldest' },
-  { value: 'shortest', label: 'Shortest' },
-  { value: 'longest', label: 'Longest' },
+  { value: 'newest', label: 'Sort By: Newest' },
+  { value: 'oldest', label: 'Sort By: Oldest' },
+  { value: 'shortest', label: 'Sort By: Shortest' },
+  { value: 'longest', label: 'Sort By: Longest' },
 ];
 
 const customStyles = {
   container: provided => ({
     ...provided,
     width: '300px',
-    marginBottom: '24px',
+    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.04)',
   }),
 };
 
@@ -76,18 +78,36 @@ const RouteList: React.FC<{}> = () => {
 
   const dispatch = useDispatch();
 
-  const handleChange = selectedOption => {
+  const handleSelectChange = selectedOption => {
     dispatch(updateFilterTerm(selectedOption.value));
+  };
+
+  const handleChange = e => {
+    console.log(e.target.value);
   };
 
   return (
     <div>
-      <Select
-        styles={customStyles}
-        defaultValue={options.filter(option => option.value === filter)}
-        {...{ options }}
-        onChange={handleChange}
-      />
+      <Header>
+        <Select
+          styles={customStyles}
+          theme={theme => ({
+            ...theme,
+            borderRadius: 2,
+            colors: {
+              ...theme.colors,
+              primary: '#4c51bf',
+            },
+          })}
+          defaultValue={options.filter(option => option.value === filter)}
+          {...{ options }}
+          onChange={handleSelectChange}
+        />
+        <InputWrapper>
+          <FontAwesomeIcon icon={faSearch} />
+          <Input onChange={handleChange} type="text" placeholder="Search" />
+        </InputWrapper>
+      </Header>
       <Grid>
         {filteredRoutes.length &&
           filteredRoutes.map(
@@ -100,10 +120,49 @@ const RouteList: React.FC<{}> = () => {
   );
 };
 
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 2.4rem;
+  background-color: #fff;
+  box-shadow: ${props => props.theme.boxShadow.sm};
+`;
+
 const Grid = styled.div`
   display: grid;
+  padding: 2.4rem;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 3.6rem;
+`;
+
+const InputWrapper = styled.div`
+  display: flex;
+  align-items: center;
+
+  svg {
+    font-size: 1.4rem;
+    color: ${props => props.theme.colors.gray[600]};
+    z-index: 20;
+  }
+`;
+
+const Input = styled.input`
+  width: 30rem;
+  height: 100%;
+  margin-left: -2.7rem;
+  padding-left: 3.6rem;
+  background-color: #fff;
+  border: 1px solid ${props => props.theme.colors.gray[400]};
+  border-radius: 2px;
+  font-size: 1.4rem;
+  box-shadow: ${props => props.theme.boxShadow.sm};
+  color: ${props => props.theme.colors.gray[900]};
+
+  &:focus {
+    outline: none;
+    box-shadow: ${props => props.theme.boxShadow.outline};
+    background-color: #fff;
+  }
 `;
 
 export default RouteList;
