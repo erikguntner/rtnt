@@ -10,6 +10,7 @@ module.exports = {
   ],
   rules: {
     // Overwrite rules specified from the extended configs e.g.
+    'react/no-unescaped-entities': 0,
     'react/prop-types': 0,
     '@typescript-eslint/camelcase': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',

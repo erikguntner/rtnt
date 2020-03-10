@@ -83,6 +83,7 @@ const NavContainer = styled.nav`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: ${props => props.theme.navHeight};
   background-color: ${props => props.theme.colors.gray[800]};
   text-align: center;
 

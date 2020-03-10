@@ -58,6 +58,14 @@ const options = [
   { value: 'longest', label: 'Longest' },
 ];
 
+const customStyles = {
+  container: provided => ({
+    ...provided,
+    width: '300px',
+    marginBottom: '24px',
+  }),
+};
+
 const RouteList: React.FC<{}> = () => {
   const { filteredRoutes, filter } = useSelector((state: RootState) => ({
     filteredRoutes: filterRoutes(state.routeList.filter, [
@@ -75,6 +83,7 @@ const RouteList: React.FC<{}> = () => {
   return (
     <div>
       <Select
+        styles={customStyles}
         defaultValue={options.filter(option => option.value === filter)}
         {...{ options }}
         onChange={handleChange}
@@ -95,7 +104,6 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 3.6rem;
-  margin: 3.6rem;
 `;
 
 export default RouteList;

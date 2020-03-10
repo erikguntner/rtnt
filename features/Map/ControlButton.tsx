@@ -55,13 +55,13 @@ const Button = styled.button<ButtonProps>`
     cursor: pointer;
   }
 
-  &:focus {
+  /* &:focus {
     span {
       visibility: visible;
       opacity: 1;
       transform: translate3d(10%, 133%, 0);
     }
-  }
+  } */
 
   &:hover div:first-of-type {
     cursor: pointer;

@@ -2,15 +2,16 @@ import React from 'react';
 import Router from 'next/router';
 import nextCookie from 'next-cookies';
 import fetch from 'isomorphic-unfetch';
+import styled from 'styled-components';
 import { addRoutes } from '../features/RouteList/routeListSlice';
 import RouteList from '../features/RouteList/RouteList';
 import API_URL from '../utils/url';
 
 const MyRoutes = () => {
   return (
-    <div>
+    <Container>
       <RouteList />
-    </div>
+    </Container>
   );
 };
 
@@ -51,5 +52,9 @@ MyRoutes.getInitialProps = async ctx => {
     return redirectOnError();
   }
 };
+
+const Container = styled.div`
+  padding: 2.4rem 1.6rem;
+`;
 
 export default MyRoutes;

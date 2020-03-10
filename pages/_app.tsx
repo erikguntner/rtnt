@@ -38,10 +38,6 @@ Router.events.on('routeChangeError', () => {
 });
 
 const Container = styled.div`
-  height: 100vh;
-  width: 100vw;
-  display: grid;
-  grid-template-rows: ${props => props.theme.navHeight} 1fr;
   background-color: ${props => props.theme.colors.gray[100]};
 `;
 

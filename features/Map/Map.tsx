@@ -43,7 +43,7 @@ const Map = () => {
   const [distanceAlongPath, setDistanceAlongPath] = useState<number>(0);
   const [pointAlongPath, setPointAlongPath] = useState<number[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [hoveredPoint, setHoveredPoint] = useState<number[]>();
+  // const [hoveredPoint, setHoveredPoint] = useState<number[]>();
 
   const dispatch: AppDispatch = useDispatch();
   const {
@@ -219,8 +219,8 @@ const Map = () => {
 };
 
 const MapContainer = styled.div`
-  height: 100%;
-  width: 100%;
+  height: calc(100vh - ${props => props.theme.navHeight});
+  width: 100vw;
   display: flex;
   flex-direction: column;
 `;
