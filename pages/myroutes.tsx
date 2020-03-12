@@ -8,9 +8,9 @@ import API_URL from '../utils/url';
 
 const MyRoutes = () => {
   return (
-    <div>
+    <>
       <RouteList />
-    </div>
+    </>
   );
 };
 

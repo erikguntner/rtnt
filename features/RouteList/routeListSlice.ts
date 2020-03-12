@@ -16,14 +16,30 @@ interface Route {
   created_on: string;
 }
 
+interface Filters {
+  keyword: string;
+  price: {
+    min: number | null;
+    max: number | null;
+  };
+}
+
 interface State {
   routes: Route[];
-  filter: string;
+  sortingTerm: string;
+  filters: Filters;
 }
 
 export const initialState: State = {
   routes: [],
-  filter: 'newest',
+  sortingTerm: 'newest',
+  filters: {
+    keyword: '',
+    price: {
+      min: null,
+      max: null
+    },
+  }
 };
 
 const { actions, reducer } = createSlice({
@@ -33,12 +49,21 @@ const { actions, reducer } = createSlice({
     addRoutes: (state, action: PayloadAction<Route[]>) => {
       state.routes = action.payload;
     },
-    updateFilterTerm: (state, action: PayloadAction<string>) => {
-      state.filter = action.payload;
+    updateSortingTerm: (state, action: PayloadAction<string>) => {
+      state.sortingTerm = action.payload;
     },
+    updateFilter: (state, action: PayloadAction<{ filter: string; value: string | number }>) => {
+      const { filter, value } = action.payload;
+      if (filter.split('').includes('price')) {
+        const [name, type] = filter.split('/');
+        state.filters.price[type] = value;
+      } else {
+        state.filters[filter] = value;
+      }
+    }
   },
 });
 
-export const { addRoutes, updateFilterTerm } = actions;
+export const { addRoutes, updateSortingTerm, updateFilter } = actions;
 
 export default reducer;
