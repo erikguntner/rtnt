@@ -122,7 +122,7 @@ const SaveRouteModal: React.FC<Props> = ({ open, setOpen }) => {
               type="text"
               placeholder="name"
               value={value}
-              onChange={e => setValue(e.target.value)}
+              onChange={(e) => setValue(e.target.value)}
             />
           </InputWrapper>
           <Controls>
@@ -132,7 +132,7 @@ const SaveRouteModal: React.FC<Props> = ({ open, setOpen }) => {
         </Container>
       ) : (
         <StatusContainer>
-          <h3>{status}...</h3>
+          <h4>{status}...</h4>
           <StatusBar {...{ progress }} />
         </StatusContainer>
       )}
@@ -142,6 +142,10 @@ const SaveRouteModal: React.FC<Props> = ({ open, setOpen }) => {
 
 const Container = styled.div`
   width: 40rem;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
+    width: 30rem;
+  }
 `;
 
 const Controls = styled.div`
@@ -151,7 +155,7 @@ const Controls = styled.div`
   align-items: center;
   padding: 2.4rem;
   border-radius: 0 0 2px 2px;
-  background-color: ${props => props.theme.colors.gray[100]};
+  background-color: ${(props) => props.theme.colors.gray[100]};
 `;
 
 const InputWrapper = styled.div`
@@ -160,46 +164,49 @@ const InputWrapper = styled.div`
   flex-direction: column;
   padding: 2.4rem;
 
-  @media screen and (max-width: ${props => props.theme.screens.sm}) {
+  @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
     margin-bottom: 1.6rem;
   }
 `;
 
 const CancelButton = styled.button`
-  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+  padding: ${(props) => props.theme.spacing.sm}
+    ${(props) => props.theme.spacing.md};
   margin-right: 1rem;
-  border: 1px solid ${props => props.theme.colors.gray[400]};
+  border: 1px solid ${(props) => props.theme.colors.gray[400]};
   border-radius: 2px;
   background-color: #fff;
   font-size: 1.4rem;
-  box-shadow: ${props => props.theme.boxShadow.sm};
+  box-shadow: ${(props) => props.theme.boxShadow.sm};
 
   &:hover {
     cursor: pointer;
-    background-color: ${props => props.theme.colors.red[300]};
+    border: 1px solid ${(props) => props.theme.colors.gray[900]};
+    box-shadow: ${(props) => props.theme.boxShadow.md};
   }
 
   &:active {
-    border: 1px solid ${props => props.theme.colors.red[600]};
+    border: 1px solid ${(props) => props.theme.colors.red[600]};
   }
 `;
 
 const AcceptButton = styled.button`
-  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+  padding: ${(props) => props.theme.spacing.sm}
+    ${(props) => props.theme.spacing.md};
   border: none;
   border-radius: 2px;
-  background-color: ${props => props.theme.colors.green[500]};
+  background-color: ${(props) => props.theme.colors.green[500]};
   color: #fff;
   font-size: 1.4rem;
-  box-shadow: ${props => props.theme.boxShadow.sm};
+  box-shadow: ${(props) => props.theme.boxShadow.sm};
 
   &:hover {
     cursor: pointer;
-    background-color: ${props => props.theme.colors.green[400]};
+    background-color: ${(props) => props.theme.colors.green[400]};
   }
 
   &:active {
-    background-color: ${props => props.theme.colors.green[500]};
+    background-color: ${(props) => props.theme.colors.green[500]};
   }
 `;
 
@@ -211,11 +218,15 @@ const StatusContainer = styled.div`
   padding: 3.6rem;
   background-color: #fff;
 
-  & > h3 {
+  & > h4 {
     max-width: 30rem;
     font-size: 2.4rem;
-    color: ${props => props.theme.colors.gray[800]};
+    color: ${(props) => props.theme.colors.gray[800]};
     margin-bottom: 2.4rem;
+
+    @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
+      font-size: 1.8rem;
+    }
   }
 `;
 
@@ -228,9 +239,13 @@ const StatusBar = styled.div<ProgressI>`
   width: 40rem;
   height: 2.6rem;
   border-radius: 50px;
-  background-color: ${props => props.theme.colors.gray[300]};
-  box-shadow: ${props => props.theme.boxShadow.sm};
+  background-color: ${(props) => props.theme.colors.gray[300]};
+  box-shadow: ${(props) => props.theme.boxShadow.sm};
   overflow: hidden;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
+    width: 25rem;
+  }
 
   &::before {
     position: absolute;
@@ -240,8 +255,8 @@ const StatusBar = styled.div<ProgressI>`
     height: 100%;
     width: 100%;
     border-radius: 50px;
-    background-color: ${props => props.theme.colors.green[600]};
-    transform: translateX(${props => props.progress}%);
+    background-color: ${(props) => props.theme.colors.green[600]};
+    transform: translateX(${(props) => props.progress}%);
     transition: all ease 0.2s;
   }
 `;

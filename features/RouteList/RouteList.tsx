@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import Select from 'react-select';
 import compareAsc from 'date-fns/compareAsc';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
@@ -13,6 +12,9 @@ import {
   removeFilter,
 } from './routeListSlice';
 import RouteCard from './RouteCard';
+import MobileFilters from './MobileFilters';
+import CustomSelect from './CustomSelect';
+
 interface ElevationData {
   distance: number;
   segDistance: number;
@@ -30,12 +32,17 @@ interface RouteI {
   created_on: string;
 }
 
-interface Filters {
+export interface FiltersTypes {
   keyword: string;
   distance: {
     min: number;
     max: number;
   };
+}
+
+export interface SelectOption {
+  value: string;
+  label: string;
 }
 
 const renderDistance = ({ min, max }: { min: number; max: number }): string => {
@@ -56,7 +63,7 @@ const renderDistance = ({ min, max }: { min: number; max: number }): string => {
 const sortRoutes = (
   sortTerm: string,
   routes: RouteI[],
-  filters: Filters
+  filters: FiltersTypes
 ): RouteI[] => {
   let result = routes;
   const { keyword, distance } = filters;
@@ -113,23 +120,8 @@ const sortRoutes = (
   }
 };
 
-const options = [
-  { value: 'newest', label: 'Sort By: Newest' },
-  { value: 'oldest', label: 'Sort By: Oldest' },
-  { value: 'shortest', label: 'Sort By: Shortest' },
-  { value: 'longest', label: 'Sort By: Longest' },
-];
-
-const customStyles = {
-  container: (provided) => ({
-    ...provided,
-    width: '300px',
-    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.04)',
-    fontSize: '14px',
-  }),
-};
-
 const RouteList: React.FC<{}> = () => {
+  const [open, setOpen] = useState<boolean>(false);
   const { sortedRoutes, sortingTerm, filters } = useSelector(
     (state: RootState) => ({
       sortedRoutes: sortRoutes(
@@ -141,11 +133,10 @@ const RouteList: React.FC<{}> = () => {
       filters: state.routeList.filters,
     })
   );
-
   const dispatch = useDispatch();
 
-  const handleSelect = (selectedOption) => {
-    dispatch(updateSortingTerm(selectedOption));
+  const handleSelect = (selectedOption: SelectOption) => {
+    dispatch(updateSortingTerm(selectedOption.value));
   };
 
   const handleChange = (filter, value) => {
@@ -183,79 +174,77 @@ const RouteList: React.FC<{}> = () => {
     });
   };
 
-  console.log(filters);
-
   return (
-    <Layout>
-      <Header>
-        <Badges>
-          <p>{sortedRoutes.length} routes</p>
-          {renderBadges(filters)}
-        </Badges>
-        <Select
-          styles={customStyles}
-          theme={(theme) => ({
-            ...theme,
-            borderRadius: 2,
-            colors: {
-              ...theme.colors,
-              primary: '#4c51bf',
-            },
-          })}
-          defaultValue={options.filter(
-            (option) => option.value === sortingTerm
-          )}
-          {...{ options }}
-          onChange={handleSelect}
-        />
-      </Header>
-      <Grid>
-        <Filters>
-          <FilterGroup>
-            <Label>Keyword</Label>
-            <InputWrapper>
-              <FontAwesomeIcon icon={faSearch} />
-              <InputWithIcon
-                onChange={(e) => handleChange('keyword', e.target.value)}
-                value={filters.keyword}
-                type="text"
-                placeholder="Filter by keyword"
-              />
-            </InputWrapper>
-          </FilterGroup>
-          <FilterGroup>
-            <Label>Distance</Label>
-            <InputGroup>
-              <Input
-                type="number"
-                placeholder="Min"
-                value={filters.distance.min}
-                onChange={(e) =>
-                  handleChange('distance/min', e.target.value || 0)
-                }
-              />
-              <Input
-                type="number"
-                placeholder="Max"
-                value={filters.distance.max}
-                onChange={(e) =>
-                  handleChange('distance/max', e.target.value || 0)
-                }
-              />
-            </InputGroup>
-          </FilterGroup>
-        </Filters>
-        <RouteGrid>
-          {sortedRoutes.length
-            ? sortedRoutes.map(
-                ({ id, name, image, total_distance: totalDistance }) => (
-                  <RouteCard key={id} {...{ id, name, image, totalDistance }} />
-                )
-              )
-            : 'No Routes to Display'}
-        </RouteGrid>
-      </Grid>
-    </Layout>
+    <>
+      <Layout>
+        <Header>
+          <FilterButton onClick={() => setOpen(true)}>filters</FilterButton>
+          <Badges>
+            <p>{sortedRoutes.length} routes</p>
+            {renderBadges(filters)}
+          </Badges>
+          <SelectContainer>
+            <CustomSelect {...{ sortingTerm, handleSelect }} />
+          </SelectContainer>
+        </Header>
+        <Grid>
+          <Filters>
+            <FilterGroup>
+              <Label>Keyword</Label>
+              <InputWrapper>
+                <FontAwesomeIcon icon={faSearch} />
+                <InputWithIcon
+                  onChange={(e) => handleChange('keyword', e.target.value)}
+                  value={filters.keyword}
+                  type="text"
+                  placeholder="Filter by keyword"
+                />
+              </InputWrapper>
+            </FilterGroup>
+            <FilterGroup>
+              <Label>Distance</Label>
+              <InputGroup>
+                <Input
+                  type="number"
+                  placeholder="Min"
+                  value={filters.distance.min}
+                  onChange={(e) =>
+                    handleChange('distance/min', e.target.value || 0)
+                  }
+                />
+                <Input
+                  type="number"
+                  placeholder="Max"
+                  value={filters.distance.max}
+                  onChange={(e) =>
+                    handleChange('distance/max', e.target.value || 0)
+                  }
+                />
+              </InputGroup>
+            </FilterGroup>
+          </Filters>
+          <>
+            {sortedRoutes.length ? (
+              <RouteGrid>
+                {sortedRoutes.map(
+                  ({ id, name, image, total_distance: totalDistance }) => (
+                    <RouteCard
+                      key={id}
+                      {...{ id, name, image, totalDistance }}
+                    />
+                  )
+                )}
+              </RouteGrid>
+            ) : (
+              <Text>No routes to display</Text>
+            )}
+          </>
+        </Grid>
+      </Layout>
+      <MobileFilters
+        {...{ open, setOpen, handleChange, filters, sortingTerm, handleSelect }}
+      />
+    </>
   );
 };
 
@@ -273,14 +262,49 @@ const Header = styled.div`
   background-color: #fff;
   box-shadow: ${(props) => props.theme.boxShadow.sm};
   z-index: 10;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
+    padding: 1.6rem;
+  }
+`;
+
+const SelectContainer = styled.div`
+  width: 300px;
+  border-radius: 2px;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    display: none;
+  }
+`;
+
+const FilterButton = styled.button`
+  display: none;
+  padding: ${(props) => props.theme.spacing.sm}
+    ${(props) => props.theme.spacing.md};
+  margin-right: 1rem;
+  border: 1px solid ${(props) => props.theme.colors.gray[400]};
+  border-radius: 2px;
+  background-color: #fff;
+  font-size: 1.4rem;
+  box-shadow: ${(props) => props.theme.boxShadow.sm};
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    display: flex;
+  }
+
+  &:hover {
+    cursor: pointer;
+    border: 1px solid ${(props) => props.theme.colors.gray[900]};
+    box-shadow: ${(props) => props.theme.boxShadow.md};
+  }
 `;
 
 const Badges = styled.div`
   display: flex;
   align-items: center;
 
-  &:hover {
-    cursor: pointer;
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    display: none;
   }
 
   & > p {
@@ -301,6 +325,10 @@ const Badge = styled.div`
   border-radius: 2px;
   color: ${(props) => props.theme.colors.teal[800]};
   background-color: ${(props) => props.theme.colors.teal[200]};
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const Grid = styled.div`
@@ -308,6 +336,10 @@ const Grid = styled.div`
   grid-template-columns: 300px 1fr;
   grid-template-rows: 1fr;
   overflow: scroll;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const RouteGrid = styled.div`
@@ -316,29 +348,50 @@ const RouteGrid = styled.div`
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 2.4rem;
   overflow: scroll;
+  justify-content: center;
+
+  @media screen and (max-width: 1050px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
+    grid-template-columns: 300px;
+  }
 `;
 
-const Filters = styled.div`
+export const Filters = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   padding: 2.4rem;
   background-color: #fff;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    display: none;
+  }
 `;
 
-const FilterGroup = styled.div`
+export const FilterGroup = styled.div`
   width: 100%;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    width: 75%;
+  }
+
+  @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
+    width: 90%;
+  }
 `;
 
-const Label = styled.div`
+export const Label = styled.div`
   margin-bottom: 8px;
   font-size: 1.4rem;
   font-weight: 600;
   color: ${(props) => props.theme.colors.gray[900]};
 `;
 
-const InputWrapper = styled.div`
+export const InputWrapper = styled.div`
   position: relative;
   display: flex;
   align-items: center;
@@ -354,7 +407,7 @@ const InputWrapper = styled.div`
   }
 `;
 
-const InputGroup = styled.div`
+export const InputGroup = styled.div`
   display: flex;
 
   & > input {
@@ -364,7 +417,7 @@ const InputGroup = styled.div`
   }
 `;
 
-const Input = styled.input`
+export const Input = styled.input`
   width: 100%;
   padding: 1rem 1rem 1rem 1rem;
   background-color: #fff;
@@ -381,8 +434,16 @@ const Input = styled.input`
   }
 `;
 
-const InputWithIcon = styled(Input)`
+export const InputWithIcon = styled(Input)`
   padding: 1rem 1rem 1rem 3.6rem;
+`;
+
+const Text = styled.p`
+  width: 100%;
+  margin-top: 5rem;
+  color: ${(props) => props.theme.colors.gray[600]};
+  font-size: 2.4rem;
+  text-align: center;
 `;
 
 export default RouteList;

@@ -23,7 +23,9 @@ const RouteCard: React.FC<Props> = ({ id, name, image, totalDistance }) => {
   );
 };
 
-const Card = styled.article``;
+const Card = styled.article`
+  max-width: 300px;
+`;
 
 const ImageFigure = styled.figure`
   height: 18rem;
@@ -43,12 +45,12 @@ const Content = styled.div`
   transform: translateY(-25%);
   background-color: #fff;
   border-radius: 2px;
-  box-shadow: ${props => props.theme.boxShadow.md};
+  box-shadow: ${(props) => props.theme.boxShadow.md};
 
   & > h3 {
     line-height: 1;
     font-size: 2.4rem;
-    color: ${props => props.theme.colors.gray[900]};
+    color: ${(props) => props.theme.colors.gray[900]};
   }
 `;
 
