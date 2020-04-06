@@ -12,7 +12,7 @@ const takeMapImage = handler => async (req, res) => {
       progress: 75,
     });
 
-    console.log('launching browser');
+    // console.log('launching browser');
     const browser = await puppeteer.launch({
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
@@ -21,7 +21,7 @@ const takeMapImage = handler => async (req, res) => {
       progress: 65,
     });
 
-    console.log('awaiting page');
+    // console.log('awaiting page');
     // open new browser
     const page = await browser.newPage();
     // reduce to 2D array of [lat, lon] coords
@@ -30,7 +30,7 @@ const takeMapImage = handler => async (req, res) => {
     // Stringify coords before using them as query string
     const coordsStr = JSON.stringify(flattenedCoords);
 
-    console.log('navigating to url');
+    // console.log('navigating to url');
     // goto page with map sending coordintaes along
     pusher.trigger('save-route', 'status-update', {
       progress: 55,
