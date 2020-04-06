@@ -7,7 +7,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 import { RootState } from '../../app/rootReducer';
-import { updateSortingTerm, updateFilter } from './routeListSlice';
+import {
+  updateSortingTerm,
+  updateFilter,
+  removeFilter,
+} from './routeListSlice';
 import RouteCard from './RouteCard';
 interface ElevationData {
   distance: number;
@@ -28,11 +32,26 @@ interface RouteI {
 
 interface Filters {
   keyword: string;
-  price: {
-    min: number | null;
-    max: number | null;
+  distance: {
+    min: number;
+    max: number;
   };
 }
+
+const renderDistance = ({ min, max }: { min: number; max: number }): string => {
+  let string = '';
+  if (min === max) {
+    string = `${min}`;
+  } else if (max > min && min <= 0) {
+    string = `${max} & Less`;
+  } else if (min > max && max >= 0) {
+    string = `${min} & Greater`;
+  } else if (max > min) {
+    string = `${min} - ${max}`;
+  }
+
+  return string;
+};
 
 const sortRoutes = (
   sortTerm: string,
@@ -40,16 +59,32 @@ const sortRoutes = (
   filters: Filters
 ): RouteI[] => {
   let result = routes;
+  const { keyword, distance } = filters;
 
-  if (filters.keyword) {
-    console.log('filtering by', filters.keyword);
+  if (keyword) {
     result = result.filter(
-      ({ name }) =>
-        name.toLowerCase().indexOf(filters.keyword.toLowerCase()) >= 0
+      ({ name }) => name.toLowerCase().indexOf(keyword.toLowerCase()) >= 0
     );
   }
 
-  if (filters.price.min || filters.price.max) {
+  if (distance.min || distance.max) {
+    if (distance.min === distance.max) {
+      result = result.filter(
+        ({ total_distance }) =>
+          total_distance[total_distance.length - 1] === distance.min
+      );
+    } else if (distance.min > distance.max) {
+      result = result.filter(
+        ({ total_distance }) =>
+          total_distance[total_distance.length - 1] >= distance.min
+      );
+    } else if (distance.min < distance.max) {
+      result = result.filter(
+        ({ total_distance }) =>
+          total_distance[total_distance.length - 1] >= distance.min &&
+          total_distance[total_distance.length - 1] <= distance.max
+      );
+    }
   }
 
   switch (sortTerm) {
@@ -86,7 +121,7 @@ const options = [
 ];
 
 const customStyles = {
-  container: provided => ({
+  container: (provided) => ({
     ...provided,
     width: '300px',
     boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.04)',
@@ -109,21 +144,46 @@ const RouteList: React.FC<{}> = () => {
 
   const dispatch = useDispatch();
 
-  const handleSelectChange = selectedOption => {
-    dispatch(updateSortingTerm(selectedOption.value));
+  const handleSelect = (selectedOption) => {
+    dispatch(updateSortingTerm(selectedOption));
   };
 
   const handleChange = (filter, value) => {
-    dispatch(updateFilter({ filter, value }));
+    if (filter === 'keyword') {
+      dispatch(updateFilter({ filter, value }));
+    } else {
+      // const restrictedValues = ['-', '.', '+', 'e'];
+      // const indexOfRestrictedValue = -1;
+
+      // for(let i = )
+
+      // make it so the input will not accept '-, e, +, or .'
+      dispatch(updateFilter({ filter, value }));
+    }
   };
 
-  const renderBadges = filters => {
-    return Object.keys(filters).map(filter => {
+  const renderBadges = (filters) => {
+    return Object.keys(filters).map((filter) => {
       if (filter === 'keyword' && filters.keyword) {
-        return <Badge>Keyword: {filters.keyword}</Badge>;
+        return (
+          <Badge key={filter} onClick={() => dispatch(removeFilter(filter))}>
+            Keyword: {filters.keyword} X
+          </Badge>
+        );
+      } else if (
+        filter === 'distance' &&
+        (filters.distance.min > 0 || filters.distance.max > 0)
+      ) {
+        return (
+          <Badge key={filter} onClick={() => dispatch(removeFilter(filter))}>
+            Distance: {renderDistance(filters.distance)} X
+          </Badge>
+        );
       }
     });
   };
+
+  console.log(filters);
 
   return (
     <Layout>
@@ -134,7 +194,7 @@ const RouteList: React.FC<{}> = () => {
         </Badges>
         <Select
           styles={customStyles}
-          theme={theme => ({
+          theme={(theme) => ({
             ...theme,
             borderRadius: 2,
             colors: {
@@ -142,9 +202,11 @@ const RouteList: React.FC<{}> = () => {
               primary: '#4c51bf',
             },
           })}
-          defaultValue={options.filter(option => option.value === sortingTerm)}
+          defaultValue={options.filter(
+            (option) => option.value === sortingTerm
+          )}
           {...{ options }}
-          onChange={handleSelectChange}
+          onChange={handleSelect}
         />
       </Header>
       <Grid>
@@ -154,7 +216,7 @@ const RouteList: React.FC<{}> = () => {
             <InputWrapper>
               <FontAwesomeIcon icon={faSearch} />
               <InputWithIcon
-                onChange={e => handleChange('keyword', e.target.value)}
+                onChange={(e) => handleChange('keyword', e.target.value)}
                 value={filters.keyword}
                 type="text"
                 placeholder="Filter by keyword"
@@ -167,15 +229,17 @@ const RouteList: React.FC<{}> = () => {
               <Input
                 type="number"
                 placeholder="Min"
-                onChange={e =>
-                  handleChange('price/min', parseInt(e.target.value))
+                value={filters.distance.min}
+                onChange={(e) =>
+                  handleChange('distance/min', e.target.value || 0)
                 }
               />
               <Input
                 type="number"
                 placeholder="Max"
-                onChange={e =>
-                  handleChange('price/max', parseInt(e.target.value))
+                value={filters.distance.max}
+                onChange={(e) =>
+                  handleChange('distance/max', e.target.value || 0)
                 }
               />
             </InputGroup>
@@ -196,7 +260,7 @@ const RouteList: React.FC<{}> = () => {
 };
 
 const Layout = styled.div`
-  height: calc(100vh - ${props => props.theme.navHeight});
+  height: calc(100vh - ${(props) => props.theme.navHeight});
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: min-content 1fr;
@@ -207,7 +271,7 @@ const Header = styled.div`
   justify-content: space-between;
   padding: 2.4rem;
   background-color: #fff;
-  box-shadow: ${props => props.theme.boxShadow.sm};
+  box-shadow: ${(props) => props.theme.boxShadow.sm};
   z-index: 10;
 `;
 
@@ -215,18 +279,28 @@ const Badges = styled.div`
   display: flex;
   align-items: center;
 
+  &:hover {
+    cursor: pointer;
+  }
+
   & > p {
-    font-size: 1.2rem;
+    margin-right: 1rem;
+    font-size: 1.4rem;
+    font-style: italic;
+  }
+
+  & > div:not(:last-child) {
+    margin-right: 6px;
   }
 `;
 
 const Badge = styled.div`
   padding: 4px 6px;
   font-size: 1.4rem;
-  border: 1px solid ${props => props.theme.colors.teal[800]};
+  border: 1px solid ${(props) => props.theme.colors.teal[800]};
   border-radius: 2px;
-  color: ${props => props.theme.colors.teal[800]};
-  background-color: ${props => props.theme.colors.teal[200]};
+  color: ${(props) => props.theme.colors.teal[800]};
+  background-color: ${(props) => props.theme.colors.teal[200]};
 `;
 
 const Grid = styled.div`
@@ -261,7 +335,7 @@ const Label = styled.div`
   margin-bottom: 8px;
   font-size: 1.4rem;
   font-weight: 600;
-  color: ${props => props.theme.colors.gray[900]};
+  color: ${(props) => props.theme.colors.gray[900]};
 `;
 
 const InputWrapper = styled.div`
@@ -274,7 +348,7 @@ const InputWrapper = styled.div`
   svg {
     position: absolute;
     font-size: 1.4rem;
-    color: ${props => props.theme.colors.gray[600]};
+    color: ${(props) => props.theme.colors.gray[600]};
     z-index: 20;
     transform: translateX(1.1rem);
   }
@@ -294,15 +368,15 @@ const Input = styled.input`
   width: 100%;
   padding: 1rem 1rem 1rem 1rem;
   background-color: #fff;
-  border: 1px solid ${props => props.theme.colors.gray[400]};
+  border: 1px solid ${(props) => props.theme.colors.gray[400]};
   border-radius: 2px;
   font-size: 1.4rem;
-  box-shadow: ${props => props.theme.boxShadow.sm};
-  color: ${props => props.theme.colors.gray[900]};
+  box-shadow: ${(props) => props.theme.boxShadow.sm};
+  color: ${(props) => props.theme.colors.gray[900]};
 
   &:focus {
     outline: none;
-    box-shadow: ${props => props.theme.boxShadow.outline};
+    box-shadow: ${(props) => props.theme.boxShadow.outline};
     background-color: #fff;
   }
 `;

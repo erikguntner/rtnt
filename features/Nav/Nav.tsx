@@ -101,7 +101,7 @@ const NavContainer = styled.nav`
   }
 `;
 
-const Avatar = styled.button`
+const Avatar = styled.div`
   position: relative;
   display: flex;
   align-items: center;
