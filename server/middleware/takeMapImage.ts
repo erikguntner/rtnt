@@ -19,9 +19,9 @@ const takeMapImage = handler => async (req, res) => {
 
     const browser = await chromium.puppeteer.launch({
       executablePath: await chromium.executablePath,
-      // args: chromium.args,
-      // defaultViewport: chromium.defaultViewport,
-      // headless: chromium.headless,
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      headless: chromium.headless,
     });
 
     pusher.trigger('save-route', 'status-update', {
