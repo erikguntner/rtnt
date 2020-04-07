@@ -32,7 +32,7 @@ interface State {
 
 export const initialState: State = {
   routes: [],
-  sortingTerm: 'longest',
+  sortingTerm: 'newest',
   filters: {
     keyword: '',
     distance: {

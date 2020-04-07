@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import puppeteer from 'puppeteer';
+// import puppeteer from 'puppeteer';
+import chromium from 'chrome-aws-lambda';
 import pusher from '../services/pusher';
 
 const takeMapImage = handler => async (req, res) => {
@@ -13,8 +14,15 @@ const takeMapImage = handler => async (req, res) => {
     });
 
     // console.log('launching browser');
-    const browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    // const browser = await puppeteer.launch({
+    //   args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    // });
+
+    const browser = await chromium.puppeteer.launch({
+      executablePath: await chromium.executablePath,
+      // args: chromium.args,
+      // defaultViewport: chromium.defaultViewport,
+      // headless: chromium.headless,
     });
 
     pusher.trigger('save-route', 'status-update', {
