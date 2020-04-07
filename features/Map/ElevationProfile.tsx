@@ -7,6 +7,7 @@ import React, {
   MutableRefObject,
 } from 'react';
 import styled from 'styled-components';
+import ResizeObserver from 'resize-observer-polyfill';
 import { createChart } from '../../utils/d3/utils';
 
 interface ElevationData {
@@ -33,7 +34,7 @@ const useResizeObserver = (
 
   useEffect(() => {
     const observerTarget = ref.current;
-    const resizeObserver = new ResizeObserver(entries => {
+    const resizeObserver = new ResizeObserver((entries) => {
       const { width, height } = entries[0].contentRect;
       setDimensions({ width, height });
     });
@@ -99,7 +100,7 @@ const Text = styled.p`
   justify-content: center;
   align-items: center;
   font-size: 2.4rem;
-  color: ${props => props.theme.colors.gray[600]};
+  color: ${(props) => props.theme.colors.gray[600]};
 `;
 
 const ChartContainer = styled.div<StyleProps>`
@@ -110,7 +111,7 @@ const ChartContainer = styled.div<StyleProps>`
   margin: 0 auto;
   width: 100vw;
   height: 35%;
-  background-color: ${props => props.theme.colors.gray[100]};
+  background-color: ${(props) => props.theme.colors.gray[100]};
   display: block;
   z-index: 25;
   transition: all 0.3s ease;

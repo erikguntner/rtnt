@@ -72,6 +72,7 @@
     "@types/webpack-env": "^1.15.0",
     "babel-plugin-styled-components": "^1.10.6",
     "puppeteer": "^2.1.1",
+    "resize-observer-polyfill": "^1.5.1",
     "typescript": "^3.6.4"
   }
 }
