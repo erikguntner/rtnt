@@ -33,8 +33,6 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({
   sortingTerm,
   handleSelect,
 }) => {
-  console.log('mobile filter status', open);
-
   return (
     <Portal selector={'#portal'}>
       {open && (

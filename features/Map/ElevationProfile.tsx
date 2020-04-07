@@ -15,7 +15,7 @@ interface ElevationData {
   elevation: number;
 }
 interface Props {
-  showElevation: boolean;
+  showElevation?: boolean | null;
   lines: number[][][];
   elevationData: ElevationData[][];
   units: string;
@@ -47,13 +47,13 @@ const useResizeObserver = (
 };
 
 const ElevationProfile: React.FC<Props> = ({
-  showElevation,
+  showElevation = true,
   lines,
   elevationData,
   units,
   setDistanceAlongPath,
 }) => {
-  if (!showElevation) {
+  if (!showElevation && showElevation !== null) {
     return null;
   }
 
@@ -89,10 +89,6 @@ const ElevationProfile: React.FC<Props> = ({
   );
 };
 
-interface StyleProps {
-  showElevation: boolean;
-}
-
 const Text = styled.p`
   width: 100%;
   height: 100%;
@@ -103,7 +99,7 @@ const Text = styled.p`
   color: ${(props) => props.theme.colors.gray[600]};
 `;
 
-const ChartContainer = styled.div<StyleProps>`
+const ChartContainer = styled.div`
   position: absolute;
   bottom: 0;
   left: 0;

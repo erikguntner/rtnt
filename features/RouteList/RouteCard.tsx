@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import styled from 'styled-components';
 
 interface Props {
@@ -18,6 +19,9 @@ const RouteCard: React.FC<Props> = ({ id, name, image, totalDistance }) => {
       <Content>
         <h3>{name}</h3>
         <p>{totalDistance[totalDistance.length - 1].toFixed(2)}</p>
+        <Link href="/route/[id]" as={`/route/${id}`}>
+          <a>View</a>
+        </Link>
       </Content>
     </Card>
   );

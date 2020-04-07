@@ -26,7 +26,6 @@ const saveRoute = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       const { id } = req.user;
       const { name, lines, elevationData, points, totalDistance } = req.body;
       const { image } = req;
-      console.log('image', image);
 
       pusher.trigger('save-route', 'status-update', {
         message: 'Saving route',
