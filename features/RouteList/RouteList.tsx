@@ -423,7 +423,7 @@ export const Input = styled.input`
   background-color: #fff;
   border: 1px solid ${(props) => props.theme.colors.gray[400]};
   border-radius: 2px;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   box-shadow: ${(props) => props.theme.boxShadow.sm};
   color: ${(props) => props.theme.colors.gray[900]};
 

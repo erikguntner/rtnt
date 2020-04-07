@@ -58,7 +58,7 @@ export const Input = styled.input<InputProps>`
     ${(props) =>
       props.error ? props.theme.colors.red[400] : props.theme.colors.gray[400]};
   border-radius: 2px;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   box-shadow: ${(props) => props.theme.boxShadow.sm};
   color: ${(props) =>
     props.error ? props.theme.colors.red[900] : props.theme.colors.gray[900]};
