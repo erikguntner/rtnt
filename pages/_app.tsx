@@ -9,6 +9,7 @@ import styled, { ThemeProvider } from 'styled-components';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import debounce from 'lodash/debounce';
+import LogRocket from 'logrocket';
 
 import Nav from '../features/Nav/Nav';
 import 'mapbox-gl/src/css/mapbox-gl.css';
@@ -37,8 +38,14 @@ Router.events.on('routeChangeError', () => {
   NProgress.done();
 });
 
+if (process.env.NODE_ENV === 'development') {
+  LogRocket.init('hhtrbz/run-tracker');
+} else {
+  LogRocket.init('hhtrbz/run-tracker-prod');
+}
+
 const Container = styled.div`
-  background-color: ${props => props.theme.colors.gray[100]};
+  background-color: ${(props) => props.theme.colors.gray[100]};
 `;
 
 const Layout = ({ children }) => {
