@@ -12,6 +12,8 @@ import API_URL from '../../utils/url';
 interface Props {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  saving: boolean;
+  setSaving: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface StatusI {
@@ -19,9 +21,13 @@ interface StatusI {
   progress: number;
 }
 
-const SaveRouteModal: React.FC<Props> = ({ open, setOpen }) => {
+const SaveRouteModal: React.FC<Props> = ({
+  open,
+  setOpen,
+  saving,
+  setSaving,
+}) => {
   const [value, setValue] = useState<string>('');
-  const [saving, setSaving] = useState<boolean>(false);
   const [status, setStatus] = useState<string>('beginning save process');
   const [progress, setProgress] = useState<number>(-90);
 

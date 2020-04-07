@@ -25,6 +25,7 @@ interface Props {
 
 const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
   const [open, setOpen] = useState<boolean>(false);
+  const [saving, setSaving] = useState<boolean>(false);
 
   const dispatch = useDispatch();
   const { points, future, past, authenticated } = useSelector(
@@ -36,7 +37,8 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
     })
   );
 
-  const isAuthenticated: boolean = authenticated === '';
+  const isAuthenticated: boolean =
+    authenticated === '' || saving === true ? true : false;
 
   return (
     <ControlsContainer>
@@ -89,7 +91,7 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
         activeState={!clipPath}
         tooltip={'linear'}
       /> */}
-      <SaveRouteModal {...{ open, setOpen }} />
+      <SaveRouteModal {...{ open, setOpen, saving, setSaving }} />
     </ControlsContainer>
   );
 };
@@ -112,7 +114,7 @@ const ControlsContainer = styled.div`
   @media screen and (max-width: 600px) {
     max-width: calc(100% - 2.4rem);
     padding: 0 1.2px;
-    top: calc(1.2rem + ${props => props.theme.navHeight});
+    top: calc(1.2rem + ${(props) => props.theme.navHeight});
   }
 `;
 
