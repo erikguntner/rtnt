@@ -13,7 +13,6 @@ const takeMapImage = handler => async (req, res) => {
       progress: 75,
     });
 
-    // console.log('launching browser');
     // const browser = await puppeteer.launch({
     //   args: ['--no-sandbox', '--disable-setuid-sandbox'],
     // });
