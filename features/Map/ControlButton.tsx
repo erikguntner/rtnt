@@ -45,10 +45,10 @@ const Button = styled.button<ButtonProps>`
   width: 12rem;
   border: none;
   padding: 0;
-  background-color: ${props => props.theme.colors.gray[200]};
+  background-color: ${(props) => props.theme.colors.gray[200]};
 
   &:not(:last-child) {
-    border-right: 1px solid ${props => props.theme.colors.gray[200]};
+    border-right: 1px solid ${(props) => props.theme.colors.gray[200]};
   }
 
   &:hover {
@@ -65,7 +65,7 @@ const Button = styled.button<ButtonProps>`
 
   &:hover div:first-of-type {
     cursor: pointer;
-    transform: ${props =>
+    transform: ${(props) =>
       props.activeState
         ? 'translate3d(0, -3px, 0)'
         : 'translate3d(0, -8px, 0)'};
@@ -104,9 +104,9 @@ const InnerButton = styled.div<ButtonProps>`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${props =>
+  background-color: ${(props) =>
     props.activeState ? props.theme.colors.indigo[100] : '#fff'};
-  color: ${props => {
+  color: ${(props) => {
     if (props.activeState) {
       return props.theme.colors.indigo[600];
     } else if (props.disabled) {
@@ -117,7 +117,7 @@ const InnerButton = styled.div<ButtonProps>`
   }};
   font-size: 2rem;
   text-transform: uppercase;
-  transform: ${props =>
+  transform: ${(props) =>
     props.activeState ? 'translate3d(0, -3px, 0)' : 'translate3d(0, -6px, 0)'};
   transition: 0.2s all linear;
 
@@ -137,13 +137,13 @@ const InnerButton = styled.div<ButtonProps>`
     align-items: center;
     justify-content: center;
     transform: translate3d(0, -3px, 0);
-    background-color: ${props => props.theme.colors.primary};
+    background-color: ${(props) => props.theme.colors.primary};
     color: #fff;
     transition: 0.2s all ease;
   }
 
   &:not(:last-child) {
-    border-right: 1px solid ${props => props.theme.colors.gray[200]};
+    border-right: 1px solid ${(props) => props.theme.colors.gray[200]};
   }
 `;
 
