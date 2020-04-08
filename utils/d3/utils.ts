@@ -60,7 +60,7 @@ export const renderLineChart = (
     .append('g')
     .attr('transform', `translate(${margin.left} ${margin.top})`);
 
-  g.append('g').call(axisLeft(yScale));
+  g.append('g').call(axisLeft(yScale).ticks(4));
   g.append('g')
     .call(axisBottom(xScale))
     .attr('transform', `translate(0 ${innerHeight})`);
@@ -122,31 +122,31 @@ export const renderLineChart = (
     .attr('height', innerHeight)
     .attr('fill', 'none')
     .attr('pointer-events', 'all')
-    .on('mouseout', function() {
+    .on('mouseout', function () {
       // on mouse out hide line, circles and text
       select('.mouse-line').style('opacity', '0');
       select('.mouse circle').style('opacity', '0');
       selectAll('.mouse text').style('opacity', '0');
       setDistanceAlongPath(0);
     })
-    .on('mouseover', function() {
+    .on('mouseover', function () {
       // on mouse in show line, circles and text
       select('.mouse-line').style('opacity', '1');
       select('.mouse circle').style('opacity', '1');
       selectAll('.mouse text').style('opacity', '1');
     })
-    .on('mousemove', function() {
+    .on('mousemove', function () {
       // mouse moving over canvas
       //@ts-ignore
       const mouseCoords = mouse(this);
-      select('.mouse-line').attr('d', function() {
+      select('.mouse-line').attr('d', function () {
         let d = 'M' + mouseCoords[0] + ',' + innerHeight;
         d += ' ' + mouseCoords[0] + ',' + 0;
         return d;
       });
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      select('.mouse').attr('transform', function(d: ElevationData[]) {
+      select('.mouse').attr('transform', function (d: ElevationData[]) {
         // const distances = lineData.map(obj => obj.distance);
 
         // const xDistance = xScale.invert(mouseCoords[0]);

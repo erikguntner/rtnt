@@ -105,8 +105,8 @@ const ChartContainer = styled.div`
   left: 0;
   right: 0;
   margin: 0 auto;
-  width: 100vw;
-  height: 35%;
+  width: 100%;
+  height: 30%;
   background-color: ${(props) => props.theme.colors.gray[100]};
   display: block;
   z-index: 25;

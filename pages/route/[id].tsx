@@ -103,61 +103,114 @@ const Profile: NextPage<{}> = () => {
     }
   }, [distanceAlongPath]);
 
+  console.log(data);
+
   return (
-    <MapContainer>
-      {data && (
-        <ElevationProfile
-          {...{
-            units,
-            setDistanceAlongPath,
-          }}
-          elevationData={data.route.elevation_data}
-          lines={data.route.lines}
-        />
-      )}
-      <ReactMapGL
-        {...viewport}
-        mapboxApiAccessToken={process.env.MAPBOX_TOKEN}
-        reuseMap={true}
-        width={'100%'}
-        height={'100%'}
-        style={{ display: 'flex', flex: '1' }}
-        onViewportChange={(viewport) => setViewport(viewport)}
-        mapStyle="mapbox://styles/mapbox/outdoors-v10"
-      >
+    <Wrapper>
+      <MapContainer>
+        <Title>{data ? data.route.name : ''}</Title>
+        <ReactMapGL
+          {...viewport}
+          mapboxApiAccessToken={process.env.MAPBOX_TOKEN}
+          reuseMap={true}
+          width={'100%'}
+          height={'100%'}
+          style={{ display: 'flex', flex: '1' }}
+          onViewportChange={(viewport) => setViewport(viewport)}
+          mapStyle="mapbox://styles/mapbox/outdoors-v10"
+        >
+          {data && (
+            <>
+              <SvgPath points={data.route.lines} />
+              <DistanceMarkers {...{ units }} lines={data.route.lines} />
+              {pointAlongPath.length ? (
+                <Marker
+                  longitude={pointAlongPath[0]}
+                  latitude={pointAlongPath[1]}
+                >
+                  <Label>{distanceAlongPath.toFixed(2)}</Label>
+                  <DistanceMarker />
+                </Marker>
+              ) : null}
+            </>
+          )}
+        </ReactMapGL>
         {data && (
-          <>
-            <SvgPath points={data.route.lines} />
-            <DistanceMarkers {...{ units }} lines={data.route.lines} />
-            {pointAlongPath.length ? (
-              <Marker
-                longitude={pointAlongPath[0]}
-                latitude={pointAlongPath[1]}
-              >
-                <Label>{distanceAlongPath.toFixed(2)}</Label>
-                <DistanceMarker />
-              </Marker>
-            ) : null}
-          </>
+          <ElevationWrapper>
+            <ElevationProfile
+              {...{
+                units,
+                setDistanceAlongPath,
+              }}
+              elevationData={data.route.elevation_data}
+              lines={data.route.lines}
+            />
+          </ElevationWrapper>
         )}
-      </ReactMapGL>
-      {!data && <LoadingIndicator />}
-      {data && (
-        <DistanceIndicator
-          {...{ units, authenticated }}
-          elevationData={data.route.elevation_data}
-        />
-      )}
-    </MapContainer>
+        {!data && <LoadingIndicator />}
+        {data && (
+          <DistanceIndicator
+            {...{ units, authenticated }}
+            elevationData={data.route.elevation_data}
+          />
+        )}
+      </MapContainer>
+      <Block />
+    </Wrapper>
   );
 };
 
-const MapContainer = styled.div`
+const Wrapper = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
   height: calc(100vh - ${(props) => props.theme.navHeight});
   width: 100vw;
+`;
+
+const Title = styled.h1`
+  letter-spacing: 2px;
+  padding: 1.6rem 0;
+  font-size: 3.6rem;
+  color: #fff;
+`;
+
+const Block = styled.div`
+  height: 200px;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: ${(props) => props.theme.colors.gray[800]};
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin: 0 1.6rem;
+    height: 1px;
+    background-color: ${(props) => props.theme.colors.gray[700]};
+  }
+`;
+
+const MapContainer = styled.div`
+  height: 75%;
+  width: 75vw;
   display: grid;
-  grid-template-rows: 70% 30%;
-  flex-direction: column;
+  grid-template-rows: min-content 70% 30%;
+  z-index: 100;
+`;
+
+const ElevationWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  & > div {
+    height: 100%;
+  }
 `;
 
 const Label = styled.div`
