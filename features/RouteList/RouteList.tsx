@@ -279,8 +279,7 @@ const SelectContainer = styled.div`
 
 const FilterButton = styled.button`
   display: none;
-  padding: ${(props) => props.theme.spacing.sm}
-    ${(props) => props.theme.spacing.md};
+  padding: 8px 1.2rem;
   margin-right: 1rem;
   border: 1px solid ${(props) => props.theme.colors.gray[400]};
   border-radius: 2px;

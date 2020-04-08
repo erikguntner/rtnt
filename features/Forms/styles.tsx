@@ -71,8 +71,7 @@ export const Input = styled.input<InputProps>`
 `;
 
 export const SubmitButton = styled.button`
-  padding: ${(props) => props.theme.spacing.sm}
-    ${(props) => props.theme.spacing.md};
+  padding: 8px 1.2rem;
   border: none;
   border-radius: 2px;
   background-color: ${(props) => props.theme.colors.indigo[700]};

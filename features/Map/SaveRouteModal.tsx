@@ -176,8 +176,7 @@ const InputWrapper = styled.div`
 `;
 
 const CancelButton = styled.button`
-  padding: ${(props) => props.theme.spacing.sm}
-    ${(props) => props.theme.spacing.md};
+  padding: 8px 1.2rem;
   margin-right: 1rem;
   border: 1px solid ${(props) => props.theme.colors.gray[400]};
   border-radius: 2px;
@@ -197,8 +196,7 @@ const CancelButton = styled.button`
 `;
 
 const AcceptButton = styled.button`
-  padding: ${(props) => props.theme.spacing.sm}
-    ${(props) => props.theme.spacing.md};
+  padding: 8px 1.2rem;
   border: none;
   border-radius: 2px;
   background-color: ${(props) => props.theme.colors.green[500]};

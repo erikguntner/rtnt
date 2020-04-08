@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
 import styled, { keyframes } from 'styled-components';
@@ -17,14 +17,77 @@ interface Links {
   key?: string;
 }
 
+const useKeyPress = function (targetKey) {
+  const [keyPressed, setKeyPressed] = useState(false);
+
+  function downHandler({ key }) {
+    if (key === targetKey) {
+      setKeyPressed(true);
+    }
+  }
+
+  const upHandler = ({ key }) => {
+    if (key === targetKey) {
+      setKeyPressed(false);
+    }
+  };
+
+  React.useEffect(() => {
+    window.addEventListener('keydown', downHandler);
+    window.addEventListener('keyup', upHandler);
+
+    return () => {
+      window.removeEventListener('keydown', downHandler);
+      window.removeEventListener('keyup', upHandler);
+    };
+  });
+
+  return keyPressed;
+};
+
 const Nav = () => {
   const [open, setOpen] = useState<boolean>(false);
+  const [cursor, setCursor] = useState<number>(0);
+  const downPress = useKeyPress('ArrowDown');
+  const upPress = useKeyPress('ArrowUp');
+  const avatar = useRef<HTMLLIElement>(null);
   const dispatch = useDispatch();
 
   const { authenticated, user } = useSelector((state: RootState) => ({
     authenticated: state.auth.authenticated,
     user: state.auth.user,
   }));
+
+  const handleClick = (e) => {
+    if (avatar.current) {
+      if (avatar.current.contains(e.target)) {
+        // inside click
+        return;
+      }
+
+      setOpen(false);
+    }
+  };
+
+  const handleArrowPress = (e) => {
+    console.log('check keys');
+    if (e.key === 'ArrowUp') {
+      console.log('arrow up');
+    } else if (e.key === 'ArrowDown') {
+      console.log('arrow down');
+    }
+  };
+
+  useEffect(() => {
+    // add when mounted
+    document.addEventListener('mousedown', handleClick);
+    document.addEventListener('keydown', handleArrowPress);
+    // return function to be called when unmounted
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      document.addEventListener('keydown', handleArrowPress);
+    };
+  }, []);
 
   const logout = () => {
     dispatch(
@@ -61,7 +124,7 @@ const Nav = () => {
         )}
         {!!authenticated && (
           <>
-            <Avatar>
+            <Avatar ref={avatar}>
               <AvatarButton onClick={() => setOpen(!open)}>
                 <Username>{user.username}</Username>
                 <AvatarIcon>
@@ -86,9 +149,16 @@ const Nav = () => {
                     }}
                   >
                     <Link href="/myroutes">
-                      <a>My Routes</a>
+                      <a onClick={() => setOpen(false)}>My Routes</a>
                     </Link>
-                    <button onClick={logout}>Sign Out</button>
+                    <button
+                      onClick={() => {
+                        setOpen(false);
+                        logout();
+                      }}
+                    >
+                      Sign Out
+                    </button>
                   </Dropdown>
                 )}
               </AnimatePresence>
@@ -218,7 +288,8 @@ const Dropdown = styled(motion.div)`
     color: ${(props) => props.theme.colors.gray[600]};
     font-size: 1.4rem;
 
-    &:hover {
+    &:hover,
+    &:focus {
       background-color: ${(props) => props.theme.colors.gray[300]};
     }
   }

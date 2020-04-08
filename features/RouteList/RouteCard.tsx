@@ -36,13 +36,15 @@ const RouteCard: React.FC<Props> = ({
       </ImageFigure>
       <Content>
         <h3>{name}</h3>
-        <p>
-          <span>{calculateDistance(elevationData, units)}</span>
-          <span>{abbreviatedDistance(units)}</span>
-        </p>
-        <Link href="/route/[id]" as={`/route/${id}`}>
-          <a>View</a>
-        </Link>
+        <Row>
+          <Distance>
+            <span>{calculateDistance(elevationData, units)}</span>
+            <span>{abbreviatedDistance(units)}</span>
+          </Distance>
+          <Link href="/route/[id]" as={`/route/${id}`}>
+            <a>View</a>
+          </Link>
+        </Row>
       </Content>
     </Card>
   );
@@ -73,10 +75,24 @@ const Content = styled.div`
   box-shadow: ${(props) => props.theme.boxShadow.md};
 
   & > h3 {
+    margin-bottom: 8px;
     line-height: 1;
     font-size: 2.4rem;
     color: ${(props) => props.theme.colors.gray[900]};
   }
+`;
+
+const Distance = styled.p`
+  & > span {
+    margin-right: 4px;
+    font-size: 1.4rem;
+  }
+`;
+
+const Row = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
 `;
 
 export default RouteCard;
