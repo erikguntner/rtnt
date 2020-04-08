@@ -2,15 +2,33 @@ import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 
+import {
+  calculateDistance,
+  abbreviatedDistance,
+} from '../../utils/calculateDistance';
+
+interface ElevationData {
+  distance: number;
+  segDistance: number;
+  elevation: number;
+}
+
 interface Props {
   id: number;
   name: string;
   image: string;
-  totalDistance: number[];
+  elevationData: ElevationData[][];
+  units: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const RouteCard: React.FC<Props> = ({ id, name, image, totalDistance }) => {
+const RouteCard: React.FC<Props> = ({
+  id,
+  name,
+  image,
+  elevationData,
+  units,
+}) => {
   return (
     <Card>
       <ImageFigure>
@@ -18,7 +36,10 @@ const RouteCard: React.FC<Props> = ({ id, name, image, totalDistance }) => {
       </ImageFigure>
       <Content>
         <h3>{name}</h3>
-        <p>{totalDistance[totalDistance.length - 1].toFixed(2)}</p>
+        <p>
+          <span>{calculateDistance(elevationData, units)}</span>
+          <span>{abbreviatedDistance(units)}</span>
+        </p>
         <Link href="/route/[id]" as={`/route/${id}`}>
           <a>View</a>
         </Link>

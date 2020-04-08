@@ -122,17 +122,21 @@ const sortRoutes = (
 
 const RouteList: React.FC<{}> = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const { sortedRoutes, sortingTerm, filters } = useSelector(
-    (state: RootState) => ({
-      sortedRoutes: sortRoutes(
-        state.routeList.sortingTerm,
-        [...state.routeList.routes],
-        state.routeList.filters
-      ),
-      sortingTerm: state.routeList.sortingTerm,
-      filters: state.routeList.filters,
-    })
-  );
+  const {
+    sortedRoutes,
+    sortingTerm,
+    filters,
+    user: { units },
+  } = useSelector((state: RootState) => ({
+    sortedRoutes: sortRoutes(
+      state.routeList.sortingTerm,
+      [...state.routeList.routes],
+      state.routeList.filters
+    ),
+    sortingTerm: state.routeList.sortingTerm,
+    filters: state.routeList.filters,
+    user: state.auth.user,
+  }));
   const dispatch = useDispatch();
 
   const handleSelect = (selectedOption: SelectOption) => {
@@ -178,7 +182,6 @@ const RouteList: React.FC<{}> = () => {
     <>
       <Layout>
         <Header>
-          <FilterButton onClick={() => setOpen(true)}>filters</FilterButton>
           <Badges>
             <p>{sortedRoutes.length} routes</p>
             {renderBadges(filters)}
@@ -186,6 +189,7 @@ const RouteList: React.FC<{}> = () => {
           <SelectContainer>
             <CustomSelect {...{ sortingTerm, handleSelect }} />
           </SelectContainer>
+          <FilterButton onClick={() => setOpen(true)}>filters</FilterButton>
         </Header>
         <Grid>
           <Filters>
@@ -227,10 +231,10 @@ const RouteList: React.FC<{}> = () => {
             {sortedRoutes.length ? (
               <RouteGrid>
                 {sortedRoutes.map(
-                  ({ id, name, image, total_distance: totalDistance }) => (
+                  ({ id, name, image, elevation_data: elevationData }) => (
                     <RouteCard
                       key={id}
-                      {...{ id, name, image, totalDistance }}
+                      {...{ id, name, image, elevationData, units }}
                     />
                   )
                 )}
@@ -258,14 +262,10 @@ const Layout = styled.div`
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: 2.4rem;
+  padding: 1.6rem;
   background-color: #fff;
   box-shadow: ${(props) => props.theme.boxShadow.sm};
   z-index: 10;
-
-  @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
-    padding: 1.6rem;
-  }
 `;
 
 const SelectContainer = styled.div`
@@ -303,9 +303,9 @@ const Badges = styled.div`
   display: flex;
   align-items: center;
 
-  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+  /* @media screen and (max-width: ${(props) => props.theme.screens.md}) {
     display: none;
-  }
+  } */
 
   & > p {
     margin-right: 1rem;

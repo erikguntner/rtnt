@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import * as turfHelpers from '@turf/helpers';
+import {
+  calculateDistance,
+  abbreviatedDistance,
+} from '../../utils/calculateDistance';
 
 import { updateUnits } from '../Auth/authSlice';
 
@@ -17,12 +21,6 @@ interface Props {
   authenticated: string;
 }
 
-const calculateDistance = (data, units): string => {
-  const arrLength = data[data.length - 1].length;
-  const distance = data[data.length - 1][arrLength - 1].distance;
-  return turfHelpers.convertLength(distance, 'meters', units).toFixed(1);
-};
-
 const DistanceIndicator: React.FC<Props> = ({
   elevationData,
   units,
@@ -33,16 +31,7 @@ const DistanceIndicator: React.FC<Props> = ({
 
   const handleClick = () => {
     const newUnits = units === 'miles' ? 'kilometers' : 'miles';
-    // setUnits(() => (units === 'miles' ? 'kilometers' : 'miles'));
     dispatch(updateUnits(newUnits, authenticated));
-  };
-
-  const abbreviatedDistance = (units: string): string => {
-    if (units === 'miles') {
-      return 'mi';
-    } else {
-      return 'km';
-    }
   };
 
   useEffect(() => {

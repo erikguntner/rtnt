@@ -14,6 +14,7 @@ import DistanceIndicator from '../../features/Map/DistanceIndicator';
 import LoadingIndicator from '../../features/Map/LoadingIndicator';
 import { RootState } from '../../app/rootReducer';
 import SvgPath from '../../features/Map/SvgPath';
+
 import { withAuthSync } from '../../utils/auth';
 
 interface Viewport {
