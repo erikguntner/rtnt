@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -10,10 +10,15 @@ import fetch from 'isomorphic-unfetch';
 
 import ElevationProfile from '../../features/Map/ElevationProfile';
 import DistanceMarkers from '../../features/Map/DistanceMarkers';
-import DistanceIndicator from '../../features/Map/DistanceIndicator';
 import LoadingIndicator from '../../features/Map/LoadingIndicator';
 import { RootState } from '../../app/rootReducer';
 import SvgPath from '../../features/Map/SvgPath';
+import {
+  calculateDistance,
+  abbreviatedDistance,
+} from '../../utils/calculateDistance';
+import PopOut from '../../features/Utilities/PopOut';
+import Link from 'next/link';
 
 interface Viewport {
   latitude: number;
@@ -69,6 +74,9 @@ const RoutePage: NextPage<{}> = () => {
   });
   const [distanceAlongPath, setDistanceAlongPath] = useState<number>(0);
   const [pointAlongPath, setPointAlongPath] = useState<number[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
+  const options = useRef<HTMLDivElement>(null);
+
   const {
     authenticated,
     user: { units },
@@ -101,12 +109,43 @@ const RoutePage: NextPage<{}> = () => {
     }
   }, [distanceAlongPath]);
 
-  console.log(data);
-
   return (
     <Wrapper>
+      <Header>
+        {data && (
+          <>
+            <h1>{data.route.name}</h1>
+            <div>
+              <Distance>
+                <span>
+                  {calculateDistance(data.route.elevation_data, units)}
+                </span>
+                <span>{abbreviatedDistance(units)}</span>
+              </Distance>
+              <Options ref={options}>
+                <button onClick={() => setOpen(!open)}>Options</button>
+                <PopOut
+                  motionKey="optionsPopOut"
+                  parentRef={options}
+                  {...{ open, setOpen }}
+                >
+                  <Link href="/myroutes">
+                    <a onClick={() => setOpen(false)}>My Routes</a>
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setOpen(false);
+                    }}
+                  >
+                    Sign Out
+                  </button>
+                </PopOut>
+              </Options>
+            </div>
+          </>
+        )}
+      </Header>
       <MapContainer>
-        <Title>{data ? data.route.name : ''}</Title>
         <ReactMapGL
           {...viewport}
           mapboxApiAccessToken={process.env.MAPBOX_TOKEN}
@@ -146,12 +185,6 @@ const RoutePage: NextPage<{}> = () => {
           </ElevationWrapper>
         )}
         {!data && <LoadingIndicator />}
-        {data && (
-          <DistanceIndicator
-            {...{ units, authenticated }}
-            elevationData={data.route.elevation_data}
-          />
-        )}
       </MapContainer>
       <Block />
     </Wrapper>
@@ -161,16 +194,44 @@ const RoutePage: NextPage<{}> = () => {
 const Wrapper = styled.div`
   position: relative;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   height: calc(100vh - ${(props) => props.theme.navHeight});
   width: 100vw;
 `;
 
-const Title = styled.h1`
-  letter-spacing: 2px;
+const Header = styled.div`
+  display: flex;
+  width: 75vw;
   padding: 1.6rem 0;
-  font-size: 3.6rem;
-  color: #fff;
+  z-index: 200;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  & h1 {
+    letter-spacing: 2px;
+    font-size: 3.6rem;
+    color: #fff;
+  }
+
+  & p {
+    span {
+      color: #fff;
+      font-size: 2.4rem;
+    }
+  }
+`;
+
+const Options = styled.div`
+  position: relative;
+`;
+
+const Distance = styled.p`
+  & > span {
+    margin-right: 4px;
+    font-size: 1.4rem;
+  }
 `;
 
 const Block = styled.div`
@@ -197,8 +258,9 @@ const MapContainer = styled.div`
   height: 75%;
   width: 75vw;
   display: grid;
-  grid-template-rows: min-content 70% 30%;
+  grid-template-rows: 70% 30%;
   z-index: 100;
+  box-shadow: ${(props) => props.theme.boxShadow.sm};
 `;
 
 const ElevationWrapper = styled.div`

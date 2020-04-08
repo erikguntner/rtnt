@@ -1,4 +1,4 @@
-const route = {
+export const route = {
   route: {
     past: [
       {

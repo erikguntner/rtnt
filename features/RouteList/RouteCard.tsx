@@ -52,27 +52,25 @@ const RouteCard: React.FC<Props> = ({
 
 const Card = styled.article`
   max-width: 300px;
+  box-shadow: ${(props) => props.theme.boxShadow.sm};
 `;
 
 const ImageFigure = styled.figure`
   height: 18rem;
-  border-radius: 2px;
+  border-radius: 2px 2px 0 0;
 
   & > img {
     height: 100%;
     width: 100%;
-    border-radius: 2px;
+    border-radius: 2px 2px 0 0;
   }
 `;
 
 const Content = styled.div`
-  width: 90%;
   margin: 0 auto;
   padding: 1.8rem;
-  transform: translateY(-25%);
   background-color: #fff;
-  border-radius: 2px;
-  box-shadow: ${(props) => props.theme.boxShadow.md};
+  border-radius: 0 0 2px 2px;
 
   & > h3 {
     margin-bottom: 8px;
