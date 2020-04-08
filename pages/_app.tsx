@@ -16,6 +16,7 @@ import 'mapbox-gl/src/css/mapbox-gl.css';
 import withReduxStore from '../utils/withReduxStore';
 import { authenticateUser } from '../features/Auth/authSlice';
 import { theme, GlobalStyle } from '../utils/theme';
+import { initializeStore } from '../app/store';
 import API_URL from '../utils/url';
 
 config.autoAddCss = false;
@@ -64,50 +65,52 @@ const Layout = ({ children }) => {
 };
 
 class MyApp extends App {
-  static async getInitialProps({ Component, ctx }: AppContext) {
-    const { reduxStore } = ctx;
+  // static async getInitialProps({ Component, ctx }: AppContext) {
+  //   const { reduxStore } = ctx;
 
-    const { token } = nextCookie(ctx);
+  //   const { token } = nextCookie(ctx);
 
-    // if token exists, use token to log user in serverside when app loads
-    if (token) {
-      try {
-        const response = await fetch(`${API_URL}/api/user`, {
-          credentials: 'include',
-          headers: {
-            Authorization: JSON.stringify({ token }),
-          },
-        });
+  //   // if token exists, use token to log user in serverside when app loads
+  //   if (token) {
+  //     try {
+  //       const response = await fetch(`${API_URL}/api/user`, {
+  //         credentials: 'include',
+  //         headers: {
+  //           Authorization: JSON.stringify({ token }),
+  //         },
+  //       });
 
-        const { user } = await response.json();
-        reduxStore.dispatch(authenticateUser({ authenticated: token, user }));
-      } catch (error) {
-        // Implementation or Network error
-        console.log(error);
-        return {
-          pageProps: Component.getInitialProps
-            ? await Component.getInitialProps(ctx)
-            : {},
-        };
-      }
-    }
+  //       const { user } = await response.json();
+  //       reduxStore.dispatch(authenticateUser({ authenticated: token, user }));
+  //     } catch (error) {
+  //       // Implementation or Network error
+  //       console.log(error);
+  //       return {
+  //         pageProps: Component.getInitialProps
+  //           ? await Component.getInitialProps(ctx)
+  //           : {},
+  //       };
+  //     }
+  //   }
 
-    return {
-      pageProps: Component.getInitialProps
-        ? await Component.getInitialProps(ctx)
-        : {},
-    };
-  }
+  //   return {
+  //     pageProps: Component.getInitialProps
+  //       ? await Component.getInitialProps(ctx)
+  //       : {},
+  //   };
+  // }
 
   render() {
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     //@ts-ignore
-    const { Component, pageProps, reduxStore } = this.props;
+    // const { Component, pageProps, reduxStore } = this.props;
+    const { Component, pageProps } = this.props;
+    const initStore = initializeStore();
 
     return (
       <ThemeProvider theme={theme}>
         <GlobalStyle />
-        <Provider store={reduxStore}>
+        <Provider store={initStore}>
           <Layout>
             <Component {...pageProps} />
           </Layout>
@@ -117,4 +120,5 @@ class MyApp extends App {
   }
 }
 
+// export default withReduxStore(MyApp);
 export default withReduxStore(MyApp);

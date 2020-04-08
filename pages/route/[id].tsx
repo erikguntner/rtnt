@@ -95,10 +95,6 @@ const RoutePage: NextPage<{}> = () => {
     fetcher
   );
 
-  if (error) {
-    console.log(error);
-  }
-
   useEffect(() => {
     if (distanceAlongPath !== 0 && data) {
       const line = turf.lineString(data.route.lines.flat());
@@ -110,6 +106,16 @@ const RoutePage: NextPage<{}> = () => {
       setPointAlongPath([]);
     }
   }, [distanceAlongPath]);
+
+  if (!data) {
+    return <LoadingIndicator />;
+  }
+
+  if (data.message) {
+    return <h1>There was an error</h1>;
+  }
+
+  console.log(data);
 
   return (
     <Wrapper>
