@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 import { Dispatch, SetStateAction } from 'react';
 import {
+  area,
   axisLeft,
   axisBottom,
   scaleLinear,
@@ -14,8 +15,6 @@ import {
   max,
 } from 'd3';
 import * as turfHelpers from '@turf/helpers';
-
-// import { popData, lineData } from './mockData';
 
 interface ElevationData {
   distance: number;
@@ -31,6 +30,7 @@ export const renderLineChart = (
     height: number;
   }
 ) => {
+  console.log(data);
   const margin = { top: 20, right: 20, bottom: 20, left: 50 };
   const height = dimensions.height;
   const width = dimensions.width;
@@ -70,6 +70,13 @@ export const renderLineChart = (
     .y(d => yScale(yValue(d)))
     .curve(curveMonotoneX);
 
+  const areaGenerator = area()
+    .curve(curveMonotoneX)
+    .x(d => xScale(xValue(d)))
+    .y0(innerHeight)
+    .y1(d => yScale(yValue(d)))
+
+
   const linePath = g
     .append('path')
     .attr('class', 'line-path')
@@ -78,6 +85,29 @@ export const renderLineChart = (
     .attr('stroke-width', '2')
     //@ts-ignore
     .attr('d', lineGenerator(data));
+
+  //@ts-ignore
+  const colorScale = scaleLinear().range(['#667eea', '#7f9cf5', '#a3bffa', '#c3dafe', '#ebf4ff'])
+
+  //@ts-ignore
+  g.append("linearGradient")
+    .attr("id", "temperature-gradient")
+    // .attr("gradientUnits", "userSpaceOnUse")
+    .attr("x1", '0%').attr("y1", '0%')
+    .attr("x2", '0%').attr("y2", '100%')
+    .selectAll("stop")
+    .data(colorScale.range())
+    .enter().append("stop")
+    .attr("offset", (d, i) => i / (colorScale.range().length - 1))
+    .attr("stop-color", (d) => d)
+    .attr("stop-opacity", 0.5);
+
+
+
+  g.append("path")
+    .attr("fill", "url(#temperature-gradient)")
+    //@ts-ignore
+    .attr("d", areaGenerator(data));
 
   // black vertical line to follow mouse
   const mouseG = svg.append('g');
@@ -116,75 +146,81 @@ export const renderLineChart = (
     .attr('transform', 'translate(10,10)')
     .attr('class', 'elevation-text');
 
+  const mouseOut = () => {
+    // on mouse out hide line, circles and text
+    select('.mouse-line').style('opacity', '0');
+    select('.mouse circle').style('opacity', '0');
+    selectAll('.mouse text').style('opacity', '0');
+    setDistanceAlongPath(0);
+  }
+
+  const mouseOver = () => {
+    // on mouse in show line, circles and text
+    select('.mouse-line').style('opacity', '1');
+    select('.mouse circle').style('opacity', '1');
+    selectAll('.mouse text').style('opacity', '1');
+  }
+
+  function mouseMove() {
+    // mouse moving over canvas
+    //@ts-ignore
+    const mouseCoords = mouse(this);
+    select('.mouse-line').attr('d', function () {
+      let d = 'M' + mouseCoords[0] + ',' + innerHeight;
+      d += ' ' + mouseCoords[0] + ',' + 0;
+      return d;
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    select('.mouse').attr('transform', function (d: ElevationData[]) {
+      // const distances = lineData.map(obj => obj.distance);
+
+      // const xDistance = xScale.invert(mouseCoords[0]);
+      // const bisect = bisector(xValue).right;
+      // const idx = bisect(distances, xDistance);
+
+      let beginning = 0;
+      let end = linePath.node().getTotalLength();
+      let pos = null;
+      // const target = null;
+
+      while (true) {
+        const target = Math.floor((beginning + end) / 2);
+        pos = linePath.node().getPointAtLength(target);
+        if (
+          (target === end || target === beginning) &&
+          pos.x !== mouseCoords[0]
+        ) {
+          break;
+        }
+        if (pos.x > mouseCoords[0]) end = target;
+        else if (pos.x < mouseCoords[0]) beginning = target;
+        else break; //position found
+      }
+
+      setDistanceAlongPath(+xScale.invert(pos.x));
+
+      select(this)
+        .select('.elevation-text')
+        .text(yScale.invert(pos.y).toFixed(2));
+
+      select(this)
+        .select('.distance-text')
+        .text(xScale.invert(pos.x).toFixed(2));
+
+      return `translate(${mouseCoords[0]},${pos.y})`;
+    });
+  }
+
   mouseG
     .append('svg:rect') // append a rect to catch mouse movements on canvas
     .attr('width', innerWidth) // can't catch mouse events on a g element
     .attr('height', innerHeight)
     .attr('fill', 'none')
     .attr('pointer-events', 'all')
-    .on('mouseout', function () {
-      // on mouse out hide line, circles and text
-      select('.mouse-line').style('opacity', '0');
-      select('.mouse circle').style('opacity', '0');
-      selectAll('.mouse text').style('opacity', '0');
-      setDistanceAlongPath(0);
-    })
-    .on('mouseover', function () {
-      // on mouse in show line, circles and text
-      select('.mouse-line').style('opacity', '1');
-      select('.mouse circle').style('opacity', '1');
-      selectAll('.mouse text').style('opacity', '1');
-    })
-    .on('mousemove', function () {
-      // mouse moving over canvas
-      //@ts-ignore
-      const mouseCoords = mouse(this);
-      select('.mouse-line').attr('d', function () {
-        let d = 'M' + mouseCoords[0] + ',' + innerHeight;
-        d += ' ' + mouseCoords[0] + ',' + 0;
-        return d;
-      });
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      select('.mouse').attr('transform', function (d: ElevationData[]) {
-        // const distances = lineData.map(obj => obj.distance);
-
-        // const xDistance = xScale.invert(mouseCoords[0]);
-        // const bisect = bisector(xValue).right;
-        // const idx = bisect(distances, xDistance);
-
-        let beginning = 0;
-        let end = linePath.node().getTotalLength();
-        let pos = null;
-        // const target = null;
-
-        while (true) {
-          const target = Math.floor((beginning + end) / 2);
-          pos = linePath.node().getPointAtLength(target);
-          if (
-            (target === end || target === beginning) &&
-            pos.x !== mouseCoords[0]
-          ) {
-            break;
-          }
-          if (pos.x > mouseCoords[0]) end = target;
-          else if (pos.x < mouseCoords[0]) beginning = target;
-          else break; //position found
-        }
-
-        setDistanceAlongPath(+xScale.invert(pos.x));
-
-        select(this)
-          .select('.elevation-text')
-          .text(yScale.invert(pos.y).toFixed(2));
-
-        select(this)
-          .select('.distance-text')
-          .text(xScale.invert(pos.x).toFixed(2));
-
-        return `translate(${mouseCoords[0]},${pos.y})`;
-      });
-    });
+    .on('mouseout', mouseOut)
+    .on('mouseover', mouseOver)
+    .on('mousemove', mouseMove);
 };
 
 export const createChart = (

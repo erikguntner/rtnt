@@ -15,8 +15,6 @@ import LoadingIndicator from '../../features/Map/LoadingIndicator';
 import { RootState } from '../../app/rootReducer';
 import SvgPath from '../../features/Map/SvgPath';
 
-import { withAuthSync } from '../../utils/auth';
-
 interface Viewport {
   latitude: number;
   longitude: number;
@@ -61,7 +59,7 @@ const fetcher = async (url, authenticated) => {
   }
 };
 
-const Profile: NextPage<{}> = () => {
+const RoutePage: NextPage<{}> = () => {
   const [viewport, setViewport] = useState<Viewport>({
     latitude: 34.105999576,
     longitude: -117.718497126,
@@ -235,4 +233,4 @@ const DistanceMarker = styled.div`
   transform: translate3d(-50%, -50%, 0);
 `;
 
-export default withAuthSync(Profile);
+export default RoutePage;
