@@ -7,6 +7,8 @@ import ReactMapGL, { Marker } from 'react-map-gl';
 import * as turf from '@turf/turf';
 import styled from 'styled-components';
 import fetch from 'isomorphic-unfetch';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 
 import ElevationProfile from '../../features/Map/ElevationProfile';
 import DistanceMarkers from '../../features/Map/DistanceMarkers';
@@ -115,7 +117,7 @@ const RoutePage: NextPage<{}> = () => {
         {data && (
           <>
             <h1>{data.route.name}</h1>
-            <div>
+            <HeaderRight>
               <Distance>
                 <span>
                   {calculateDistance(data.route.elevation_data, units)}
@@ -123,7 +125,9 @@ const RoutePage: NextPage<{}> = () => {
                 <span>{abbreviatedDistance(units)}</span>
               </Distance>
               <Options ref={options}>
-                <button onClick={() => setOpen(!open)}>Options</button>
+                <OptionsButton onClick={() => setOpen(!open)}>
+                  <FontAwesomeIcon icon={faEllipsisH} />
+                </OptionsButton>
                 <PopOut
                   motionKey="optionsPopOut"
                   parentRef={options}
@@ -141,7 +145,7 @@ const RoutePage: NextPage<{}> = () => {
                   </button>
                 </PopOut>
               </Options>
-            </div>
+            </HeaderRight>
           </>
         )}
       </Header>
@@ -207,24 +211,64 @@ const Header = styled.div`
   padding: 1.6rem 0;
   z-index: 200;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
+    width: 95vw;
+  }
 
   & h1 {
     letter-spacing: 2px;
     font-size: 3.6rem;
     color: #fff;
+
+    @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
+      font-size: 2.4rem;
+    }
   }
 
   & p {
+    margin-right: 1.6rem;
+
     span {
       color: #fff;
       font-size: 2.4rem;
+
+      @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
+        font-size: 1.8rem;
+      }
     }
   }
 `;
 
+const HeaderRight = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 const Options = styled.div`
   position: relative;
+`;
+
+const OptionsButton = styled.button`
+  padding: 0 1.2rem;
+  font-size: 1.8rem;
+  background-color: #fff;
+  border: none;
+  border-radius: 2px;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
+    font-size: 1.4rem;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: ${(props) => props.theme.boxShadow.outline};
+  }
 `;
 
 const Distance = styled.p`
@@ -247,7 +291,7 @@ const Block = styled.div`
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+    width: calc(100% - 32px);
     margin: 0 1.6rem;
     height: 1px;
     background-color: ${(props) => props.theme.colors.gray[700]};
@@ -261,6 +305,11 @@ const MapContainer = styled.div`
   grid-template-rows: 70% 30%;
   z-index: 100;
   box-shadow: ${(props) => props.theme.boxShadow.sm};
+
+  @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
+    width: 95vw;
+    height: 85%;
+  }
 `;
 
 const ElevationWrapper = styled.div`

@@ -220,7 +220,10 @@ export const renderLineChart = (
     .attr('pointer-events', 'all')
     .on('mouseout', mouseOut)
     .on('mouseover', mouseOver)
-    .on('mousemove', mouseMove);
+    .on('mousemove', mouseMove)
+    .on('touchend', mouseOut)
+    .on('touchstart', mouseOver)
+    .on('touchmove', mouseMove);
 };
 
 export const createChart = (
