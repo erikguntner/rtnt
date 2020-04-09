@@ -188,6 +188,7 @@ const RouteList: React.FC<{}> = () => {
     const fetchRoutes = async () => {
       try {
         const response = await fetch(`${API_URL}/api/routes`, {
+          method: 'GET',
           credentials: 'include',
         });
 
@@ -205,6 +206,8 @@ const RouteList: React.FC<{}> = () => {
 
     fetchRoutes();
   }, []);
+
+  console.log(sortedRoutes);
 
   return (
     <>

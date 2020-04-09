@@ -38,7 +38,11 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
   );
 
   const isAuthenticated: boolean =
-    authenticated === '' || saving === true ? true : false;
+    points.length < 2
+      ? true
+      : authenticated === '' || saving === true
+      ? true
+      : false;
 
   return (
     <ControlsContainer>

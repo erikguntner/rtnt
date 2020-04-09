@@ -125,7 +125,6 @@ export const updateUnits = (
       headers: {
         Accept: 'application/json, text/plain, */*',
         'Content-Type': 'application/json',
-        Authorization: JSON.stringify(authenticated),
       },
       body: JSON.stringify({ units }),
     });

@@ -48,7 +48,6 @@ interface RouteI {
 }
 
 const fetcher = async (url) => {
-  console.log(url);
   const response = await fetch(url, {
     method: 'GET',
     credentials: 'include',
@@ -62,7 +61,7 @@ const fetcher = async (url) => {
   }
 };
 
-const RoutePage: NextPage<{ id: string }> = ({ id }) => {
+const RoutePage: NextPage<{}> = () => {
   const [viewport, setViewport] = useState<Viewport>({
     latitude: 34.105999576,
     longitude: -117.718497126,
@@ -81,7 +80,14 @@ const RoutePage: NextPage<{ id: string }> = ({ id }) => {
     user: state.auth.user,
   }));
 
-  const { data, error } = useSWR([`/api/getRoute/${id}`], fetcher);
+  const router = useRouter();
+
+  const { id } = router.query;
+
+  const { data, error, isValidating } = useSWR(
+    id ? [`/api/getRoute/${id}`] : null,
+    fetcher
+  );
 
   useEffect(() => {
     if (distanceAlongPath !== 0 && data) {
@@ -95,15 +101,13 @@ const RoutePage: NextPage<{ id: string }> = ({ id }) => {
     }
   }, [distanceAlongPath]);
 
-  if (!data) {
+  if (isValidating || !data) {
     return <LoadingIndicator />;
   }
 
   if (data.message) {
     return <h1>There was an error</h1>;
   }
-
-  console.log(data);
 
   return (
     <Wrapper>

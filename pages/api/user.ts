@@ -3,8 +3,6 @@ import jwt from 'jwt-simple';
 import query from '../../server/db';
 
 const request = async (req: NextApiRequest, res: NextApiResponse) => {
-  console.log(req.cookies);
-
   try {
     const { token } = req.cookies;
 
