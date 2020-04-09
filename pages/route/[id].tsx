@@ -22,7 +22,6 @@ import {
   abbreviatedDistance,
 } from '../../utils/calculateDistance';
 import PopOut from '../../features/Utilities/PopOut';
-import Link from 'next/link';
 
 interface Viewport {
   latitude: number;
@@ -93,7 +92,7 @@ const RoutePage: NextPage<{}> = () => {
   const [viewport, setViewport] = useState<Viewport>({
     latitude: 34.105999576,
     longitude: -117.718497126,
-    zoom: 14,
+    zoom: 12,
     bearing: 0,
     pitch: 0,
   });
@@ -128,6 +127,20 @@ const RoutePage: NextPage<{}> = () => {
       setPointAlongPath([]);
     }
   }, [distanceAlongPath]);
+
+  useEffect(() => {
+    if (data?.route) {
+      const coords = turf.featureCollection(
+        data.route.lines.flat().map((point) => turf.point(point))
+      );
+      const { geometry } = turf.center(coords);
+      setViewport({
+        ...viewport,
+        latitude: geometry.coordinates[1],
+        longitude: geometry.coordinates[0],
+      });
+    }
+  }, [data]);
 
   if (isValidating || !data) {
     return <LoadingIndicator />;
