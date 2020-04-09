@@ -121,4 +121,4 @@ class MyApp extends App {
 }
 
 // export default withReduxStore(MyApp);
-export default withReduxStore(MyApp);
+export default MyApp;
