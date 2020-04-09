@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { NextPage } from 'next';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import useSWR from 'swr';
 import ReactMapGL, { Marker } from 'react-map-gl';
 import * as turf from '@turf/turf';
@@ -61,6 +61,32 @@ const fetcher = async (url) => {
   }
 };
 
+const deleteRoute = async (id) => {
+  try {
+    const response = await fetch(`/api/route/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json, text/plain, */*',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id }),
+    });
+
+    if (response.ok) {
+      const data = response.json();
+      console.log('successful delteion', data);
+      Router.push('/myroutes');
+    } else {
+      const error = new Error(response.statusText);
+      console.log('error');
+    }
+  } catch (err) {
+    // console.log(err);
+    console.log('send notification of error', err);
+  }
+};
+
 const RoutePage: NextPage<{}> = () => {
   const [viewport, setViewport] = useState<Viewport>({
     latitude: 34.105999576,
@@ -85,7 +111,7 @@ const RoutePage: NextPage<{}> = () => {
   const { id } = router.query;
 
   const { data, error, isValidating } = useSWR(
-    id ? [`/api/getRoute/${id}`] : null,
+    id ? [`/api/route/${id}`] : null,
     fetcher
   );
 
@@ -131,15 +157,13 @@ const RoutePage: NextPage<{}> = () => {
                   parentRef={options}
                   {...{ open, setOpen }}
                 >
-                  <Link href="/myroutes">
-                    <a onClick={() => setOpen(false)}>My Routes</a>
-                  </Link>
                   <button
                     onClick={() => {
                       setOpen(false);
+                      deleteRoute(data.route.id);
                     }}
                   >
-                    Sign Out
+                    Delete Route
                   </button>
                 </PopOut>
               </Options>
