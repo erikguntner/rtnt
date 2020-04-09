@@ -24,14 +24,14 @@ interface Viewport {
   bearing: number;
   pitch: number;
 }
-
 const Map = () => {
   const [clipPath, setClipPath] = useState<boolean>(false);
+  const [position, setPosition] = useState<number[]>([]);
   const [showElevation, setShowElevation] = useState<boolean>(false);
   const [viewport, setViewport] = useState<Viewport>({
-    latitude: 34.105999576,
-    longitude: -117.718497126,
-    zoom: 14,
+    latitude: 42.5,
+    longitude: 12.5,
+    zoom: 5,
     bearing: 0,
     pitch: 0,
   });
@@ -161,6 +161,24 @@ const Map = () => {
     }
   }, [distanceAlongPath]);
 
+  useEffect(() => {
+    const geo = navigator.geolocation;
+    if (!geo) {
+      console.log('no geo', geo);
+      return;
+    }
+    geo.getCurrentPosition((position) => {
+      setViewport({
+        ...viewport,
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        zoom: 14,
+      });
+
+      setPosition([position.coords.latitude, position.coords.longitude]);
+    });
+  }, []);
+
   return (
     <MapContainer>
       <Controls
@@ -186,6 +204,11 @@ const Map = () => {
         onViewportChange={(viewport) => setViewport(viewport)}
         mapStyle="mapbox://styles/mapbox/outdoors-v10"
       >
+        {position.length > 0 && (
+          <Marker longitude={position[1]} latitude={position[0]}>
+            <UserMarker />
+          </Marker>
+        )}
         {isDragging && (
           <ConnectingLines points={points} index={index} endPoint={point} />
         )}
@@ -237,6 +260,15 @@ const Label = styled.div`
   font-size: 1rem;
   border-radius: 5px;
   transform: translate3d(-50%, -150%, 0);
+`;
+
+const UserMarker = styled.div`
+  height: 1.6rem;
+  width: 1.6rem;
+  background-color: ${(props) => props.theme.colors.primary};
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: ${(props) => props.theme.boxShadow.sm};
 `;
 
 const DistanceMarker = styled.div`
