@@ -17,6 +17,7 @@ import {
 import RouteCard from './RouteCard';
 import MobileFilters from './MobileFilters';
 import CustomSelect from './CustomSelect';
+import Skeleton from '../Utilities/Skeleton';
 
 interface ElevationData {
   distance: number;
@@ -47,6 +48,25 @@ export interface SelectOption {
   value: string;
   label: string;
 }
+
+const CardSkeleton = () => {
+  return (
+    <SkeletonWrapper>
+      <Skeleton height={200} width={300} />
+      <Skeleton height={24} width={150} />
+      <Skeleton width={50} />
+    </SkeletonWrapper>
+  );
+};
+
+const SkeletonWrapper = styled.article`
+  height: 100%;
+  width: 100%;
+
+  div {
+    margin-bottom: 8px;
+  }
+`;
 
 const renderDistance = ({ min, max }: { min: number; max: number }): string => {
   let string = '';
@@ -125,6 +145,8 @@ const sortRoutes = (
 
 const RouteList: React.FC<{}> = () => {
   const [open, setOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+
   const {
     sortedRoutes,
     sortingTerm,
@@ -185,6 +207,7 @@ const RouteList: React.FC<{}> = () => {
   useEffect(() => {
     console.log('fetching routes');
     const fetchRoutes = async () => {
+      setLoading(true);
       try {
         const response = await fetch(`${API_URL}/api/routes`, {
           method: 'GET',
@@ -194,12 +217,11 @@ const RouteList: React.FC<{}> = () => {
         if (response.ok) {
           const { routes } = await response.json();
           dispatch(addRoutes(routes));
-          return {};
-        } else {
-          console.log('response returned error');
         }
+        setLoading(false);
       } catch (error) {
         console.log(error);
+        setLoading(false);
       }
     };
 
@@ -257,9 +279,15 @@ const RouteList: React.FC<{}> = () => {
               </InputGroup>
             </FilterGroup>
           </Filters>
-          <>
-            {sortedRoutes.length ? (
-              <RouteGrid>
+          <RouteGrid>
+            {loading ? (
+              <>
+                {Array.from(Array(10), (_, i) => (
+                  <CardSkeleton key={i} />
+                ))}
+              </>
+            ) : (
+              <>
                 {sortedRoutes.map(
                   ({ id, name, image, elevation_data: elevationData }) => (
                     <RouteCard
@@ -268,11 +296,9 @@ const RouteList: React.FC<{}> = () => {
                     />
                   )
                 )}
-              </RouteGrid>
-            ) : (
-              <Text>No routes to display</Text>
+              </>
             )}
-          </>
+          </RouteGrid>
         </Grid>
       </Layout>
       <MobileFilters

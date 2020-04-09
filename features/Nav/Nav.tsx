@@ -7,6 +7,8 @@ import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 import { DarkButtonLink, PrimaryButtonLink } from '../Button';
 import PopOut from '../Utilities/PopOut';
+import Skeleton from '../Utilities/Skeleton';
+
 import { RootState } from '../../app/rootReducer';
 import { removeCookieOnLogout } from '../../utils/auth';
 import { authenticateUser } from '../Auth/authSlice';
@@ -22,10 +24,13 @@ const Nav = () => {
   const avatar = useRef<HTMLLIElement>(null);
   const dispatch = useDispatch();
 
-  const { authenticated, user } = useSelector((state: RootState) => ({
-    authenticated: state.auth.authenticated,
-    user: state.auth.user,
-  }));
+  const { validating, authenticated, user } = useSelector(
+    (state: RootState) => ({
+      validating: state.auth.validating,
+      authenticated: state.auth.authenticated,
+      user: state.auth.user,
+    })
+  );
 
   const logout = () => {
     dispatch(
@@ -42,6 +47,51 @@ const Nav = () => {
     removeCookieOnLogout();
   };
 
+  const renderAuthButtons = () => {
+    return (
+      <>
+        <li>
+          <DarkButtonLink href="/login">Login</DarkButtonLink>
+        </li>
+        <li>
+          <PrimaryButtonLink href="/signup">Sign Up</PrimaryButtonLink>
+        </li>
+      </>
+    );
+  };
+
+  const renderAvatar = () => {
+    return (
+      <>
+        <Avatar ref={avatar}>
+          <AvatarButton onClick={() => setOpen(!open)}>
+            <Username>{user.username}</Username>
+            <AvatarIcon>
+              <FontAwesomeIcon icon={faUserCircle} />
+            </AvatarIcon>
+          </AvatarButton>
+          <PopOut
+            motionKey="navPopOut"
+            parentRef={avatar}
+            {...{ open, setOpen }}
+          >
+            <Link href="/myroutes">
+              <a onClick={() => setOpen(false)}>My Routes</a>
+            </Link>
+            <button
+              onClick={() => {
+                setOpen(false);
+                logout();
+              }}
+            >
+              Sign Out
+            </button>
+          </PopOut>
+        </Avatar>
+      </>
+    );
+  };
+
   return (
     <NavContainer>
       <ul>
@@ -50,43 +100,12 @@ const Nav = () => {
         </li>
       </ul>
       <ul>
-        {!authenticated && (
-          <li>
-            <DarkButtonLink href="/login">Login</DarkButtonLink>
-          </li>
-        )}
-        {!authenticated && (
-          <li>
-            <PrimaryButtonLink href="/signup">Sign Up</PrimaryButtonLink>
-          </li>
-        )}
-        {!!authenticated && (
+        {validating ? (
+          <Skeleton />
+        ) : (
           <>
-            <Avatar ref={avatar}>
-              <AvatarButton onClick={() => setOpen(!open)}>
-                <Username>{user.username}</Username>
-                <AvatarIcon>
-                  <FontAwesomeIcon icon={faUserCircle} />
-                </AvatarIcon>
-              </AvatarButton>
-              <PopOut
-                motionKey="navPopOut"
-                parentRef={avatar}
-                {...{ open, setOpen }}
-              >
-                <Link href="/myroutes">
-                  <a onClick={() => setOpen(false)}>My Routes</a>
-                </Link>
-                <button
-                  onClick={() => {
-                    setOpen(false);
-                    logout();
-                  }}
-                >
-                  Sign Out
-                </button>
-              </PopOut>
-            </Avatar>
+            {!authenticated && renderAuthButtons()}
+            {authenticated && renderAvatar()}
           </>
         )}
       </ul>

@@ -11,7 +11,7 @@ import LogRocket from 'logrocket';
 
 import Nav from '../features/Nav/Nav';
 import 'mapbox-gl/src/css/mapbox-gl.css';
-import { authenticateUser } from '../features/Auth/authSlice';
+import { authenticateUser, setValidating } from '../features/Auth/authSlice';
 import { theme, GlobalStyle } from '../utils/theme';
 import { configStore } from '../app/store';
 import API_URL from '../utils/url';
@@ -50,19 +50,27 @@ const Layout = ({ children }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(setValidating(true));
+
     const getUser = async () => {
-      const response = await fetch(`${API_URL}/api/user`, {
-        credentials: 'include',
-        headers: {
-          Accept: 'application/json, text/plain, */*',
-          'Content-Type': 'application/json',
-        },
-      });
+      try {
+        const response = await fetch(`${API_URL}/api/user`, {
+          credentials: 'include',
+          headers: {
+            Accept: 'application/json, text/plain, */*',
+            'Content-Type': 'application/json',
+          },
+        });
 
-      if (response.ok) {
-        const { token, user } = await response.json();
+        if (response.ok) {
+          const { token, user } = await response.json();
 
-        dispatch(authenticateUser({ authenticated: token, user }));
+          dispatch(authenticateUser({ authenticated: token, user }));
+        }
+
+        dispatch(setValidating(false));
+      } catch (err) {
+        dispatch(setValidating(false));
       }
     };
 

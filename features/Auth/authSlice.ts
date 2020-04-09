@@ -12,11 +12,13 @@ interface UserI {
 }
 
 interface AuthState {
+  validating: boolean;
   authenticated: string;
   user: UserI;
 }
 
 const initialState: AuthState = {
+  validating: false,
   authenticated: '',
   user: {
     email: '',
@@ -29,10 +31,13 @@ const { actions, reducer } = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    authenticateUser: (state, action: PayloadAction<AuthState>) => {
+    authenticateUser: (state, action: PayloadAction<{ authenticated: string; user: UserI }>) => {
       const { authenticated, user } = action.payload;
       state.authenticated = authenticated;
       state.user = user;
+    },
+    setValidating: (state, action: PayloadAction<boolean>) => {
+      state.validating = action.payload
     },
     changeUsersUnits: (
       state,
@@ -43,7 +48,7 @@ const { actions, reducer } = createSlice({
   },
 });
 
-export const { authenticateUser, changeUsersUnits } = actions;
+export const { authenticateUser, changeUsersUnits, setValidating } = actions;
 
 interface LoginI {
   username: string;
@@ -89,7 +94,7 @@ export const signup = ({
   password,
 }: NewUser): AppThunk => async dispatch => {
   try {
-    const res = await fetch(`${API_URL}/api/signup`, {
+    const response = await fetch(`${API_URL}/api/signup`, {
       method: 'POST',
       headers: {
         Accept: 'application/json, text/plain, */*',
@@ -98,12 +103,16 @@ export const signup = ({
       body: JSON.stringify({ email, username, password }),
     });
 
-    const { token, user } = await res.json();
+    if (response.ok) {
 
-    if (token) {
-      await setCookieOnLogin({ token });
-      dispatch(authenticateUser({ authenticated: token, user }));
-    }
+      const { token, user } = await response.json();
+
+      if (token) {
+        await setCookieOnLogin({ token });
+        dispatch(authenticateUser({ authenticated: token, user }));
+      }
+    } else { }
+
   } catch (e) {
     console.log('error signing up', e);
   }
