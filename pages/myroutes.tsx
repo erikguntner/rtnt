@@ -6,9 +6,9 @@ import fetch from 'isomorphic-unfetch';
 import { addRoutes } from '../features/RouteList/routeListSlice';
 import RouteList from '../features/RouteList/RouteList';
 import API_URL from '../utils/url';
+import { auth } from '../utils/auth';
 
 const MyRoutes: NextPage<{}> = () => {
-
   return (
     <>
       <RouteList />

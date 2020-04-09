@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { NextPage } from 'next';
+import { NextPage, GetStaticProps } from 'next';
 import { withRouter, useRouter } from 'next/router';
 import useSWR from 'swr';
 import ReactMapGL, { Marker } from 'react-map-gl';
@@ -62,7 +62,7 @@ const fetcher = async (url) => {
   }
 };
 
-const RoutePage: NextPage<{}> = () => {
+const RoutePage: NextPage<{ id: string }> = ({ id }) => {
   const [viewport, setViewport] = useState<Viewport>({
     latitude: 34.105999576,
     longitude: -117.718497126,
@@ -80,9 +80,6 @@ const RoutePage: NextPage<{}> = () => {
   } = useSelector((state: RootState) => ({
     user: state.auth.user,
   }));
-
-  const router = useRouter();
-  const { id } = router.query;
 
   const { data, error } = useSWR([`/api/getRoute/${id}`], fetcher);
 
