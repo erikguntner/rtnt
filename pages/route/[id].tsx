@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { NextPage } from 'next';
-import { useRouter } from 'next/router';
+import { NextPage, GetStaticProps } from 'next';
+import { withRouter, useRouter } from 'next/router';
 import useSWR from 'swr';
 import ReactMapGL, { Marker } from 'react-map-gl';
 import * as turf from '@turf/turf';
@@ -47,15 +47,10 @@ interface RouteI {
   created_on: string;
 }
 
-const fetcher = async (url, authenticated) => {
+const fetcher = async (url) => {
   const response = await fetch(url, {
     method: 'GET',
     credentials: 'include',
-    headers: {
-      Accept: 'application/json, text/plain, */*',
-      'Content-Type': 'application/json',
-      Authorization: JSON.stringify(authenticated),
-    },
   });
 
   if (response.ok) {
@@ -80,24 +75,19 @@ const RoutePage: NextPage<{}> = () => {
   const options = useRef<HTMLDivElement>(null);
 
   const {
-    authenticated,
     user: { units },
   } = useSelector((state: RootState) => ({
-    authenticated: state.auth.authenticated,
     user: state.auth.user,
   }));
 
   const router = useRouter();
+
   const { id } = router.query;
 
-  const { data, error } = useSWR(
-    [`/api/getRoute/${id}`, authenticated],
+  const { data, error, isValidating } = useSWR(
+    id ? [`/api/getRoute/${id}`] : null,
     fetcher
   );
-
-  if (error) {
-    console.log(error);
-  }
 
   useEffect(() => {
     if (distanceAlongPath !== 0 && data) {
@@ -110,6 +100,14 @@ const RoutePage: NextPage<{}> = () => {
       setPointAlongPath([]);
     }
   }, [distanceAlongPath]);
+
+  if (isValidating || !data) {
+    return <LoadingIndicator />;
+  }
+
+  if (data.message) {
+    return <h1>There was an error</h1>;
+  }
 
   return (
     <Wrapper>

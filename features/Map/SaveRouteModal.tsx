@@ -74,7 +74,6 @@ const SaveRouteModal: React.FC<Props> = ({
         headers: {
           Accept: 'application/json, text/plain, */*',
           'Content-Type': 'application/json',
-          Authorization: JSON.stringify(authenticated),
         },
         body: JSON.stringify(body),
       });

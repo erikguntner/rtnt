@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { connect, useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
 import ReactMapGL, { Marker } from 'react-map-gl';
 import styled from 'styled-components';
@@ -64,7 +64,7 @@ const Map = () => {
     user: state.auth.user,
   }));
 
-  const handleClick = event => {
+  const handleClick = (event) => {
     const [newLong, newLat] = event.lngLat;
 
     if (points.length) {
@@ -138,7 +138,7 @@ const Map = () => {
     }
   };
 
-  const handleDrag = event => {
+  const handleDrag = (event) => {
     setPoint(event.lngLat);
   };
 
@@ -183,7 +183,7 @@ const Map = () => {
         height={'100%'}
         style={{ display: 'flex', flex: '1' }}
         onClick={handleClick}
-        onViewportChange={viewport => setViewport(viewport)}
+        onViewportChange={(viewport) => setViewport(viewport)}
         mapStyle="mapbox://styles/mapbox/outdoors-v10"
       >
         {isDragging && (
@@ -197,9 +197,9 @@ const Map = () => {
             longitude={point[0]}
             latitude={point[1]}
             draggable
-            onDragStart={event => handleDragStart(event, i)}
-            onDrag={event => handleDrag(event)}
-            onDragEnd={event => handleDragEnd(event.lngLat, point, i)}
+            onDragStart={(event) => handleDragStart(event, i)}
+            onDrag={(event) => handleDrag(event)}
+            onDragEnd={(event) => handleDragEnd(event.lngLat, point, i)}
           >
             <Pin index={i} points={points} />
           </Marker>
@@ -219,7 +219,7 @@ const Map = () => {
 };
 
 const MapContainer = styled.div`
-  height: calc(100vh - ${props => props.theme.navHeight});
+  height: calc(100vh - ${(props) => props.theme.navHeight});
   width: 100vw;
   display: flex;
   flex-direction: column;
@@ -243,8 +243,8 @@ const DistanceMarker = styled.div`
   height: 1.2rem;
   width: 1.2rem;
   border-radius: 10px;
-  border: 2px solid ${props => props.theme.colors.indigo[500]};
+  border: 2px solid ${(props) => props.theme.colors.indigo[500]};
   transform: translate3d(-50%, -50%, 0);
 `;
 
-export default Map;
+export default connect((state) => state)(Map);

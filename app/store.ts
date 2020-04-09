@@ -19,6 +19,10 @@ export const initializeStore = (preloadedState = {}) => {
   return storeInit;
 };
 
+export const configStore = configureStore({
+  reducer: rootReducer,
+});
+
 const store = initializeStore();
 
 export type AppDispatch = typeof store.dispatch;

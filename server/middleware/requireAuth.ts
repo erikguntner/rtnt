@@ -2,13 +2,13 @@ import jwt from 'jwt-simple';
 import query from '../db';
 
 const requireAuth = handler => async (req, res) => {
-  if (!('authorization' in req.headers)) {
+  if (!('authorization' in req.headers) && !req.cookies.token) {
     console.log('auth header missing');
     return res.status(401).send('Authorization header missing');
   }
 
   try {
-    const token = JSON.parse(req.headers.authorization);
+    const token = req.cookies.token ? req.cookies.token : JSON.parse(req.headers.authorization);
 
     if (!token) {
       return res.status(422).json({ message: 'No token provided' });

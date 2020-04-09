@@ -22,6 +22,6 @@
     "**/*.ts",
     "**/*.tsx",
     "utils/d3/utils.ts",
-    "utils/withReduxStore.js"
+    "utils/withReduxStore.js", "features/Utilities/Counter.js"
   ]
 }

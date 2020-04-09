@@ -30,7 +30,6 @@ export const renderLineChart = (
     height: number;
   }
 ) => {
-  console.log(data);
   const margin = { top: 20, right: 20, bottom: 20, left: 50 };
   const height = dimensions.height;
   const width = dimensions.width;

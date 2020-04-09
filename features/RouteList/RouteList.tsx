@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import compareAsc from 'date-fns/compareAsc';
@@ -6,6 +6,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 import { RootState } from '../../app/rootReducer';
+import API_URL from '../../utils/url';
+import { addRoutes } from './routeListSlice';
+
 import {
   updateSortingTerm,
   updateFilter,
@@ -127,6 +130,7 @@ const RouteList: React.FC<{}> = () => {
     sortingTerm,
     filters,
     user: { units },
+    authenticated,
   } = useSelector((state: RootState) => ({
     sortedRoutes: sortRoutes(
       state.routeList.sortingTerm,
@@ -136,6 +140,7 @@ const RouteList: React.FC<{}> = () => {
     sortingTerm: state.routeList.sortingTerm,
     filters: state.routeList.filters,
     user: state.auth.user,
+    authenticated: state.auth.authenticated,
   }));
   const dispatch = useDispatch();
 
@@ -177,6 +182,32 @@ const RouteList: React.FC<{}> = () => {
       }
     });
   };
+
+  useEffect(() => {
+    console.log('fetching routes');
+    const fetchRoutes = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/routes`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (response.ok) {
+          const { routes } = await response.json();
+          dispatch(addRoutes(routes));
+          return {};
+        } else {
+          console.log('response returned error');
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchRoutes();
+  }, []);
+
+  console.log(sortedRoutes);
 
   return (
     <>

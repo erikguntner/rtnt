@@ -1,5 +1,5 @@
-import React from 'react';
-import { Provider } from 'react-redux';
+import React, { useEffect } from 'react';
+import { Provider, useDispatch } from 'react-redux';
 import Head from 'next/head';
 import Router from 'next/router';
 import nextCookie from 'next-cookies';
@@ -13,9 +13,11 @@ import LogRocket from 'logrocket';
 
 import Nav from '../features/Nav/Nav';
 import 'mapbox-gl/src/css/mapbox-gl.css';
+import { CounterProvider } from '../features/Utilities/Counter';
 import withReduxStore from '../utils/withReduxStore';
 import { authenticateUser } from '../features/Auth/authSlice';
 import { theme, GlobalStyle } from '../utils/theme';
+import { initializeStore, configStore } from '../app/store';
 import API_URL from '../utils/url';
 
 config.autoAddCss = false;
@@ -49,6 +51,28 @@ const Container = styled.div`
 `;
 
 const Layout = ({ children }) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const response = await fetch(`${API_URL}/api/user`, {
+        credentials: 'include',
+        headers: {
+          Accept: 'application/json, text/plain, */*',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const { token, user } = await response.json();
+
+        dispatch(authenticateUser({ authenticated: token, user }));
+      }
+    };
+
+    getUser();
+  }, []);
+
   return (
     <>
       <Container>
@@ -63,58 +87,59 @@ const Layout = ({ children }) => {
   );
 };
 
-class MyApp extends App {
-  static async getInitialProps({ Component, ctx }: AppContext) {
-    const { reduxStore } = ctx;
+const MyApp = ({ Component, pageProps }) => {
+  // static async getInitialProps({ Component, ctx }: AppContext) {
+  //   const { reduxStore } = ctx;
 
-    const { token } = nextCookie(ctx);
+  //   const { token } = nextCookie(ctx);
 
-    // if token exists, use token to log user in serverside when app loads
-    if (token) {
-      try {
-        const response = await fetch(`${API_URL}/api/user`, {
-          credentials: 'include',
-          headers: {
-            Authorization: JSON.stringify({ token }),
-          },
-        });
+  //   // if token exists, use token to log user in serverside when app loads
+  //   if (token) {
+  //     try {
+  //       const response = await fetch(`${API_URL}/api/user`, {
+  //         credentials: 'include',
+  //         headers: {
+  //           Authorization: JSON.stringify({ token }),
+  //         },
+  //       });
 
-        const { user } = await response.json();
-        reduxStore.dispatch(authenticateUser({ authenticated: token, user }));
-      } catch (error) {
-        // Implementation or Network error
-        console.log(error);
-        return {
-          pageProps: Component.getInitialProps
-            ? await Component.getInitialProps(ctx)
-            : {},
-        };
-      }
-    }
+  //       const { user } = await response.json();
+  //       reduxStore.dispatch(authenticateUser({ authenticated: token, user }));
+  //     } catch (error) {
+  //       // Implementation or Network error
+  //       console.log(error);
+  //       return {
+  //         pageProps: Component.getInitialProps
+  //           ? await Component.getInitialProps(ctx)
+  //           : {},
+  //       };
+  //     }
+  //   }
 
-    return {
-      pageProps: Component.getInitialProps
-        ? await Component.getInitialProps(ctx)
-        : {},
-    };
-  }
+  //   return {
+  //     pageProps: Component.getInitialProps
+  //       ? await Component.getInitialProps(ctx)
+  //       : {},
+  //   };
+  // }
 
-  render() {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    //@ts-ignore
-    const { Component, pageProps, reduxStore } = this.props;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  //@ts-ignore
+  // const { Component, pageProps, reduxStore } = this.props;
 
-    return (
-      <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        <Provider store={reduxStore}>
+  return (
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      <Provider store={configStore}>
+        <CounterProvider>
           <Layout>
             <Component {...pageProps} />
           </Layout>
-        </Provider>
-      </ThemeProvider>
-    );
-  }
-}
+        </CounterProvider>
+      </Provider>
+    </ThemeProvider>
+  );
+};
 
-export default withReduxStore(MyApp);
+// export default withReduxStore(MyApp);
+export default MyApp;

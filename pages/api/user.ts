@@ -3,12 +3,8 @@ import jwt from 'jwt-simple';
 import query from '../../server/db';
 
 const request = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (!('authorization' in req.headers)) {
-    return res.status(401).send('Authorization header missing');
-  }
-
   try {
-    const { token } = await JSON.parse(req.headers.authorization);
+    const { token } = req.cookies;
 
     if (token) {
       const { sub } = await jwt.decode(token, process.env.JWT_SECRET);
