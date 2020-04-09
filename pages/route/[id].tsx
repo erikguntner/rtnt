@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { NextPage } from 'next';
-import { useRouter } from 'next/router';
+import { withRouter, useRouter } from 'next/router';
 import useSWR from 'swr';
 import ReactMapGL, { Marker } from 'react-map-gl';
 import * as turf from '@turf/turf';
@@ -47,15 +47,11 @@ interface RouteI {
   created_on: string;
 }
 
-const fetcher = async (url, authenticated) => {
+const fetcher = async (url) => {
+  console.log(url);
   const response = await fetch(url, {
     method: 'GET',
     credentials: 'include',
-    headers: {
-      Accept: 'application/json, text/plain, */*',
-      'Content-Type': 'application/json',
-      Authorization: JSON.stringify(authenticated),
-    },
   });
 
   if (response.ok) {
@@ -80,20 +76,15 @@ const RoutePage: NextPage<{}> = () => {
   const options = useRef<HTMLDivElement>(null);
 
   const {
-    authenticated,
     user: { units },
   } = useSelector((state: RootState) => ({
-    authenticated: state.auth.authenticated,
     user: state.auth.user,
   }));
 
   const router = useRouter();
   const { id } = router.query;
 
-  const { data, error } = useSWR(
-    [`/api/getRoute/${id}`, authenticated],
-    fetcher
-  );
+  const { data, error } = useSWR([`/api/getRoute/${id}`], fetcher);
 
   useEffect(() => {
     if (distanceAlongPath !== 0 && data) {

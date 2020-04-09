@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NextPage } from 'next';
 import Router from 'next/router';
 import nextCookie from 'next-cookies';
@@ -8,6 +8,7 @@ import RouteList from '../features/RouteList/RouteList';
 import API_URL from '../utils/url';
 
 const MyRoutes: NextPage<{}> = () => {
+
   return (
     <>
       <RouteList />

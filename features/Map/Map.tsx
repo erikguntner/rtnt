@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { connect, useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
 import ReactMapGL, { Marker } from 'react-map-gl';
 import styled from 'styled-components';
@@ -162,65 +162,59 @@ const Map = () => {
   }, [distanceAlongPath]);
 
   return (
-    <>
-      <div>
-        <button onClick={handleIncrease}>count</button>
-        <div>count: {count}</div>
-      </div>
-      <MapContainer>
-        <Controls
-          {...{ setClipPath, clipPath, showElevation, setShowElevation }}
-        />
-        <ElevationProfile
-          {...{
-            showElevation,
-            elevationData,
-            lines,
-            units,
-            setDistanceAlongPath,
-          }}
-        />
-        <ReactMapGL
-          {...viewport}
-          mapboxApiAccessToken={process.env.MAPBOX_TOKEN}
-          reuseMap={true}
-          width={'100%'}
-          height={'100%'}
-          style={{ display: 'flex', flex: '1' }}
-          onClick={handleClick}
-          onViewportChange={(viewport) => setViewport(viewport)}
-          mapStyle="mapbox://styles/mapbox/outdoors-v10"
-        >
-          {isDragging && (
-            <ConnectingLines points={points} index={index} endPoint={point} />
-          )}
-          <SvgPath points={lines} />
-          {/* <GeoJsonPath {...{ lines }} /> */}
-          {points.map((point, i) => (
-            <Marker
-              key={i}
-              longitude={point[0]}
-              latitude={point[1]}
-              draggable
-              onDragStart={(event) => handleDragStart(event, i)}
-              onDrag={(event) => handleDrag(event)}
-              onDragEnd={(event) => handleDragEnd(event.lngLat, point, i)}
-            >
-              <Pin index={i} points={points} />
-            </Marker>
-          ))}
-          <DistanceMarkers {...{ lines, units }} />
-          {pointAlongPath.length ? (
-            <Marker longitude={pointAlongPath[0]} latitude={pointAlongPath[1]}>
-              <Label>{distanceAlongPath.toFixed(2)}</Label>
-              <DistanceMarker />
-            </Marker>
-          ) : null}
-        </ReactMapGL>
-        {isLoading && <LoadingIndicator />}
-        <DistanceIndicator {...{ elevationData, units, authenticated }} />
-      </MapContainer>
-    </>
+    <MapContainer>
+      <Controls
+        {...{ setClipPath, clipPath, showElevation, setShowElevation }}
+      />
+      <ElevationProfile
+        {...{
+          showElevation,
+          elevationData,
+          lines,
+          units,
+          setDistanceAlongPath,
+        }}
+      />
+      <ReactMapGL
+        {...viewport}
+        mapboxApiAccessToken={process.env.MAPBOX_TOKEN}
+        reuseMap={true}
+        width={'100%'}
+        height={'100%'}
+        style={{ display: 'flex', flex: '1' }}
+        onClick={handleClick}
+        onViewportChange={(viewport) => setViewport(viewport)}
+        mapStyle="mapbox://styles/mapbox/outdoors-v10"
+      >
+        {isDragging && (
+          <ConnectingLines points={points} index={index} endPoint={point} />
+        )}
+        <SvgPath points={lines} />
+        {/* <GeoJsonPath {...{ lines }} /> */}
+        {points.map((point, i) => (
+          <Marker
+            key={i}
+            longitude={point[0]}
+            latitude={point[1]}
+            draggable
+            onDragStart={(event) => handleDragStart(event, i)}
+            onDrag={(event) => handleDrag(event)}
+            onDragEnd={(event) => handleDragEnd(event.lngLat, point, i)}
+          >
+            <Pin index={i} points={points} />
+          </Marker>
+        ))}
+        <DistanceMarkers {...{ lines, units }} />
+        {pointAlongPath.length ? (
+          <Marker longitude={pointAlongPath[0]} latitude={pointAlongPath[1]}>
+            <Label>{distanceAlongPath.toFixed(2)}</Label>
+            <DistanceMarker />
+          </Marker>
+        ) : null}
+      </ReactMapGL>
+      {isLoading && <LoadingIndicator />}
+      <DistanceIndicator {...{ elevationData, units, authenticated }} />
+    </MapContainer>
   );
 };
 
@@ -253,4 +247,4 @@ const DistanceMarker = styled.div`
   transform: translate3d(-50%, -50%, 0);
 `;
 
-export default Map;
+export default connect((state) => state)(Map);
