@@ -19,6 +19,24 @@ interface Links {
   key?: string;
 }
 
+const AvatarSkeleton = () => {
+  return (
+    <SkeletonWrapper>
+      <Skeleton width={100} />
+      <Skeleton height={24} width={24} borderRadius={200} />
+    </SkeletonWrapper>
+  );
+};
+
+const SkeletonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+
+  & div:first-of-type {
+    margin-right: 8px;
+  }
+`;
+
 const Nav = () => {
   const [open, setOpen] = useState<boolean>(false);
   const avatar = useRef<HTMLLIElement>(null);
@@ -101,7 +119,7 @@ const Nav = () => {
       </ul>
       <ul>
         {validating ? (
-          <Skeleton />
+          <AvatarSkeleton />
         ) : (
           <>
             {!authenticated && renderAuthButtons()}
