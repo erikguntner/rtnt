@@ -205,7 +205,6 @@ const RouteList: React.FC<{}> = () => {
   };
 
   useEffect(() => {
-    console.log('fetching routes');
     const fetchRoutes = async () => {
       setLoading(true);
       try {
@@ -227,8 +226,6 @@ const RouteList: React.FC<{}> = () => {
 
     fetchRoutes();
   }, []);
-
-  console.log(sortedRoutes);
 
   return (
     <>

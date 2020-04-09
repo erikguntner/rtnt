@@ -76,7 +76,6 @@ const deleteRoute = async (id) => {
 
     if (response.ok) {
       const data = response.json();
-      console.log('successful delteion', data);
       Router.push('/myroutes');
     } else {
       const error = new Error(response.statusText);
