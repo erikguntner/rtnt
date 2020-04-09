@@ -13,6 +13,7 @@ import LogRocket from 'logrocket';
 
 import Nav from '../features/Nav/Nav';
 import 'mapbox-gl/src/css/mapbox-gl.css';
+import { CounterProvider } from '../features/Utilities/Counter';
 import withReduxStore from '../utils/withReduxStore';
 import { authenticateUser } from '../features/Auth/authSlice';
 import { theme, GlobalStyle } from '../utils/theme';
@@ -111,9 +112,11 @@ class MyApp extends App {
       <ThemeProvider theme={theme}>
         <GlobalStyle />
         <Provider store={initStore}>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <CounterProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </CounterProvider>
         </Provider>
       </ThemeProvider>
     );
