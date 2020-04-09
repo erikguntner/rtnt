@@ -2,9 +2,7 @@ import React, { useEffect } from 'react';
 import { Provider, useDispatch } from 'react-redux';
 import Head from 'next/head';
 import Router from 'next/router';
-import nextCookie from 'next-cookies';
 import fetch from 'isomorphic-unfetch';
-import App, { AppContext } from 'next/app';
 import styled, { ThemeProvider } from 'styled-components';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -13,11 +11,9 @@ import LogRocket from 'logrocket';
 
 import Nav from '../features/Nav/Nav';
 import 'mapbox-gl/src/css/mapbox-gl.css';
-import { CounterProvider } from '../features/Utilities/Counter';
-import withReduxStore from '../utils/withReduxStore';
 import { authenticateUser } from '../features/Auth/authSlice';
 import { theme, GlobalStyle } from '../utils/theme';
-import { initializeStore, configStore } from '../app/store';
+import { configStore } from '../app/store';
 import API_URL from '../utils/url';
 
 config.autoAddCss = false;
@@ -88,54 +84,13 @@ const Layout = ({ children }) => {
 };
 
 const MyApp = ({ Component, pageProps }) => {
-  // static async getInitialProps({ Component, ctx }: AppContext) {
-  //   const { reduxStore } = ctx;
-
-  //   const { token } = nextCookie(ctx);
-
-  //   // if token exists, use token to log user in serverside when app loads
-  //   if (token) {
-  //     try {
-  //       const response = await fetch(`${API_URL}/api/user`, {
-  //         credentials: 'include',
-  //         headers: {
-  //           Authorization: JSON.stringify({ token }),
-  //         },
-  //       });
-
-  //       const { user } = await response.json();
-  //       reduxStore.dispatch(authenticateUser({ authenticated: token, user }));
-  //     } catch (error) {
-  //       // Implementation or Network error
-  //       console.log(error);
-  //       return {
-  //         pageProps: Component.getInitialProps
-  //           ? await Component.getInitialProps(ctx)
-  //           : {},
-  //       };
-  //     }
-  //   }
-
-  //   return {
-  //     pageProps: Component.getInitialProps
-  //       ? await Component.getInitialProps(ctx)
-  //       : {},
-  //   };
-  // }
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-  //@ts-ignore
-  // const { Component, pageProps, reduxStore } = this.props;
-
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <Provider store={configStore}>
-        <CounterProvider>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </CounterProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </Provider>
     </ThemeProvider>
   );

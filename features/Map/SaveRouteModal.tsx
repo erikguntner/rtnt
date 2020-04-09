@@ -37,7 +37,6 @@ const SaveRouteModal: React.FC<Props> = ({
     lines,
     elevationData,
     totalDistance,
-    authenticated,
   } = useSelector((state: RootState) => ({
     points: state.route.present.points,
     lines: state.route.present.lines,

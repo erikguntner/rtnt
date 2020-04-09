@@ -130,7 +130,6 @@ const RouteList: React.FC<{}> = () => {
     sortingTerm,
     filters,
     user: { units },
-    authenticated,
   } = useSelector((state: RootState) => ({
     sortedRoutes: sortRoutes(
       state.routeList.sortingTerm,

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { NextPage, GetStaticProps } from 'next';
-import { withRouter, useRouter } from 'next/router';
+import { NextPage } from 'next';
+import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import ReactMapGL, { Marker } from 'react-map-gl';
 import * as turf from '@turf/turf';
@@ -105,7 +105,7 @@ const RoutePage: NextPage<{}> = () => {
     return <LoadingIndicator />;
   }
 
-  if (data.message) {
+  if (data.message || error) {
     return <h1>There was an error</h1>;
   }
 
