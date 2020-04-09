@@ -53,6 +53,7 @@
     "redux-undo": "^1.0.0",
     "styled-components": "^5.0.1",
     "swr": "^0.2.0",
+    "viewport-mercator-project": "^7.0.1",
     "yup": "^0.28.1"
   },
   "devDependencies": {

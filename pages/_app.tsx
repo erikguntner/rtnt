@@ -6,11 +6,11 @@ import fetch from 'isomorphic-unfetch';
 import styled, { ThemeProvider } from 'styled-components';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import debounce from 'lodash/debounce';
 import LogRocket from 'logrocket';
 
 import Nav from '../features/Nav/Nav';
-import 'mapbox-gl/src/css/mapbox-gl.css';
 import { authenticateUser, setValidating } from '../features/Auth/authSlice';
 import { theme, GlobalStyle } from '../utils/theme';
 import { configStore } from '../app/store';

@@ -3,8 +3,10 @@ import { useSelector } from 'react-redux';
 import { NextPage } from 'next';
 import Router, { useRouter } from 'next/router';
 import useSWR from 'swr';
-import ReactMapGL, { Marker } from 'react-map-gl';
+import ReactMapGL, { Marker, NavigationControl } from 'react-map-gl';
+import WebMercatorViewport from 'viewport-mercator-project';
 import * as turf from '@turf/turf';
+import bbox from '@turf/bbox';
 import styled from 'styled-components';
 import fetch from 'isomorphic-unfetch';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -79,7 +81,7 @@ const deleteRoute = async (id) => {
       Router.push('/myroutes');
     } else {
       const error = new Error(response.statusText);
-      console.log('error');
+      console.log(error);
     }
   } catch (err) {
     // console.log(err);
@@ -134,6 +136,9 @@ const RoutePage: NextPage<{}> = () => {
   if (data.message || error) {
     return <h1>There was an error</h1>;
   }
+
+  // const line = turf.lineString(data.route.lines.flat());
+  // const bBox = bbox(line);
 
   return (
     <Wrapper>
@@ -197,6 +202,9 @@ const RoutePage: NextPage<{}> = () => {
               ) : null}
             </>
           )}
+          <div style={{ position: 'absolute', left: 16, top: 16 }}>
+            <NavigationControl showCompass={false} />
+          </div>
         </ReactMapGL>
         {data && (
           <ElevationWrapper>

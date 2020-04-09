@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
-import ReactMapGL, { Marker } from 'react-map-gl';
+import ReactMapGL, { Marker, NavigationControl } from 'react-map-gl';
 import styled from 'styled-components';
 
 import { RootState } from '../../app/rootReducer';
@@ -211,6 +211,9 @@ const Map = () => {
             <DistanceMarker />
           </Marker>
         ) : null}
+        <div style={{ position: 'absolute', left: 16, top: 48 }}>
+          <NavigationControl showCompass={false} />
+        </div>
       </ReactMapGL>
       {isLoading && <LoadingIndicator />}
       <DistanceIndicator {...{ elevationData, units, authenticated }} />
