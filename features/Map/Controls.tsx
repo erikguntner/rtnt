@@ -8,6 +8,7 @@ import {
   faRedoAlt,
   faMountain,
   faSave,
+  faFileDownload,
 } from '@fortawesome/free-solid-svg-icons';
 
 import ControlButton from './ControlButton';
@@ -15,6 +16,7 @@ import SaveRouteModal from './SaveRouteModal';
 
 import { RootState } from '../../app/rootReducer';
 import { clearRoute } from './routeSlice';
+import { createGPXFile } from '../../utils/createGPXFile';
 
 interface Props {
   clipPath: boolean;
@@ -36,6 +38,18 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
       authenticated: state.auth.authenticated,
     })
   );
+
+  const downloadGPXFile = () => {
+    const data = createGPXFile();
+    const blob = new Blob([data]);
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.download = 'test.gpx';
+    link.href = url;
+    document.body.appendChild(link); // Required for this to work in FireFox
+    link.click();
+  };
 
   const isAuthenticated: boolean =
     points.length < 2
@@ -75,6 +89,12 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
         handleClick={() => setOpen(!open)}
         icon={faSave}
         tooltip={'save route'}
+      />
+      <ControlButton
+        disabled={points.length < 2}
+        handleClick={downloadGPXFile}
+        icon={faFileDownload}
+        tooltip={'export as gpx'}
       />
       {/* <ControlButton
         handleClick={() =>

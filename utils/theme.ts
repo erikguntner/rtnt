@@ -88,6 +88,14 @@ export const theme = {
       800: '#2c5282',
       900: '#2a4365',
     },
+    newBlues: {
+      100: '#ebf8ff',
+      200: '#b6e1fd',
+      300: '#85c7fe',
+      400: '#54acfe',
+      500: '#238ffb',
+      600: '#0070f3',
+    },
     indigo: {
       100: '#ebf4ff',
       200: '#c3dafe',
