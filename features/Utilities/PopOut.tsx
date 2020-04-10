@@ -50,7 +50,6 @@ const PopOut: React.FC<PopOutProps> = ({
   const upPress = useKeyPress('ArrowUp');
 
   const handleArrowPress = (e) => {
-    console.log('check keys');
     if (e.key === 'ArrowUp') {
       console.log('arrow up');
     } else if (e.key === 'ArrowDown') {
