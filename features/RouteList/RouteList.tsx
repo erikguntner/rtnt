@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import * as turfHelpers from '@turf/helpers';
 import styled from 'styled-components';
 import compareAsc from 'date-fns/compareAsc';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import Slider from '@material-ui/core/Slider';
 
 import { RootState } from '../../app/rootReducer';
 import API_URL from '../../utils/url';
@@ -38,10 +40,7 @@ interface RouteI {
 
 export interface FiltersTypes {
   keyword: string;
-  distance: {
-    min: number;
-    max: number;
-  };
+  distance: number[];
 }
 
 export interface SelectOption {
@@ -68,25 +67,31 @@ const SkeletonWrapper = styled.article`
   }
 `;
 
-const renderDistance = ({ min, max }: { min: number; max: number }): string => {
-  let string = '';
-  if (min === max) {
-    string = `${min}`;
-  } else if (max > min && min <= 0) {
-    string = `${max} & Less`;
-  } else if (min > max && max >= 0) {
-    string = `${min} & Greater`;
-  } else if (max > min) {
-    string = `${min} - ${max}`;
-  }
+const renderDistance = (
+  min: number,
+  max: number,
+  maxDistance: number,
+  units: string
+): string => {
+  const abbrevUnits = units === 'miles' ? 'mi' : 'km';
 
-  return string;
+  if (min === max) {
+    return `${min}${abbrevUnits}`;
+  } else if (min > 0 && max < maxDistance) {
+    return `${min}${abbrevUnits} - ${max}${abbrevUnits}`;
+  } else if (min > 0 && max === maxDistance) {
+    return `${min}${abbrevUnits} & greater`;
+  } else if (min === 0 && max < maxDistance) {
+    return `${max}${abbrevUnits} & less`;
+  }
 };
 
 const sortRoutes = (
   sortTerm: string,
   routes: RouteI[],
-  filters: FiltersTypes
+  filters: FiltersTypes,
+  maxDistance: number,
+  units
 ): RouteI[] => {
   let result = routes;
   const { keyword, distance } = filters;
@@ -97,25 +102,18 @@ const sortRoutes = (
     );
   }
 
-  if (distance.min || distance.max) {
-    if (distance.min === distance.max) {
-      result = result.filter(
-        ({ total_distance }) =>
-          total_distance[total_distance.length - 1] === distance.min
-      );
-    } else if (distance.min > distance.max) {
-      result = result.filter(
-        ({ total_distance }) =>
-          total_distance[total_distance.length - 1] >= distance.min
-      );
-    } else if (distance.min < distance.max) {
-      result = result.filter(
-        ({ total_distance }) =>
-          total_distance[total_distance.length - 1] >= distance.min &&
-          total_distance[total_distance.length - 1] <= distance.max
-      );
-    }
-  }
+  result = result.filter(({ total_distance }) => {
+    const totalDistance = total_distance[total_distance.length - 1];
+    const convertedDistance = turfHelpers.convertLength(
+      totalDistance,
+      'meters',
+      units
+    );
+
+    return distance[0] <= distance[1]
+      ? convertedDistance >= distance[0] && convertedDistance <= distance[1]
+      : convertedDistance <= distance[0] && convertedDistance >= distance[1];
+  });
 
   switch (sortTerm) {
     case 'newest':
@@ -143,12 +141,19 @@ const sortRoutes = (
   }
 };
 
-const RouteList: React.FC<{}> = () => {
-  const [open, setOpen] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+const calculateMaxDistance = (routes, units) => {
+  const distance = routes.reduce((accum, curr) => {
+    const distance = curr.total_distance[curr.total_distance.length - 1];
+    return Math.max(accum, distance);
+  }, 0);
 
+  return Math.round(turfHelpers.convertLength(distance, 'meters', units));
+};
+
+const RouteList: React.FC<{}> = () => {
   const {
     sortedRoutes,
+    maxDistance,
     sortingTerm,
     filters,
     user: { units },
@@ -156,34 +161,29 @@ const RouteList: React.FC<{}> = () => {
     sortedRoutes: sortRoutes(
       state.routeList.sortingTerm,
       [...state.routeList.routes],
-      state.routeList.filters
+      state.routeList.filters,
+      state.routeList.maxDistance,
+      state.auth.user.units
     ),
+    maxDistance: state.routeList.maxDistance,
     sortingTerm: state.routeList.sortingTerm,
     filters: state.routeList.filters,
     user: state.auth.user,
-    authenticated: state.auth.authenticated,
   }));
   const dispatch = useDispatch();
+
+  const [open, setOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSelect = (selectedOption: SelectOption) => {
     dispatch(updateSortingTerm(selectedOption.value));
   };
 
   const handleChange = (filter, value) => {
-    if (filter === 'keyword') {
-      dispatch(updateFilter({ filter, value }));
-    } else {
-      // const restrictedValues = ['-', '.', '+', 'e'];
-      // const indexOfRestrictedValue = -1;
-
-      // for(let i = )
-
-      // make it so the input will not accept '-, e, +, or .'
-      dispatch(updateFilter({ filter, value }));
-    }
+    dispatch(updateFilter({ filter, value }));
   };
 
-  const renderBadges = (filters) => {
+  const renderBadges = (filters: FiltersTypes, maxDistance: number) => {
     return Object.keys(filters).map((filter) => {
       if (filter === 'keyword' && filters.keyword) {
         return (
@@ -191,17 +191,34 @@ const RouteList: React.FC<{}> = () => {
             Keyword: {filters.keyword} X
           </Badge>
         );
-      } else if (
-        filter === 'distance' &&
-        (filters.distance.min > 0 || filters.distance.max > 0)
-      ) {
-        return (
-          <Badge key={filter} onClick={() => dispatch(removeFilter(filter))}>
-            Distance: {renderDistance(filters.distance)} X
-          </Badge>
-        );
+      } else if (filter === 'distance') {
+        const distance = filters.distance;
+        const min = Math.min(distance[0], distance[1]);
+        const max = Math.max(distance[0], distance[1]);
+
+        if (min > 0 || max < maxDistance) {
+          return (
+            <Badge key={filter} onClick={() => dispatch(removeFilter(filter))}>
+              Distance: {renderDistance(min, max, maxDistance, units)} X
+            </Badge>
+          );
+        }
       }
     });
+  };
+
+  const handleSlide = (
+    event: any,
+    newValue: number[],
+    filters: FiltersTypes
+  ) => {
+    if (
+      newValue[0] === filters.distance[0] &&
+      newValue[1] === filters.distance[1]
+    )
+      return;
+    console.log(newValue);
+    dispatch(updateFilter({ filter: 'distance', value: newValue }));
   };
 
   useEffect(() => {
@@ -215,7 +232,8 @@ const RouteList: React.FC<{}> = () => {
 
         if (response.ok) {
           const { routes } = await response.json();
-          dispatch(addRoutes(routes));
+          const maxDistance = calculateMaxDistance(routes, units);
+          dispatch(addRoutes({ routes, maxDistance }));
         }
         setLoading(false);
       } catch (error) {
@@ -233,7 +251,7 @@ const RouteList: React.FC<{}> = () => {
         <Header>
           <Badges>
             <p>{sortedRoutes.length} routes</p>
-            {renderBadges(filters)}
+            {renderBadges(filters, maxDistance)}
           </Badges>
           <SelectContainer>
             <CustomSelect {...{ sortingTerm, handleSelect }} />
@@ -257,21 +275,14 @@ const RouteList: React.FC<{}> = () => {
             <FilterGroup>
               <Label>Distance</Label>
               <InputGroup>
-                <Input
-                  type="number"
-                  placeholder="Min"
-                  value={filters.distance.min}
-                  onChange={(e) =>
-                    handleChange('distance/min', e.target.value || 0)
+                <Slider
+                  min={0}
+                  step={0.5}
+                  max={maxDistance}
+                  onChange={(event: any, newValue: number[]) =>
+                    handleSlide(event, newValue, filters)
                   }
-                />
-                <Input
-                  type="number"
-                  placeholder="Max"
-                  value={filters.distance.max}
-                  onChange={(e) =>
-                    handleChange('distance/max', e.target.value || 0)
-                  }
+                  value={[filters.distance[0], filters.distance[1]]}
                 />
               </InputGroup>
             </FilterGroup>
@@ -299,7 +310,16 @@ const RouteList: React.FC<{}> = () => {
         </Grid>
       </Layout>
       <MobileFilters
-        {...{ open, setOpen, handleChange, filters, sortingTerm, handleSelect }}
+        {...{
+          open,
+          setOpen,
+          handleChange,
+          filters,
+          sortingTerm,
+          handleSelect,
+          maxDistance,
+          handleSlide,
+        }}
       />
     </>
   );
@@ -372,11 +392,15 @@ const Badges = styled.div`
 
 const Badge = styled.div`
   padding: 4px 6px;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   border: 1px solid ${(props) => props.theme.colors.teal[800]};
   border-radius: 2px;
   color: ${(props) => props.theme.colors.teal[800]};
   background-color: ${(props) => props.theme.colors.teal[200]};
+
+  @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
+    font-size: 1rem;
+  }
 
   &:hover {
     cursor: pointer;

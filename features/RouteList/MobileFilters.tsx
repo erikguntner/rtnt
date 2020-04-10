@@ -2,6 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import Portal from '../Utilities/Portal';
+import Slider from '@material-ui/core/Slider';
 
 import {
   Input,
@@ -19,10 +20,12 @@ import CustomSelect from './CustomSelect';
 interface MobileFiltersProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  handleChange: (filter, value) => void;
   filters: FiltersTypes;
   sortingTerm: string;
+  maxDistance: number;
+  handleChange: (filter, value) => void;
   handleSelect: (selectedOption: SelectOption) => void;
+  handleSlide: (event: any, newValue: number[], filters: FiltersTypes) => void;
 }
 
 const MobileFilters: React.FC<MobileFiltersProps> = ({
@@ -32,6 +35,8 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({
   filters,
   sortingTerm,
   handleSelect,
+  maxDistance,
+  handleSlide,
 }) => {
   return (
     <Portal selector={'#portal'}>
@@ -56,21 +61,14 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({
           <FilterGroup>
             <Label>Distance</Label>
             <InputGroup>
-              <Input
-                type="number"
-                placeholder="Min"
-                value={filters.distance.min}
-                onChange={(e) =>
-                  handleChange('distance/min', e.target.value || 0)
+              <Slider
+                min={0}
+                step={0.5}
+                max={maxDistance}
+                onChange={(event: any, newValue: number[]) =>
+                  handleSlide(event, newValue, filters)
                 }
-              />
-              <Input
-                type="number"
-                placeholder="Max"
-                value={filters.distance.max}
-                onChange={(e) =>
-                  handleChange('distance/max', e.target.value || 0)
-                }
+                value={[filters.distance[0], filters.distance[1]]}
               />
             </InputGroup>
           </FilterGroup>
