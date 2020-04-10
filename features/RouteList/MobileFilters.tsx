@@ -5,7 +5,6 @@ import Portal from '../Utilities/Portal';
 import Slider from '@material-ui/core/Slider';
 
 import {
-  Input,
   FilterGroup,
   Label,
   InputWrapper,
@@ -25,7 +24,11 @@ interface MobileFiltersProps {
   maxDistance: number;
   handleChange: (filter, value) => void;
   handleSelect: (selectedOption: SelectOption) => void;
-  handleSlide: (event: any, newValue: number[], filters: FiltersTypes) => void;
+  handleSlide: (
+    event: React.ChangeEvent<{}>,
+    newValue: number[],
+    filters: FiltersTypes
+  ) => void;
 }
 
 const MobileFilters: React.FC<MobileFiltersProps> = ({
@@ -65,7 +68,7 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({
                 min={0}
                 step={0.5}
                 max={maxDistance}
-                onChange={(event: any, newValue: number[]) =>
+                onChange={(event: React.ChangeEvent<{}>, newValue: number[]) =>
                   handleSlide(event, newValue, filters)
                 }
                 value={[filters.distance[0], filters.distance[1]]}

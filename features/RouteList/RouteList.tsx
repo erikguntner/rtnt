@@ -208,7 +208,7 @@ const RouteList: React.FC<{}> = () => {
   };
 
   const handleSlide = (
-    event: any,
+    event: React.ChangeEvent<{}>,
     newValue: number[],
     filters: FiltersTypes
   ) => {
@@ -279,9 +279,10 @@ const RouteList: React.FC<{}> = () => {
                   min={0}
                   step={0.5}
                   max={maxDistance}
-                  onChange={(event: any, newValue: number[]) =>
-                    handleSlide(event, newValue, filters)
-                  }
+                  onChange={(
+                    event: React.ChangeEvent<{}>,
+                    newValue: number[]
+                  ) => handleSlide(event, newValue, filters)}
                   value={[filters.distance[0], filters.distance[1]]}
                 />
               </InputGroup>
@@ -512,14 +513,6 @@ export const Input = styled.input`
 
 export const InputWithIcon = styled(Input)`
   padding: 1rem 1rem 1rem 3.6rem;
-`;
-
-const Text = styled.p`
-  width: 100%;
-  margin-top: 5rem;
-  color: ${(props) => props.theme.colors.gray[600]};
-  font-size: 2.4rem;
-  text-align: center;
 `;
 
 export default RouteList;
