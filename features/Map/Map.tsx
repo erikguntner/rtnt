@@ -64,6 +64,8 @@ const Map = () => {
     user: state.auth.user,
   }));
 
+  const handleViewportChange = (viewport) => setViewport(viewport);
+
   const handleClick = (event) => {
     const [newLong, newLat] = event.lngLat;
 
@@ -201,7 +203,8 @@ const Map = () => {
         height={'100%'}
         style={{ display: 'flex', flex: '1' }}
         onClick={handleClick}
-        onViewportChange={(viewport) => setViewport(viewport)}
+        onTouchStart={(event) => console.log(event)}
+        onViewportChange={handleViewportChange}
         mapStyle="mapbox://styles/mapbox/outdoors-v10"
       >
         {position.length > 0 && (

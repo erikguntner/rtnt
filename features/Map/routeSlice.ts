@@ -261,15 +261,15 @@ export const updateRouteAfterDrag = ({
       pointIndex == 0
         ? 0
         : elevationData[pointIndex - 1][
-            elevationData[pointIndex - 1].length - 1
-          ].distance;
+          elevationData[pointIndex - 1].length - 1
+        ].distance;
     // index in elevationData array where we need to start looping and updating distances
     const startingIndexToUpdateElevation =
       pointIndex === 0
         ? 1
         : pointIndex === numberOfPoints
-        ? elevationData.length - 1
-        : pointIndex;
+          ? elevationData.length - 1
+          : pointIndex;
 
     // get new lines segments and new distance to add to all following points
     const { newElevationSegments, currentDistance } = parseElevationData(
