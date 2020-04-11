@@ -19,7 +19,6 @@ const SvgPath: React.FC<Props> = ({ points }) => {
 
     return (
       <path
-        onMouseOver={(event) => console.log(event)}
         d={path}
         stroke="#667eea"
         strokeWidth="4"

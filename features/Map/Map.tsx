@@ -203,7 +203,6 @@ const Map = () => {
         height={'100%'}
         style={{ display: 'flex', flex: '1' }}
         onClick={handleClick}
-        onTouchStart={(event) => console.log(event)}
         onViewportChange={handleViewportChange}
         mapStyle="mapbox://styles/mapbox/outdoors-v10"
       >
