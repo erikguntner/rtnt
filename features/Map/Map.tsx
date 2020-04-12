@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
 import ReactMapGL, { Marker, NavigationControl } from 'react-map-gl';
@@ -38,12 +38,12 @@ const Map = () => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [point, setPoint] = useState<number[]>([]);
   const [index, setIndex] = useState<number>(0);
-
   // state for syncing mouseevents for chart and map
   const [distanceAlongPath, setDistanceAlongPath] = useState<number>(0);
   const [pointAlongPath, setPointAlongPath] = useState<number[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   // const [hoveredPoint, setHoveredPoint] = useState<number[]>();
+  const mapRef = useRef(null);
 
   const dispatch: AppDispatch = useDispatch();
   const {
@@ -196,6 +196,7 @@ const Map = () => {
         }}
       />
       <ReactMapGL
+        ref={(ref) => (mapRef.current = ref && ref.getMap())}
         {...viewport}
         mapboxApiAccessToken={process.env.MAPBOX_TOKEN}
         reuseMap={true}
@@ -214,7 +215,7 @@ const Map = () => {
         {isDragging && (
           <ConnectingLines points={points} index={index} endPoint={point} />
         )}
-        <SvgPath points={lines} />
+        <SvgPath points={lines} {...{ mapRef, setPointAlongPath }} />
         {/* <GeoJsonPath {...{ lines }} /> */}
         {points.map((point, i) => (
           <Marker
