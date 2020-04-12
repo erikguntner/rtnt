@@ -73,6 +73,8 @@ const ElevationProfile: React.FC<Props> = ({
     createChart(elevationData, setDistanceAlongPath, units, dimensions);
   }, [elevationData, dimensions]);
 
+  console.log('elevation data', elevationData);
+
   return (
     <ChartContainer
       {...{ showElevation }}

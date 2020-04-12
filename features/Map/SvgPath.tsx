@@ -1,56 +1,80 @@
-import React from 'react';
-import WebMercatorViewport from '@math.gl/web-mercator';
+import React, { useEffect } from 'react';
+import * as turfHelpers from '@turf/helpers';
 import { SVGOverlay } from 'react-map-gl';
 import {
-  area,
-  axisLeft,
-  axisBottom,
   scaleLinear,
-  scaleBand,
-  extent,
   select,
-  selectAll,
-  curveMonotoneX,
   line,
   mouse,
   max,
 } from 'd3';
 
-interface Props {
-  points: number[][][];
-  mapRef: React.MutableRefObject<any>;
-  setPointAlongPath: React.Dispatch<React.SetStateAction<number[]>>;
+interface ElevationData {
+  distance: number;
+  segDistance: number;
+  elevation: number;
 }
 
-const SvgPath: React.FC<Props> = ({ points, mapRef, setPointAlongPath }) => {
-  const handleMouseMove = (event) => {
-    const bounds = event.target.getBoundingClientRect();
-    const container = mapRef.current.getCanvasContainer();
-    const x = event.clientX - container.offsetLeft;
-    const y = event.clientY - container.offsetTop - 64;
-    console.log(mapRef.current);
-    const {
-      width,
-      height,
-      scale,
-      tileZoom,
-      _center,
-      _pitch,
-    } = mapRef.current.transform;
-    console.log(scale);
+interface Props {
+  points: number[][][];
+  elevationData: ElevationData[][];
+  mapRef: React.MutableRefObject<any>;
+  setDistanceAlongPath: React.Dispatch<React.SetStateAction<number>>;
+  units: 'miles' | 'kilometers';
+}
 
-    const viewport = new WebMercatorViewport({
-      width,
-      height,
-      longitude: _center.lng,
-      latitude: _center.lat,
-      zoom: tileZoom,
-      pitch: _pitch,
-    });
+const SvgPath: React.FC<Props> = ({
+  points,
+  elevationData,
+  setDistanceAlongPath,
+  units,
+}) => {
+  function mouseMove() {
+    const data = elevationData.flat();
 
-    const coords = viewport.unproject([x, y], scale);
-    setPointAlongPath(coords);
-  };
+    const mouseCoords = mouse(this);
+    const path = select('.route-path');
+    let beginning = 0;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    //@ts-ignore
+    let end = path.node().getTotalLength();
+    let pos = null;
+
+    const xValue = (d) =>
+      turfHelpers.convertLength(d.distance, 'meters', units);
+
+    const xScale = scaleLinear()
+      .domain([0, max(data, xValue)])
+      .range([0, end]);
+
+    while (true) {
+      const target = Math.floor((beginning + end) / 2);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      //@ts-ignore
+      pos = path.node().getPointAtLength(target);
+      if (
+        (target === end || target === beginning) &&
+        pos.x !== mouseCoords[0]
+      ) {
+        break;
+      }
+      if (pos.x > mouseCoords[0]) end = target;
+      else if (pos.x < mouseCoords[0]) beginning = target;
+      else break; //position found
+    }
+
+    setDistanceAlongPath(+xScale.invert(pos.x) - 1.2);
+  }
+
+  useEffect(() => {
+    console.log('im reloadingggg');
+    const path = select('.route-path');
+    path
+      .attr('pointer-events', 'all')
+      // .on('mouseout', mouseOut)
+      // .on('mouseover', mouseOver)
+      .on('mousemove', mouseMove);
+  }, [elevationData]);
 
   const redraw = ({ project }) => {
     const path = points.flat().reduce((accum, point, i) => {
@@ -67,10 +91,10 @@ const SvgPath: React.FC<Props> = ({ points, mapRef, setPointAlongPath }) => {
       <path
         d={path}
         stroke="#667eea"
-        strokeWidth="4"
+        strokeWidth="6"
         fill="none"
         className="route-path"
-        onMouseMove={handleMouseMove}
+        // onMouseMove={handleMouseMove}
       />
     );
   };
