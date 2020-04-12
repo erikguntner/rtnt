@@ -30,12 +30,14 @@ export const renderLineChart = (
     height: number;
   }
 ) => {
-  const margin = { top: 20, right: 20, bottom: 20, left: 50 };
+  const margin = { top: 20, right: 30, bottom: 20, left: 50 };
   const height = dimensions.height;
   const width = dimensions.width;
   const svg = select('.line-chart');
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
+
+  const yAxisUnits = units === 'miles' ? 'feet' : 'meters';
 
   //@ts-ignore
   const xValue = d => turfHelpers.convertLength(d.distance, 'meters', units);
@@ -44,7 +46,7 @@ export const renderLineChart = (
       d.elevation,
       'meters',
       //@ts-ignore
-      units === 'miles' ? 'feet' : 'meters'
+      yAxisUnits
     );
 
   const xScale = scaleLinear()
@@ -59,10 +61,27 @@ export const renderLineChart = (
     .append('g')
     .attr('transform', `translate(${margin.left} ${margin.top})`);
 
-  g.append('g').call(axisLeft(yScale).ticks(4));
+  g.append('g')
+    .call(axisLeft(yScale)
+      .ticks(4))
+    .append('text')
+    .attr("class", "axis-title")
+    .attr("y", -4)
+    .style("text-anchor", "end")
+    .attr("fill", "black")
+    .text(yAxisUnits);
+
   g.append('g')
     .call(axisBottom(xScale))
-    .attr('transform', `translate(0 ${innerHeight})`);
+    .attr('transform', `translate(0 ${innerHeight})`)
+    .append('text')
+    .attr("class", "axis-title")
+    .attr("x", width - margin.right - 30)
+    .attr("y", 15)
+    .attr('transform', `translateX(100%)`)
+    .style("text-anchor", "end")
+    .attr("fill", "black")
+    .text(units);
 
   const lineGenerator = line()
     .x(d => xScale(xValue(d)))

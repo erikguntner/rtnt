@@ -1,13 +1,7 @@
 import React, { useEffect } from 'react';
 import * as turfHelpers from '@turf/helpers';
 import { SVGOverlay } from 'react-map-gl';
-import {
-  scaleLinear,
-  select,
-  line,
-  mouse,
-  max,
-} from 'd3';
+import { scaleLinear, select, line, mouse, max } from 'd3';
 
 interface ElevationData {
   distance: number;
@@ -17,15 +11,15 @@ interface ElevationData {
 
 interface Props {
   points: number[][][];
-  elevationData: ElevationData[][];
-  mapRef: React.MutableRefObject<any>;
-  setDistanceAlongPath: React.Dispatch<React.SetStateAction<number>>;
-  units: 'miles' | 'kilometers';
+  elevationData?: ElevationData[][] | null;
+  mapRef?: React.MutableRefObject<any>;
+  setDistanceAlongPath?: React.Dispatch<React.SetStateAction<number>>;
+  units?: 'miles' | 'kilometers';
 }
 
 const SvgPath: React.FC<Props> = ({
   points,
-  elevationData,
+  elevationData = null,
   setDistanceAlongPath,
   units,
 }) => {
@@ -68,12 +62,13 @@ const SvgPath: React.FC<Props> = ({
 
   useEffect(() => {
     console.log('im reloadingggg');
-    const path = select('.route-path');
-    path
-      .attr('pointer-events', 'all')
+    if (elevationData !== null) {
+      const path = select('.route-path');
+      path.attr('pointer-events', 'all');
       // .on('mouseout', mouseOut)
       // .on('mouseover', mouseOver)
-      .on('mousemove', mouseMove);
+      // .on('mousemove', mouseMove);
+    }
   }, [elevationData]);
 
   const redraw = ({ project }) => {
@@ -91,7 +86,7 @@ const SvgPath: React.FC<Props> = ({
       <path
         d={path}
         stroke="#667eea"
-        strokeWidth="6"
+        strokeWidth="4"
         fill="none"
         className="route-path"
         // onMouseMove={handleMouseMove}
