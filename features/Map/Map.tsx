@@ -1,11 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
-import ReactMapGL, {
-  Marker,
-  NavigationControl,
-  _MapContext,
-} from 'react-map-gl';
+import ReactMapGL, { Marker, NavigationControl } from 'react-map-gl';
 import styled from 'styled-components';
 
 import { RootState } from '../../app/rootReducer';
