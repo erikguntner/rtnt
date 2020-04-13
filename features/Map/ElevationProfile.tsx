@@ -113,6 +113,14 @@ const ChartContainer = styled.div`
   display: block;
   z-index: 25;
   transition: all 0.3s ease;
+
+  .distance-text {
+    /* fill: blue; */
+  }
+
+  .elevation-text {
+    /* fill: blue; */
+  }
 `;
 
 export default ElevationProfile;

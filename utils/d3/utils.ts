@@ -78,7 +78,6 @@ export const renderLineChart = (
     .attr("class", "axis-title")
     .attr("x", width - margin.right - 30)
     .attr("y", 15)
-    .attr('transform', `translateX(100%)`)
     .style("text-anchor", "end")
     .attr("fill", "black")
     .text(units);
@@ -141,9 +140,6 @@ export const renderLineChart = (
     .style('opacity', '0');
 
   const mouseOnLine = mouseG
-    .selectAll('.mouse')
-    .data(data)
-    .enter()
     .append('g')
     .attr('class', 'mouse');
 
@@ -156,12 +152,22 @@ export const renderLineChart = (
     .style('opacity', '0');
 
   mouseOnLine
-    .append('text')
-    .attr('transform', 'translate(10,3)')
-    .attr('class', 'distance-text');
+    .append('rect')
+    .attr('width', '55')
+    .attr('height', '35')
+    .attr('transform', 'translate(10, -17.5)')
+    .attr('fill', '#fff')
+    .attr('stroke', 'black')
+    .style('opacity', '0');
+
   mouseOnLine
     .append('text')
-    .attr('transform', 'translate(10,10)')
+    .attr('transform', 'translate(15, -3)')
+    .attr('class', 'distance-text');
+
+  mouseOnLine
+    .append('text')
+    .attr('transform', 'translate(15, 10)')
     .attr('class', 'elevation-text');
 
   const mouseOut = () => {
@@ -169,6 +175,7 @@ export const renderLineChart = (
     select('.mouse-line').style('opacity', '0');
     select('.mouse circle').style('opacity', '0');
     selectAll('.mouse text').style('opacity', '0');
+    selectAll('.mouse rect').style('opacity', '0');
     setDistanceAlongPath(0);
   }
 
@@ -177,6 +184,7 @@ export const renderLineChart = (
     select('.mouse-line').style('opacity', '1');
     select('.mouse circle').style('opacity', '1');
     selectAll('.mouse text').style('opacity', '1');
+    selectAll('.mouse rect').style('opacity', '1');
   }
 
   function mouseMove() {
@@ -217,16 +225,18 @@ export const renderLineChart = (
       }
 
       setDistanceAlongPath(+xScale.invert(pos.x));
+      const elevationAbbrev: string = units === 'miles' ? 'ft' : 'm';
+      const distanceAbbrev: string = units === 'miles' ? 'mi' : 'km';
 
       select(this)
         .select('.elevation-text')
-        .text(yScale.invert(pos.y).toFixed(2));
+        .text(`${yScale.invert(pos.y).toFixed(2)} ${elevationAbbrev}`);
 
       select(this)
         .select('.distance-text')
-        .text(xScale.invert(pos.x).toFixed(2));
+        .text(`${xScale.invert(pos.x).toFixed(2)} ${distanceAbbrev}`);
 
-      return `translate(${mouseCoords[0]},${pos.y})`;
+      return `translate(${mouseCoords[0]}, ${pos.y})`;
     });
   }
 
