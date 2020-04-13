@@ -22,8 +22,8 @@ interface Links {
 const AvatarSkeleton = () => {
   return (
     <SkeletonWrapper>
-      <Skeleton width={100} />
-      <Skeleton height={24} width={24} borderRadius={200} />
+      <Skeleton width={'100px'} />
+      <Skeleton height={'24px'} width={'24px'} borderRadius={'50%'} />
     </SkeletonWrapper>
   );
 };

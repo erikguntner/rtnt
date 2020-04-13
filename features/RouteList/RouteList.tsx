@@ -51,9 +51,9 @@ export interface SelectOption {
 const CardSkeleton = () => {
   return (
     <SkeletonWrapper>
-      <Skeleton height={200} width={300} />
-      <Skeleton height={24} width={150} />
-      <Skeleton width={50} />
+      <Skeleton height={'200px'} width={'100%'} />
+      <Skeleton height={'24px'} width={'150px'} />
+      <Skeleton width={'50px'} />
     </SkeletonWrapper>
   );
 };

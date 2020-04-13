@@ -2,22 +2,22 @@ import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
 interface SkeletonProps {
-  height?: number;
-  width?: number;
-  borderRadius?: number;
+  height?: string;
+  width?: string;
+  borderRadius?: string;
 }
 
 const Skeleton: React.FC<SkeletonProps> = ({
-  height = 16,
-  width = 16,
-  borderRadius = 2,
+  height = '16px',
+  width = '16px',
+  borderRadius = '2px',
 }) => {
   return (
     <SkeletonWrapper
       style={{
-        height: `${height}px`,
-        width: `${width}px`,
-        borderRadius: `${borderRadius}px`,
+        height: `${height}`,
+        width: `${width}`,
+        borderRadius: `${borderRadius}`,
       }}
     ></SkeletonWrapper>
   );
