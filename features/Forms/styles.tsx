@@ -74,17 +74,17 @@ export const SubmitButton = styled.button`
   padding: 8px 1.2rem;
   border: none;
   border-radius: 2px;
-  background-color: ${(props) => props.theme.colors.indigo[700]};
+  background-color: ${(props) => props.theme.colors.primary};
   color: #fff;
   font-size: 1.4rem;
 
   &:hover {
     cursor: pointer;
-    background-color: ${(props) => props.theme.colors.indigo[600]};
+    background-color: ${(props) => props.theme.colors.newBlues[500]};
   }
 
   &:active {
-    background-color: ${(props) => props.theme.colors.indigo[800]};
+    background-color: ${(props) => props.theme.colors.blue[800]};
   }
 `;
 
@@ -120,7 +120,7 @@ export const Spinner = styled.div`
   height: 2rem;
   width: 2rem;
   border-radius: 50%;
-  border-right: 3px solid ${(props) => props.theme.colors.indigo[600]};
+  border-right: 3px solid ${(props) => props.theme.colors.primary};
   border-left: 3px solid ${(props) => props.theme.colors.gray[100]};
   border-top: 3px solid ${(props) => props.theme.colors.gray[100]};
   border-bottom: 3px solid ${(props) => props.theme.colors.gray[100]};

@@ -98,13 +98,13 @@ export const renderLineChart = (
     .append('path')
     .attr('class', 'line-path')
     .attr('fill', 'none')
-    .attr('stroke', '#667eea')
+    .attr('stroke', '#0070f3')
     .attr('stroke-width', '2')
     //@ts-ignore
     .attr('d', lineGenerator(data));
 
   //@ts-ignore
-  const colorScale = scaleLinear().range(['#667eea', '#7f9cf5', '#a3bffa', '#c3dafe', '#ebf4ff'])
+  const colorScale = scaleLinear().range(['#0070f3', '#238ffb', '#54acfe', '#85c7fe', '#b6e1fd', '#ebf4ff'])
 
   //@ts-ignore
   g.append("linearGradient")

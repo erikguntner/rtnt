@@ -108,7 +108,7 @@ const InnerButton = styled.div<ButtonProps>`
     props.activeState ? props.theme.colors.indigo[100] : '#fff'};
   color: ${(props) => {
     if (props.activeState) {
-      return props.theme.colors.indigo[600];
+      return props.theme.colors.primary;
     } else if (props.disabled) {
       return props.theme.colors.gray[600];
     } else {

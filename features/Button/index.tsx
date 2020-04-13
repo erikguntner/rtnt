@@ -25,7 +25,7 @@ const StyledLink = styled(Link)`
 
   &:focus {
     outline: none;
-    box-shadow: ${props => props.theme.boxShadow.outline};
+    box-shadow: ${(props) => props.theme.boxShadow.outline};
   }
 `;
 
@@ -37,16 +37,17 @@ const StyledButton = styled.button`
 
   &:focus {
     outline: none;
-    box-shadow: ${props => props.theme.boxShadow.outline};
+    box-shadow: ${(props) => props.theme.boxShadow.outline};
   }
 `;
 
 const StyledDarkButton = styled.button`
-  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+  padding: ${(props) => props.theme.spacing.sm}
+    ${(props) => props.theme.spacing.md};
   border: none;
   border-radius: 2px;
   background-color: transparent;
-  color: ${props => props.theme.colors.gray[400]};
+  color: ${(props) => props.theme.colors.gray[400]};
   font-size: 1.4rem;
 
   &:hover {
@@ -57,27 +58,28 @@ const StyledDarkButton = styled.button`
 `;
 
 const StyledPrimaryButton = styled.button`
-  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+  padding: ${(props) => props.theme.spacing.sm}
+    ${(props) => props.theme.spacing.md};
   border: none;
   border-radius: 2px;
-  background-color: ${props => props.theme.colors.indigo[700]};
+  background-color: ${(props) => props.theme.colors.primary};
   color: #fff;
   font-size: 1.4rem;
 
   &:hover {
     cursor: pointer;
-    background-color: ${props => props.theme.colors.indigo[600]};
+    background-color: ${(props) => props.theme.colors.newBlues[500]};
   }
 
   &:active {
-    background-color: ${props => props.theme.colors.indigo[800]};
+    background-color: ${(props) => props.theme.colors.blue[700]};
   }
 `;
 
-export const Button = props => Wrapper(StyledButton, props);
+export const Button = (props) => Wrapper(StyledButton, props);
 
-export const DarkButtonLink = props => Wrapper(StyledDarkButton, props);
+export const DarkButtonLink = (props) => Wrapper(StyledDarkButton, props);
 
-export const PrimaryButtonLink = props => Wrapper(StyledPrimaryButton, props);
+export const PrimaryButtonLink = (props) => Wrapper(StyledPrimaryButton, props);
 
 export default Wrapper;

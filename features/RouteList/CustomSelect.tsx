@@ -10,7 +10,7 @@ interface CustomSelectProps {
 const customStyles = {
   container: (styles) => ({
     ...styles,
-    fontSize: '14px',
+    fontSize: '16px',
   }),
   option: (styles, { isFocused, isSelected }) => ({
     ...styles,

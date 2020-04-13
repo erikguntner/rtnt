@@ -4,8 +4,9 @@ import { NextPage } from 'next';
 import Router, { useRouter } from 'next/router';
 import useSWR from 'swr';
 import ReactMapGL, { Marker, NavigationControl } from 'react-map-gl';
-import WebMercatorViewport from 'viewport-mercator-project';
 import * as turf from '@turf/turf';
+import * as turfHelpers from '@turf/helpers';
+import WebMercatorViewport from '@math.gl/web-mercator';
 import bbox from '@turf/bbox';
 import styled from 'styled-components';
 import fetch from 'isomorphic-unfetch';
@@ -99,6 +100,7 @@ const RoutePage: NextPage<{}> = () => {
   const [pointAlongPath, setPointAlongPath] = useState<number[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const options = useRef<HTMLDivElement>(null);
+  const mapRef = useRef(null);
 
   const {
     user: { units },
@@ -129,14 +131,25 @@ const RoutePage: NextPage<{}> = () => {
 
   useEffect(() => {
     if (data?.route) {
-      const coords = turf.featureCollection(
-        data.route.lines.flat().map((point) => turf.point(point))
+      const { transform } = mapRef.current;
+      const line = turfHelpers.multiLineString(data.route.lines);
+      var bBox = bbox(line);
+      const newViewport = new WebMercatorViewport({
+        width: transform.width,
+        height: transform.height,
+      }).fitBounds(
+        [
+          [bBox[0], bBox[1]],
+          [bBox[2], bBox[3]],
+        ],
+        {
+          padding: 5,
+          offset: [0, -20],
+        }
       );
-      const { geometry } = turf.center(coords);
+
       setViewport({
-        ...viewport,
-        latitude: geometry.coordinates[1],
-        longitude: geometry.coordinates[0],
+        ...newViewport,
       });
     }
   }, [data]);
@@ -148,9 +161,6 @@ const RoutePage: NextPage<{}> = () => {
   if (data.message || error) {
     return <h1>There was an error</h1>;
   }
-
-  // const line = turf.lineString(data.route.lines.flat());
-  // const bBox = bbox(line);
 
   return (
     <Wrapper>
@@ -191,6 +201,7 @@ const RoutePage: NextPage<{}> = () => {
       <MapContainer>
         <ReactMapGL
           {...viewport}
+          ref={(ref) => (mapRef.current = ref && ref.getMap())}
           mapboxApiAccessToken={process.env.MAPBOX_TOKEN}
           reuseMap={true}
           width={'100%'}

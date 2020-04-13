@@ -14,18 +14,20 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
       const { email, username, password } = req.body;
 
       if (!email || !username || !password) {
+        console.log('not enough info');
         return res
           .status(400)
           .json({ error: 'You must provide and username and password' });
       }
       // const existingUser = await User.findOne({ username: username });
       const existingUser = await query(
-        'select * from users where username = $1',
-        [username]
+        'select * from users where username = $1 or email = $2',
+        [username, email]
       );
 
       if (existingUser.rows.length > 0) {
-        return res.status(400).json({ error: 'username already exists' });
+        console.log('existing user');
+        return res.status(400).json({ error: 'username or email already in use' });
       }
 
       const salt = await bcrypt.genSalt(10);
@@ -35,6 +37,9 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
         'insert into users (email, username, password) values ($1, $2, $3) returning *',
         [email, username, hashedPassword]
       );
+
+      console.log('created user');
+
       const token = tokenForUser(user.rows[0]);
 
       return res.status(200).json({
@@ -42,6 +47,8 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
         user: user.rows[0],
       });
     } catch (e) {
+      console.log('error', e);
+      console.log(e.message);
       return res.status(400).json({ message: 'There was an error signing in' });
     }
   } else {

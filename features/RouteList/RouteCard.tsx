@@ -42,7 +42,7 @@ const RouteCard: React.FC<Props> = ({
             <span>{abbreviatedDistance(units)}</span>
           </Distance>
           <Link href="/route/[id]" as={`/route/${id}`}>
-            <a>View</a>
+            <ViewLink>View</ViewLink>
           </Link>
         </Row>
       </Content>
@@ -77,6 +77,21 @@ const Content = styled.div`
     line-height: 1;
     font-size: 2.4rem;
     color: ${(props) => props.theme.colors.gray[900]};
+  }
+`;
+
+const ViewLink = styled.a`
+  padding: 6px 1.2rem;
+  font-size: 1.2rem;
+  color: ${(props) => props.theme.colors.primary};
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  border-radius: 2px;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.newBlues[100]};
+    cursor: pointer;
   }
 `;
 
