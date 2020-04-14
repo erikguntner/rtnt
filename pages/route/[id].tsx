@@ -137,17 +137,17 @@ const RoutePage: NextPage<{}> = () => {
       const newViewport = new WebMercatorViewport({
         width: transform.width,
         height: transform.height,
+        zoom: transform._zoom,
+        scale: transform.scale
       }).fitBounds(
         [
           [bBox[0], bBox[1]],
           [bBox[2], bBox[3]],
         ],
         {
-          padding: 5,
-          offset: [0, -20],
+          padding: 10,
         }
       );
-
       setViewport({
         ...newViewport,
       });

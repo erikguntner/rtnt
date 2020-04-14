@@ -61,7 +61,6 @@ const SvgPath: React.FC<Props> = ({
   }
 
   useEffect(() => {
-    console.log('im reloadingggg');
     if (elevationData !== null) {
       const path = select('.route-path');
       path.attr('pointer-events', 'all');

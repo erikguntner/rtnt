@@ -74,13 +74,13 @@ export const renderLineChart = (
   g.append('g')
     .call(axisBottom(xScale))
     .attr('transform', `translate(0 ${innerHeight})`)
-    .append('text')
-    .attr("class", "axis-title")
-    .attr("x", width - margin.right - 30)
-    .attr("y", 15)
-    .style("text-anchor", "end")
-    .attr("fill", "black")
-    .text(units);
+  // .append('text')
+  // .attr("class", "axis-title")
+  // .attr("x", width - margin.right - 30)
+  // .attr("y", 15)
+  // .style("text-anchor", "end")
+  // .attr("fill", "black")
+  // .text(units);
 
   const lineGenerator = line()
     .x(d => xScale(xValue(d)))

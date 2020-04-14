@@ -38,6 +38,7 @@ const Map = () => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [point, setPoint] = useState<number[]>([]);
   const [index, setIndex] = useState<number>(0);
+  // const [touchPoint, setTouchPoint] = useState<number[]>([]);
   // state for syncing mouseevents for chart and map
   const [distanceAlongPath, setDistanceAlongPath] = useState<number>(0);
   const [pointAlongPath, setPointAlongPath] = useState<number[]>([]);
@@ -205,6 +206,10 @@ const Map = () => {
         height={'100%'}
         style={{ display: 'flex', flex: '1' }}
         onClick={handleClick}
+        onMouseDown={(event) => {
+          console.log(event);
+          setTouchPoint(event.lngLat);
+        }}
         onViewportChange={handleViewportChange}
         mapStyle="mapbox://styles/mapbox/outdoors-v10"
       >
@@ -234,6 +239,11 @@ const Map = () => {
             <Pin index={i} points={points} />
           </Marker>
         ))}
+        {/* {touchPoint.length > 0 && (
+          <Marker longitude={touchPoint[0]} latitude={touchPoint[1]} draggable>
+            <UserMarker style={{ transform: 'translate3d(-5px, -5px, 0)' }} />
+          </Marker>
+        )} */}
         <DistanceMarkers {...{ lines, units }} />
         {pointAlongPath.length ? (
           <Marker longitude={pointAlongPath[0]} latitude={pointAlongPath[1]}>
