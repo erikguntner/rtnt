@@ -74,6 +74,7 @@
     "@types/webpack-env": "^1.15.0",
     "@typescript-eslint/eslint-plugin": "^2.27.0",
     "@typescript-eslint/parser": "^2.27.0",
+    "babel-plugin-inline-react-svg": "^1.1.1",
     "babel-plugin-styled-components": "^1.10.6",
     "puppeteer": "^2.1.1",
     "resize-observer-polyfill": "^1.5.1",

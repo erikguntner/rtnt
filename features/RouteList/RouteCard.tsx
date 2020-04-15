@@ -6,6 +6,7 @@ import {
   calculateDistance,
   abbreviatedDistance,
 } from '../../utils/calculateDistance';
+import { icons } from '../Utilities/Tag';
 
 interface ElevationData {
   distance: number;
@@ -19,6 +20,8 @@ interface Props {
   image: string;
   elevationData: ElevationData[][];
   units: string;
+  sports: string[];
+  surfaces: string[];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -28,6 +31,8 @@ const RouteCard: React.FC<Props> = ({
   image,
   elevationData,
   units,
+  sports,
+  surfaces,
 }) => {
   return (
     <Card>
@@ -35,12 +40,18 @@ const RouteCard: React.FC<Props> = ({
         <img src={image} alt="map" />
       </ImageFigure>
       <Content>
-        <h3>{name}</h3>
         <Row>
+          <Name>{name}</Name>
           <Distance>
             <span>{calculateDistance(elevationData, units)}</span>
             <span>{abbreviatedDistance(units)}</span>
           </Distance>
+        </Row>
+        <Row>
+          <Icons>
+            <>{sports.map((sport) => icons[sport])}</>
+            <>{surfaces.map((surface) => icons[surface])}</>
+          </Icons>
           <Link href="/route/[id]" as={`/route/${id}`}>
             <ViewLink>View</ViewLink>
           </Link>
@@ -71,13 +82,12 @@ const Content = styled.div`
   padding: 1.8rem;
   background-color: #fff;
   border-radius: 0 0 2px 2px;
+`;
 
-  & > h3 {
-    margin-bottom: 8px;
-    line-height: 1;
-    font-size: 2.4rem;
-    color: ${(props) => props.theme.colors.gray[900]};
-  }
+const Name = styled.h3`
+  line-height: 1;
+  font-size: 2.4rem;
+  color: ${(props) => props.theme.colors.gray[900]};
 `;
 
 const ViewLink = styled.a`
@@ -96,9 +106,24 @@ const ViewLink = styled.a`
 `;
 
 const Distance = styled.p`
-  & > span {
+  & span {
     margin-right: 4px;
     font-size: 1.4rem;
+
+    &:first-of-type {
+      font-size: 2.4rem;
+    }
+  }
+`;
+
+const Icons = styled.div`
+  display: flex;
+  font-size: 1.4rem;
+
+  & > svg {
+    &:not(:last-of-type) {
+      margin-right: 1rem;
+    }
   }
 `;
 
@@ -106,6 +131,7 @@ const Row = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
+  align-items: center;
 `;
 
 export default RouteCard;

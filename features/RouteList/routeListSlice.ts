@@ -14,11 +14,15 @@ interface Route {
   total_distance: number[];
   elevation_data: ElevationData[][];
   created_on: string;
+  sports: string[];
+  surfaces: string[];
 }
 
 interface Filters {
   keyword: string;
   distance: number[];
+  sports: string[];
+  surfaces: string[];
 }
 
 interface State {
@@ -35,6 +39,8 @@ export const initialState: State = {
   filters: {
     keyword: '',
     distance: [0, 0],
+    sports: [],
+    surfaces: [],
   }
 };
 
@@ -53,7 +59,7 @@ const { actions, reducer } = createSlice({
     updateSortingTerm: (state, action: PayloadAction<string>) => {
       state.sortingTerm = action.payload;
     },
-    updateFilter: (state, action: PayloadAction<{ filter: string; value: string | number[] }>) => {
+    updateFilter: (state, action: PayloadAction<{ filter: string; value: string | number[] | string[] }>) => {
       const { filter, value } = action.payload;
       state.filters[filter] = value;
     },

@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import Portal from '../Utilities/Portal';
@@ -12,9 +13,11 @@ import {
   InputGroup,
   FiltersTypes,
   SelectOption,
+  TagsWrapper,
 } from './RouteList';
-import styled from 'styled-components';
 import CustomSelect from './CustomSelect';
+import Tag from '../Utilities/Tag';
+import { sportsArr, surfacesArr } from '../Utilities/Tag';
 
 interface MobileFiltersProps {
   open: boolean;
@@ -24,6 +27,7 @@ interface MobileFiltersProps {
   maxDistance: number;
   handleChange: (filter, value) => void;
   handleSelect: (selectedOption: SelectOption) => void;
+  toggleTags: (filter: string, title: string, tags: string[]) => void;
   handleSlide: (
     event: React.ChangeEvent<{}>,
     newValue: number[],
@@ -39,6 +43,7 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({
   sortingTerm,
   handleSelect,
   maxDistance,
+  toggleTags,
   handleSlide,
 }) => {
   return (
@@ -74,6 +79,36 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({
                 value={[filters.distance[0], filters.distance[1]]}
               />
             </InputGroup>
+          </FilterGroup>
+          <FilterGroup>
+            <Label>Sports</Label>
+            <TagsWrapper>
+              {sportsArr.map((sport, i) => (
+                <Tag
+                  key={i}
+                  options={filters.sports}
+                  title={sport}
+                  handleClick={() =>
+                    toggleTags('sports', sport, filters.sports)
+                  }
+                />
+              ))}
+            </TagsWrapper>
+          </FilterGroup>
+          <FilterGroup>
+            <Label>Surface</Label>
+            <TagsWrapper>
+              {surfacesArr.map((surface, i) => (
+                <Tag
+                  key={i}
+                  options={filters.surfaces}
+                  title={surface}
+                  handleClick={() =>
+                    toggleTags('surfaces', surface, filters.surfaces)
+                  }
+                />
+              ))}
+            </TagsWrapper>
           </FilterGroup>
         </Filters>
       )}

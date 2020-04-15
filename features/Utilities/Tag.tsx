@@ -1,15 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 import {
-  faUndoAlt,
-  faTimes,
-  faRedoAlt,
+  faWalking,
+  faRunning,
+  faBiking,
   faMountain,
-  faSave,
-  faFileDownload,
+  faWrench,
+  faRoad,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-common-types';
+// import Paved from '../../svg/paved.svg';
 
 interface TagProps {
   options: string[];
@@ -18,17 +19,34 @@ interface TagProps {
   handleClick: () => void;
 }
 
+export const sportsArr = ['run', 'bike', 'walk'];
+export const surfacesArr = ['paved', 'unpaved', 'trail'];
+
+export const icons = {
+  run: <FontAwesomeIcon icon={faRunning} />,
+  bike: <FontAwesomeIcon icon={faBiking} />,
+  walk: <FontAwesomeIcon icon={faWalking} />,
+  paved: <FontAwesomeIcon icon={faRoad} />,
+  unpaved: <FontAwesomeIcon icon={faWrench} />,
+  trail: <FontAwesomeIcon icon={faMountain} />,
+};
+
 const Tag: React.FC<TagProps> = ({ options, title, icon, handleClick }) => {
   return (
     <TagButton selected={options.includes(title)} onClick={handleClick}>
-      {icon && <FontAwesomeIcon icon={icon} />}
+      <Icon>{icons[title]}</Icon>
       <span>{title}</span>
     </TagButton>
   );
 };
 
+const Icon = styled.span`
+  font-size: 1.8rem;
+`;
+
 const TagButton = styled.button<{ selected: boolean }>`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   background: 'transparent';

@@ -11,6 +11,7 @@ import { RootState } from '../../app/rootReducer';
 import { changeNotificationStatus } from './notificationSlice';
 import API_URL from '../../utils/url';
 import { topoSvgUrl } from '../../utils/topographyStyle';
+import {sportsArr, surfacesArr} from '../Utilities/Tag';
 
 interface Props {
   open: boolean;
@@ -23,9 +24,6 @@ interface StatusI {
   message?: string;
   progress: number;
 }
-
-const sportsArr = ['run', 'bike', 'walk'];
-const surfacesArr = ['paved', 'unpaved', 'trail'];
 
 const SaveRouteModal: React.FC<Props> = ({
   open,
@@ -126,8 +124,6 @@ const SaveRouteModal: React.FC<Props> = ({
       setTags([...tags, title]);
     }
   };
-
-  console.log(sports, surfaces);
 
   return (
     <Portal selector={'#portal'}>

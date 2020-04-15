@@ -10,6 +10,7 @@ import Slider from '@material-ui/core/Slider';
 import { RootState } from '../../app/rootReducer';
 import API_URL from '../../utils/url';
 import { addRoutes } from './routeListSlice';
+import { sportsArr, surfacesArr } from '../Utilities/Tag';
 
 import {
   updateSortingTerm,
@@ -20,6 +21,7 @@ import RouteCard from './RouteCard';
 import MobileFilters from './MobileFilters';
 import CustomSelect from './CustomSelect';
 import Skeleton from '../Utilities/Skeleton';
+import Tag from '../Utilities/Tag';
 
 interface ElevationData {
   distance: number;
@@ -36,11 +38,15 @@ interface RouteI {
   total_distance: number[];
   elevation_data: ElevationData[][];
   created_on: string;
+  sports: string[];
+  surfaces: string[];
 }
 
 export interface FiltersTypes {
   keyword: string;
   distance: number[];
+  sports: string[];
+  surfaces: string[];
 }
 
 export interface SelectOption {
@@ -114,6 +120,30 @@ const sortRoutes = (
       ? convertedDistance >= distance[0] && convertedDistance <= distance[1]
       : convertedDistance <= distance[0] && convertedDistance >= distance[1];
   });
+
+  if (filters.sports.length > 0) {
+    result = result.filter(({ sports }) => {
+      for (let i = 0; i < sports.length; i++) {
+        if (filters.sports.includes(sports[i])) {
+          return true;
+        }
+      }
+
+      return false;
+    });
+  }
+
+  if (filters.surfaces.length > 0) {
+    result = result.filter(({ surfaces }) => {
+      for (let i = 0; i < surfaces.length; i++) {
+        if (filters.surfaces.includes(surfaces[i])) {
+          return true;
+        }
+      }
+
+      return false;
+    });
+  }
 
   switch (sortTerm) {
     case 'newest':
@@ -203,6 +233,15 @@ const RouteList: React.FC<{}> = () => {
             </Badge>
           );
         }
+      } else if (
+        (filter === 'sports' && filters.sports.length > 0) ||
+        (filter === 'surfaces' && filters.surfaces.length > 0)
+      ) {
+        return (
+          <Badge key={filter} onClick={() => dispatch(removeFilter(filter))}>
+            {filter}: {filters[filter].map((item) => item)} X
+          </Badge>
+        );
       }
     });
   };
@@ -217,8 +256,20 @@ const RouteList: React.FC<{}> = () => {
       newValue[1] === filters.distance[1]
     )
       return;
-    console.log(newValue);
+      
     dispatch(updateFilter({ filter: 'distance', value: newValue }));
+  };
+
+  const toggleTags = (filter: string, title: string, tags: string[]) => {
+    let value;
+
+    if (tags.includes(title)) {
+      value = tags.filter((tag) => tag !== title);
+    } else {
+      value = [...tags, title];
+    }
+
+    dispatch(updateFilter({ filter, value }));
   };
 
   useEffect(() => {
@@ -245,7 +296,7 @@ const RouteList: React.FC<{}> = () => {
     fetchRoutes();
   }, []);
 
-  console.log(sortedRoutes);
+  console.log(filters);
 
   return (
     <>
@@ -289,6 +340,36 @@ const RouteList: React.FC<{}> = () => {
                 />
               </InputGroup>
             </FilterGroup>
+            <FilterGroup>
+              <Label>Sports</Label>
+              <TagsWrapper>
+                {sportsArr.map((sport, i) => (
+                  <Tag
+                    key={i}
+                    options={filters.sports}
+                    title={sport}
+                    handleClick={() =>
+                      toggleTags('sports', sport, filters.sports)
+                    }
+                  />
+                ))}
+              </TagsWrapper>
+            </FilterGroup>
+            <FilterGroup>
+              <Label>Surface</Label>
+              <TagsWrapper>
+                {surfacesArr.map((surface, i) => (
+                  <Tag
+                    key={i}
+                    options={filters.surfaces}
+                    title={surface}
+                    handleClick={() =>
+                      toggleTags('surfaces', surface, filters.surfaces)
+                    }
+                  />
+                ))}
+              </TagsWrapper>
+            </FilterGroup>
           </Filters>
           <RouteGrid>
             {loading ? (
@@ -300,10 +381,25 @@ const RouteList: React.FC<{}> = () => {
             ) : (
               <>
                 {sortedRoutes.map(
-                  ({ id, name, image, elevation_data: elevationData }) => (
+                  ({
+                    id,
+                    name,
+                    image,
+                    elevation_data: elevationData,
+                    sports,
+                    surfaces,
+                  }) => (
                     <RouteCard
                       key={id}
-                      {...{ id, name, image, elevationData, units }}
+                      {...{
+                        id,
+                        name,
+                        image,
+                        elevationData,
+                        units,
+                        sports,
+                        surfaces,
+                      }}
                     />
                   )
                 )}
@@ -321,6 +417,7 @@ const RouteList: React.FC<{}> = () => {
           sortingTerm,
           handleSelect,
           maxDistance,
+          toggleTags,
           handleSlide,
         }}
       />
@@ -453,6 +550,7 @@ export const Filters = styled.div`
 
 export const FilterGroup = styled.div`
   width: 100%;
+  margin-bottom: 2.4rem;
 
   @media screen and (max-width: ${(props) => props.theme.screens.md}) {
     width: 75%;
@@ -470,12 +568,15 @@ export const Label = styled.div`
   color: ${(props) => props.theme.colors.gray[900]};
 `;
 
+export const TagsWrapper = styled.div`
+  display: flex;
+`;
+
 export const InputWrapper = styled.div`
   position: relative;
   display: flex;
   align-items: center;
   width: 100%;
-  margin-bottom: 2.4rem;
 
   svg {
     position: absolute;
