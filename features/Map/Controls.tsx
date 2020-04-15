@@ -90,12 +90,12 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
         icon={faSave}
         tooltip={'save route'}
       />
-      <ControlButton
+      {/* <ControlButton
         disabled={points.length < 2}
         handleClick={downloadGPXFile}
         icon={faFileDownload}
         tooltip={'export as gpx'}
-      />
+      /> */}
       {/* <ControlButton
         handleClick={() =>
           dispatch(
