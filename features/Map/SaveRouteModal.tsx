@@ -11,7 +11,7 @@ import { RootState } from '../../app/rootReducer';
 import { changeNotificationStatus } from './notificationSlice';
 import API_URL from '../../utils/url';
 import { topoSvgUrl } from '../../utils/topographyStyle';
-import {sportsArr, surfacesArr} from '../Utilities/Tag';
+import { sportsArr, surfacesArr } from '../Utilities/Tag';
 
 interface Props {
   open: boolean;
@@ -135,62 +135,66 @@ const SaveRouteModal: React.FC<Props> = ({
               <p>Save Route</p>
               <button onClick={() => setOpen(!open)}>X</button>
             </Header>
-            {!saving ? (
-              <Container>
-                <InputWrapper>
-                  <Label htmlFor="routeName">Route Name</Label>
-                  <Input
-                    id="routeName"
-                    name="routeName"
-                    type="text"
-                    placeholder="name"
-                    value={value}
-                    onChange={(e) => setValue(e.target.value)}
-                  />
-                </InputWrapper>
-                <InputWrapper>
-                  <Label htmlFor="sports">Sports</Label>
-                  <TagsWrapper>
-                    {sportsArr.map((sport, i) => (
-                      <Tag
-                        key={i}
-                        options={sports}
-                        title={sport}
-                        handleClick={() => toggleTags(sport, sports, setSports)}
-                      />
-                    ))}
-                  </TagsWrapper>
-                </InputWrapper>
-                <InputWrapper>
-                  <Label htmlFor="surfaces">Surface</Label>
-                  <TagsWrapper>
-                    {surfacesArr.map((surface, i) => (
-                      <Tag
-                        key={i}
-                        options={surfaces}
-                        title={surface}
-                        handleClick={() =>
-                          toggleTags(surface, surfaces, setSurfaces)
-                        }
-                      />
-                    ))}
-                  </TagsWrapper>
-                </InputWrapper>
-                <Controls>
-                  <CancelButton onClick={() => setOpen(!open)}>
-                    Cancel
-                  </CancelButton>
-                  <AcceptButton onClick={handleSaveRoute}>
-                    Save Route
-                  </AcceptButton>
-                </Controls>
-              </Container>
-            ) : (
-              <StatusContainer>
-                <h4>{status}...</h4>
-                <StatusBar {...{ progress }} />
-              </StatusContainer>
-            )}
+            <Container>
+              {!saving ? (
+                <>
+                  <InputWrapper>
+                    <Label htmlFor="routeName">Route Name</Label>
+                    <Input
+                      id="routeName"
+                      name="routeName"
+                      type="text"
+                      placeholder="name"
+                      value={value}
+                      onChange={(e) => setValue(e.target.value)}
+                    />
+                  </InputWrapper>
+                  <InputWrapper>
+                    <Label htmlFor="sports">Sports</Label>
+                    <TagsWrapper>
+                      {sportsArr.map((sport, i) => (
+                        <Tag
+                          key={i}
+                          options={sports}
+                          title={sport}
+                          handleClick={() =>
+                            toggleTags(sport, sports, setSports)
+                          }
+                        />
+                      ))}
+                    </TagsWrapper>
+                  </InputWrapper>
+                  <InputWrapper>
+                    <Label htmlFor="surfaces">Surface</Label>
+                    <TagsWrapper>
+                      {surfacesArr.map((surface, i) => (
+                        <Tag
+                          key={i}
+                          options={surfaces}
+                          title={surface}
+                          handleClick={() =>
+                            toggleTags(surface, surfaces, setSurfaces)
+                          }
+                        />
+                      ))}
+                    </TagsWrapper>
+                  </InputWrapper>
+                  <Controls>
+                    <CancelButton onClick={() => setOpen(!open)}>
+                      Cancel
+                    </CancelButton>
+                    <AcceptButton onClick={handleSaveRoute}>
+                      Save Route
+                    </AcceptButton>
+                  </Controls>
+                </>
+              ) : (
+                <StatusContainer>
+                  <h4>{status}...</h4>
+                  <StatusBar {...{ progress }} />
+                </StatusContainer>
+              )}
+            </Container>
           </ModalCard>
         </ModalWrapper>
       )}
@@ -230,16 +234,16 @@ const ModalCard = styled.article<{ open: boolean }>`
   border-radius: 2px;
   background-color: #fff;
   z-index: 1010;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
+    width: 100%;
+  }
 `;
 
 const Container = styled.div`
   width: 100%;
   padding: 1.6rem;
   overflow: scroll;
-
-  @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
-    width: 30rem;
-  }
 `;
 
 const Header = styled.div<{ svg: string }>`
@@ -339,7 +343,6 @@ const StatusContainer = styled.div`
   background-color: #fff;
 
   & > h4 {
-    max-width: 30rem;
     font-size: 2.4rem;
     color: ${(props) => props.theme.colors.gray[800]};
     margin-bottom: 2.4rem;
@@ -356,7 +359,7 @@ interface ProgressI {
 
 const StatusBar = styled.div<ProgressI>`
   position: relative;
-  width: 40rem;
+  width: 100%;
   height: 2.6rem;
   border-radius: 50px;
   background-color: ${(props) => props.theme.colors.gray[300]};

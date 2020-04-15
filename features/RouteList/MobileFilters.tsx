@@ -18,6 +18,7 @@ import {
 import CustomSelect from './CustomSelect';
 import Tag from '../Utilities/Tag';
 import { sportsArr, surfacesArr } from '../Utilities/Tag';
+import { LabelProps } from './RouteList';
 
 interface MobileFiltersProps {
   open: boolean;
@@ -33,6 +34,7 @@ interface MobileFiltersProps {
     newValue: number[],
     filters: FiltersTypes
   ) => void;
+  ValueLabelComponent: (props: LabelProps) => JSX.Element;
 }
 
 const MobileFilters: React.FC<MobileFiltersProps> = ({
@@ -45,6 +47,7 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({
   maxDistance,
   toggleTags,
   handleSlide,
+  ValueLabelComponent,
 }) => {
   return (
     <Portal selector={'#portal'}>
@@ -77,6 +80,7 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({
                   handleSlide(event, newValue, filters)
                 }
                 value={[filters.distance[0], filters.distance[1]]}
+                ValueLabelComponent={ValueLabelComponent}
               />
             </InputGroup>
           </FilterGroup>

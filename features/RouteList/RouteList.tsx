@@ -6,6 +6,7 @@ import compareAsc from 'date-fns/compareAsc';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import Slider from '@material-ui/core/Slider';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import { RootState } from '../../app/rootReducer';
 import API_URL from '../../utils/url';
@@ -72,6 +73,22 @@ const SkeletonWrapper = styled.article`
     margin-bottom: 8px;
   }
 `;
+
+export interface LabelProps {
+  children: React.ReactElement;
+  open: boolean;
+  value: number;
+}
+
+const ValueLabelComponent = (props: LabelProps) => {
+  const { children, open, value } = props;
+
+  return (
+    <Tooltip open={open} enterTouchDelay={0} placement="top" title={value}>
+      {children}
+    </Tooltip>
+  );
+};
 
 const renderDistance = (
   min: number,
@@ -237,9 +254,11 @@ const RouteList: React.FC<{}> = () => {
         (filter === 'sports' && filters.sports.length > 0) ||
         (filter === 'surfaces' && filters.surfaces.length > 0)
       ) {
+        const title = filter === 'sports' ? 'Sports' : 'Surfaces';
+
         return (
           <Badge key={filter} onClick={() => dispatch(removeFilter(filter))}>
-            {filter}: {filters[filter].map((item) => item)} X
+            {title}: {filters[filter].map((item, i) => `${item} `)} X
           </Badge>
         );
       }
@@ -256,7 +275,7 @@ const RouteList: React.FC<{}> = () => {
       newValue[1] === filters.distance[1]
     )
       return;
-      
+
     dispatch(updateFilter({ filter: 'distance', value: newValue }));
   };
 
@@ -337,6 +356,7 @@ const RouteList: React.FC<{}> = () => {
                     newValue: number[]
                   ) => handleSlide(event, newValue, filters)}
                   value={[filters.distance[0], filters.distance[1]]}
+                  ValueLabelComponent={ValueLabelComponent}
                 />
               </InputGroup>
             </FilterGroup>
@@ -419,6 +439,7 @@ const RouteList: React.FC<{}> = () => {
           maxDistance,
           toggleTags,
           handleSlide,
+          ValueLabelComponent,
         }}
       />
     </>
@@ -435,6 +456,8 @@ const Layout = styled.div`
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  /* overflow: hidden; */
   padding: 1.6rem;
   background-color: #fff;
   box-shadow: ${(props) => props.theme.boxShadow.sm};
@@ -473,16 +496,20 @@ const FilterButton = styled.button`
 
 const Badges = styled.div`
   display: flex;
+  flex: 1;
+  overflow: scroll;
+  height: min-content;
   align-items: center;
 
-  /* @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
     display: none;
-  } */
+  }
 
   & > p {
     margin-right: 1rem;
     font-size: 1.4rem;
     font-style: italic;
+    white-space: nowrap;
   }
 
   & > div:not(:last-child) {
@@ -496,7 +523,8 @@ const Badge = styled.div`
   border: 1px solid ${(props) => props.theme.colors.teal[800]};
   border-radius: 2px;
   color: ${(props) => props.theme.colors.teal[800]};
-  background-color: ${(props) => props.theme.colors.teal[200]};
+  background-color: ${(props) => props.theme.colors.teal[100]};
+  white-space: nowrap;
 
   @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
     font-size: 1rem;

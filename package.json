@@ -36,7 +36,7 @@
     "lodash": "^4.17.15",
     "logrocket": "^1.0.7",
     "mapbox-gl": "^1.5.0",
-    "next": "^9.3.0",
+    "next": "^9.3.5",
     "next-cookies": "^2.0.3",
     "node-sass": "^4.13.0",
     "nprogress": "^0.2.0",

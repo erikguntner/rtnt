@@ -79,7 +79,7 @@ const ImageFigure = styled.figure`
 
 const Content = styled.div`
   margin: 0 auto;
-  padding: 1.8rem;
+  padding: 1.4rem;
   background-color: #fff;
   border-radius: 0 0 2px 2px;
 `;
@@ -113,12 +113,17 @@ const Distance = styled.p`
     &:first-of-type {
       font-size: 2.4rem;
     }
+
+    &:nth-of-type(2) {
+      color: ${(props) => props.theme.colors.gray[600]};
+    }
   }
 `;
 
 const Icons = styled.div`
   display: flex;
   font-size: 1.4rem;
+  color: ${(props) => props.theme.colors.primary};
 
   & > svg {
     &:not(:last-of-type) {
