@@ -206,12 +206,12 @@ const Map = () => {
         height={'100%'}
         style={{ display: 'flex', flex: '1' }}
         onClick={handleClick}
-        onMouseDown={(event) => {
-          console.log(event);
-          setTouchPoint(event.lngLat);
-        }}
+        // onMouseDown={(event) => {
+        //   console.log(event);
+        //   setTouchPoint(event.lngLat);
+        // }}
         onViewportChange={handleViewportChange}
-        mapStyle="mapbox://styles/mapbox/outdoors-v10"
+        mapStyle="mapbox://styles/mapbox/outdoors-v11"
       >
         {position.length > 0 && (
           <Marker longitude={position[1]} latitude={position[0]}>

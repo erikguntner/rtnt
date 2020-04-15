@@ -3,7 +3,6 @@ import fetch from 'isomorphic-unfetch';
 
 const request = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
-    console.log('starting request');
     const { points } = req.body;
 
     const pointString = points
@@ -15,7 +14,6 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
         `https://graphhopper.com/api/1/route?${pointString}vehicle=foot&debug=true&elevation=true&legs=true&details=street_name&key=${process.env.GRAPH_HOPPER_KEY}&type=json&points_encoded=false`
       );
       const data = await response.json();
-      console.log('ending request');
       res.status(200).json({ data: data.paths[0] });
     } catch (e) {
       console.log(e);

@@ -26,7 +26,7 @@ interface Props {
 }
 
 const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
 
   const dispatch = useDispatch();
