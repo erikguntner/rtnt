@@ -114,7 +114,7 @@ const PopOutWrapper = styled(motion.div)`
   padding: 1.4rem 0;
   background-color: #fff;
   border-radius: 2px;
-  z-index: 20;
+  z-index: 2000;
   color: black;
   box-shadow: ${(props) => props.theme.boxShadow.lg};
   overflow: hidden;

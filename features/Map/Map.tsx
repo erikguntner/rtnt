@@ -253,7 +253,7 @@ const Map = () => {
             <DistanceMarker />
           </Marker>
         ) : null}
-        <div style={{ position: 'absolute', left: 16, top: 48 }}>
+        <div style={{ position: 'absolute', left: 16, top: 56 }}>
           <NavigationControl showCompass={false} />
         </div>
       </ReactMapGL>

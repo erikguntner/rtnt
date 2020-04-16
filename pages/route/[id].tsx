@@ -6,7 +6,9 @@ import useSWR from 'swr';
 import ReactMapGL, { Marker, NavigationControl } from 'react-map-gl';
 import * as turf from '@turf/turf';
 import * as turfHelpers from '@turf/helpers';
-import WebMercatorViewport from '@math.gl/web-mercator';
+// import WebMercatorViewport from '@math.gl/web-mercator';
+import WebMercatorViewport from 'viewport-mercator-project';
+
 import bbox from '@turf/bbox';
 import styled from 'styled-components';
 import fetch from 'isomorphic-unfetch';
@@ -18,6 +20,7 @@ import DistanceMarkers from '../../features/Map/DistanceMarkers';
 import LoadingIndicator from '../../features/Map/LoadingIndicator';
 import { RootState } from '../../app/rootReducer';
 import SvgPath from '../../features/Map/SvgPath';
+import Pin from '../../features/Map/Pin';
 import {
   calculateDistance,
   abbreviatedDistance,
@@ -137,15 +140,13 @@ const RoutePage: NextPage<{}> = () => {
       const newViewport = new WebMercatorViewport({
         width: transform.width,
         height: transform.height,
-        zoom: transform._zoom,
-        scale: transform.scale
       }).fitBounds(
         [
           [bBox[0], bBox[1]],
           [bBox[2], bBox[3]],
         ],
         {
-          padding: 10,
+          padding: 30,
         }
       );
       setViewport({
@@ -161,6 +162,11 @@ const RoutePage: NextPage<{}> = () => {
   if (data.message || error) {
     return <h1>There was an error</h1>;
   }
+
+  const startAndEndCoords = [
+    data.route.points[0],
+    data.route.points[data.route.points.length - 1],
+  ];
 
   return (
     <Wrapper>
@@ -213,7 +219,7 @@ const RoutePage: NextPage<{}> = () => {
           {data && (
             <>
               <SvgPath points={data.route.lines} />
-              <DistanceMarkers {...{ units }} lines={data.route.lines} />
+              {/* <DistanceMarkers {...{ units }} lines={data.route.lines} /> */}
               {pointAlongPath.length ? (
                 <Marker
                   longitude={pointAlongPath[0]}
@@ -223,11 +229,13 @@ const RoutePage: NextPage<{}> = () => {
                   <DistanceMarker />
                 </Marker>
               ) : null}
+              {startAndEndCoords.map((point, i) => (
+                <Marker key={i} longitude={point[0]} latitude={point[1]}>
+                  <Pin index={i} points={startAndEndCoords} />
+                </Marker>
+              ))}
             </>
           )}
-          <div style={{ position: 'absolute', left: 16, top: 16 }}>
-            <NavigationControl showCompass={false} />
-          </div>
         </ReactMapGL>
         {data && (
           <ElevationWrapper>
