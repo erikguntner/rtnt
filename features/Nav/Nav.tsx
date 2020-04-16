@@ -96,6 +96,9 @@ const Nav = () => {
             <Link href="/myroutes">
               <a onClick={() => setOpen(false)}>My Routes</a>
             </Link>
+            <Link href="/myprofile">
+              <a onClick={() => setOpen(false)}>My Profile</a>
+            </Link>
             <button
               onClick={() => {
                 setOpen(false);

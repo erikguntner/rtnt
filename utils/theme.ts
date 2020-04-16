@@ -215,7 +215,8 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
       'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale; */
-    font-family: ${props => props.theme.fontFamily.sans}
+    font-family: ${props => props.theme.fontFamily.sans};
+    color: #1a202c;
   }
 
   code {
