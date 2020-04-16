@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { RootState } from '../../app/rootReducer';
 import { AppDispatch } from '../../app/store';
 import { addRoute, updateRouteAfterDrag, fetchSinglePoint } from './routeSlice';
+import useWindowSize from '../../utils/useWindowSize';
 
 import SvgPath from './SvgPath';
 import ConnectingLines from './ConnectingLines';
@@ -25,6 +26,7 @@ interface Viewport {
   pitch: number;
 }
 const Map = () => {
+  const [width, height] = useWindowSize();
   const [clipPath, setClipPath] = useState<boolean>(false);
   const [position, setPosition] = useState<number[]>([]);
   const [showElevation, setShowElevation] = useState<boolean>(false);
@@ -184,7 +186,7 @@ const Map = () => {
   }, []);
 
   return (
-    <MapContainer>
+    <MapContainer {...{ width, height }}>
       <Controls
         {...{ setClipPath, clipPath, showElevation, setShowElevation }}
       />
@@ -261,10 +263,12 @@ const Map = () => {
   );
 };
 
-const MapContainer = styled.div`
-  height: calc(100vh - ${(props) => props.theme.navHeight});
+const MapContainer = styled.div<{ width: number; height: number }>`
+  height: ${(props) =>
+    props.height > 0 ? `${props.height - 64}px` : 'calc(100vh - 64px)'};
   width: 100vw;
   display: flex;
+  flex: 1;
   flex-direction: column;
 `;
 
