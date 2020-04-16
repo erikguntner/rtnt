@@ -550,6 +550,7 @@ const RouteGrid = styled.div`
   display: grid;
   padding: 2.4rem;
   grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: min-content;
   grid-gap: 2.4rem;
   overflow: scroll;
   justify-content: center;

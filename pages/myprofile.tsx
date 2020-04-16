@@ -6,11 +6,28 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { topoSvgUrl } from '../utils/topographyStyle';
+import fetch from 'isomorphic-unfetch';
+import API_URL from '../utils/url';
+import { removeCookieOnLogout } from '../utils/auth';
 
 const MyProfile: NextPage<{}> = () => {
   const { user } = useSelector((state: RootState) => ({
     user: state.auth.user,
   }));
+
+  const deleteUser = async () => {
+    const response = await fetch(`${API_URL}/api/user`, {
+      method: 'DELETE',
+    });
+
+    if(response.ok) {
+      const data = response.json();
+      console.log(data);
+
+      removeCookieOnLogout;
+    }
+
+  };
 
   return (
     <ProfileWrapper>
@@ -32,7 +49,7 @@ const MyProfile: NextPage<{}> = () => {
         <ProfileSection>
           <SectionHeader>Account</SectionHeader>
           <Label>Delete Account</Label>
-          <Button>Delete Account</Button>
+          <Button onClick={deleteUser}>Delete Account</Button>
         </ProfileSection>
       </ContentWrapper>
     </ProfileWrapper>
