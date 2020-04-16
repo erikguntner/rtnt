@@ -1,4 +1,6 @@
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../app/rootReducer';
 import { NextPage } from 'next';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -6,6 +8,10 @@ import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { topoSvgUrl } from '../utils/topographyStyle';
 
 const MyProfile: NextPage<{}> = () => {
+  const { user } = useSelector((state: RootState) => ({
+    user: state.auth.user,
+  }));
+
   return (
     <ProfileWrapper>
       <Block />
@@ -19,16 +25,14 @@ const MyProfile: NextPage<{}> = () => {
         <ProfileSection>
           <SectionHeader>User Info</SectionHeader>
           <Label>Username</Label>
-          <Text>skrimp</Text>
+          <Text>{user.username}</Text>
           <Label>Email</Label>
-          <Text>erikguntner@gmail.com</Text>
+          <Text>{user.email}</Text>
         </ProfileSection>
         <ProfileSection>
           <SectionHeader>Account</SectionHeader>
-          <Label>Username</Label>
-          <Text>skrimp</Text>
-          <Label>Email</Label>
-          <Text>erikguntner@gmail.com</Text>
+          <Label>Delete Account</Label>
+          <Button>Delete Account</Button>
         </ProfileSection>
       </ContentWrapper>
     </ProfileWrapper>
@@ -82,11 +86,30 @@ const Block = styled.div`
   }
 `;
 
+const Button = styled.button`
+  padding: 8px 1.2rem;
+  border: 1px solid ${(props) => props.theme.colors.gray[400]};
+  border-radius: 2px;
+  background-color: #fff;
+  font-size: 1.4rem;
+  box-shadow: ${(props) => props.theme.boxShadow.sm};
+
+  &:hover {
+    cursor: pointer;
+    border: 1px solid ${(props) => props.theme.colors.gray[900]};
+    box-shadow: ${(props) => props.theme.boxShadow.md};
+  }
+`;
+
 const ContentWrapper = styled.div`
   position: relative;
   max-width: 700px;
   margin: -76px auto 0 auto;
   z-index: 20;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    padding: 0 1.6rem;
+  }
 `;
 
 const ProfileSection = styled.div`
