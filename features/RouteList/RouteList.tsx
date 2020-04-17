@@ -308,6 +308,8 @@ const RouteList: React.FC<{}> = () => {
     fetchRoutes();
   }, []);
 
+  console.log(sortedRoutes);
+
   return (
     <>
       <Layout>
