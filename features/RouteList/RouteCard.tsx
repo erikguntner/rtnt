@@ -8,12 +8,6 @@ import {
 } from '../../utils/calculateDistance';
 import { icons } from '../Utilities/Tag';
 
-interface ElevationData {
-  distance: number;
-  segDistance: number;
-  elevation: number;
-}
-
 interface Props {
   id: number;
   name: string;

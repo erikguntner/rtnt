@@ -4,11 +4,6 @@ import { AppThunk } from '../../app/store';
 import { fetchRoutes } from '../../utils/fetchRoutes';
 import { changeNotificationStatus } from './notificationSlice';
 
-interface ElevationData {
-  distance: number;
-  segDistance: number;
-  elevation: number;
-}
 interface RouteState {
   points: number[][];
   lines: number[][][];
@@ -16,7 +11,6 @@ interface RouteState {
   endPoint: number[];
   totalDistance: number[];
   segmentDistances: number[][];
-  elevationData: ElevationData[][];
 }
 
 interface RouteParams {
@@ -50,7 +44,6 @@ export const initialState: RouteState = {
   endPoint: [],
   totalDistance: [0],
   segmentDistances: [],
-  elevationData: [],
 };
 
 const { actions: loadingActions, reducer: loadingReducer } = createSlice({
@@ -71,13 +64,6 @@ const { actions, reducer } = createSlice({
   reducers: {
     addPoint: (state, action: PayloadAction<number[]>) => {
       state.points.push(action.payload);
-      state.elevationData.push([
-        {
-          distance: 0,
-          segDistance: 0,
-          elevation: action.payload[2],
-        },
-      ]);
     },
     clearRoute: () => {
       return initialState;
@@ -95,7 +81,6 @@ const { actions, reducer } = createSlice({
     },
     updateStartAfterDrag: (state, action: PayloadAction<number[]>) => {
       state.points[0] = action.payload;
-      state.elevationData[0][0].elevation = action.payload[2];
     },
     updateRouteAfterDragSuccess: (
       state,
@@ -169,33 +154,6 @@ interface Instructions {
   time: number;
   street_name: string;
 }
-
-const parseElevationData = (
-  points: number[][],
-  instructions: Instructions[],
-  distance: number
-): { newElevationSegments: ElevationData[][]; currentDistance: number } => {
-  let currentDistance = distance;
-  let arr = [];
-  const newElevationSegments = [];
-
-  for (let i = 0; i < instructions.length; i++) {
-    if (instructions[i].text === 'Waypoint 1') {
-      newElevationSegments.push(arr);
-      arr = [];
-    }
-    currentDistance += instructions[i].distance;
-    const elevation = points[instructions[i].interval[1]][2];
-    arr.push({
-      distance: currentDistance,
-      segDistance: instructions[i].distance,
-      elevation,
-    });
-  }
-
-  newElevationSegments.push(arr);
-  return { newElevationSegments, currentDistance };
-};
 
 const createLineSegments = (coordinates, waypoints): number[][][] => {
   const lines = [];

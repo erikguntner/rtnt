@@ -1,21 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import * as turfHelpers from '@turf/helpers';
-import length from '@turf/length';
 import {
   calculateDistance,
   abbreviatedDistance,
 } from '../../utils/calculateDistance';
 
 import { updateUnits } from '../Auth/authSlice';
-
-interface ElevationData {
-  distance: number;
-  segDistance: number;
-  elevation: number;
-}
-
 interface Props {
   units: 'miles' | 'kilometers';
   authenticated: string;

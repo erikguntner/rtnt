@@ -24,12 +24,6 @@ import CustomSelect from './CustomSelect';
 import Skeleton from '../Utilities/Skeleton';
 import Tag from '../Utilities/Tag';
 
-interface ElevationData {
-  distance: number;
-  segDistance: number;
-  elevation: number;
-}
-
 interface RouteI {
   id: number;
   name: string;
@@ -37,7 +31,6 @@ interface RouteI {
   points: number[][];
   lines: number[][][];
   total_distance: number[];
-  elevation_data: ElevationData[][];
   created_on: string;
   sports: string[];
   surfaces: string[];
@@ -314,8 +307,6 @@ const RouteList: React.FC<{}> = () => {
 
     fetchRoutes();
   }, []);
-
-  console.log(filters);
 
   return (
     <>

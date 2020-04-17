@@ -39,15 +39,12 @@ const SaveRouteModal: React.FC<Props> = ({
   const [progress, setProgress] = useState<number>(-90);
 
   const dispatch = useDispatch();
-  const { points, lines, elevationData, totalDistance } = useSelector(
-    (state: RootState) => ({
-      points: state.route.present.points,
-      lines: state.route.present.lines,
-      elevationData: state.route.present.elevationData,
-      totalDistance: state.route.present.totalDistance,
-      authenticated: state.auth.authenticated,
-    })
-  );
+  const { points, lines, totalDistance } = useSelector((state: RootState) => ({
+    points: state.route.present.points,
+    lines: state.route.present.lines,
+    totalDistance: state.route.present.totalDistance,
+    authenticated: state.auth.authenticated,
+  }));
 
   useEffect(() => {
     const pusher = new Pusher(process.env.PUSHER_KEY, {
@@ -86,7 +83,6 @@ const SaveRouteModal: React.FC<Props> = ({
       const body = {
         name: value,
         lines,
-        elevationData,
         points,
         totalDistance,
         sports,

@@ -6,7 +6,6 @@ interface ElevationData {
   elevation: number;
 }
 
-
 const parseElevationData = (lines: number[][][]): ElevationData[] => {
   let totalDistance = 0;
   const coords: number[][] = lines.flat();

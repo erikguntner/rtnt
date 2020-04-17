@@ -1,10 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-interface ElevationData {
-  distance: number;
-  segDistance: number;
-  elevation: number;
-}
 interface Route {
   id: number;
   name: string;
@@ -12,7 +6,6 @@ interface Route {
   points: number[][];
   lines: number[][][];
   total_distance: number[];
-  elevation_data: ElevationData[][];
   created_on: string;
   sports: string[];
   surfaces: string[];

@@ -35,12 +35,6 @@ interface Viewport {
   pitch: number;
 }
 
-interface ElevationData {
-  distance: number;
-  segDistance: number;
-  elevation: number;
-}
-
 interface RouteI {
   id: number;
   name: string;
@@ -48,7 +42,6 @@ interface RouteI {
   points: number[][];
   lines: number[][][];
   total_distance: number[];
-  elevation_data: ElevationData[][];
   created_on: string;
   units: 'miles' | 'kilometers';
 }
