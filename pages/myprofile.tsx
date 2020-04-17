@@ -20,13 +20,12 @@ const MyProfile: NextPage<{}> = () => {
       method: 'DELETE',
     });
 
-    if(response.ok) {
+    if (response.ok) {
       const data = response.json();
       console.log(data);
 
       removeCookieOnLogout;
     }
-
   };
 
   return (
