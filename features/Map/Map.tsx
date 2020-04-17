@@ -258,7 +258,7 @@ const Map = () => {
         </div>
       </ReactMapGL>
       {isLoading && <LoadingIndicator />}
-      <DistanceIndicator {...{ elevationData, units, authenticated }} />
+      <DistanceIndicator {...{ units, authenticated, lines }} />
     </MapContainer>
   );
 };

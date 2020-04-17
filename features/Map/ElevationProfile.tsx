@@ -9,6 +9,7 @@ import React, {
 import styled from 'styled-components';
 import ResizeObserver from 'resize-observer-polyfill';
 import { createChart } from '../../utils/d3/utils';
+import parseElevationData from '../../utils/parseElevationData';
 
 interface ElevationData {
   distance: number;
@@ -17,7 +18,6 @@ interface ElevationData {
 interface Props {
   showElevation?: boolean | null;
   lines: number[][][];
-  elevationData: ElevationData[][];
   units: string;
   setDistanceAlongPath: Dispatch<SetStateAction<number | null>>;
 }
@@ -49,7 +49,6 @@ const useResizeObserver = (
 const ElevationProfile: React.FC<Props> = ({
   showElevation = true,
   lines,
-  elevationData,
   units,
   setDistanceAlongPath,
 }) => {
@@ -70,8 +69,11 @@ const ElevationProfile: React.FC<Props> = ({
   useEffect(() => {
     if (dimensions === null) return;
     removePreviousChart();
-    createChart(elevationData, setDistanceAlongPath, units, dimensions);
-  }, [elevationData, dimensions]);
+
+    const newElevationData = parseElevationData(lines);
+
+    createChart(newElevationData, setDistanceAlongPath, units, dimensions);
+  }, [lines, dimensions]);
 
   return (
     <ChartContainer

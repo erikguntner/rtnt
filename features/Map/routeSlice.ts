@@ -256,64 +256,64 @@ export const updateRouteAfterDrag = ({
       snapped_waypoints
     );
 
-    // distance to start incrementing from when calculating udpated distances
-    const startDistance =
-      pointIndex == 0
-        ? 0
-        : elevationData[pointIndex - 1][
-          elevationData[pointIndex - 1].length - 1
-        ].distance;
-    // index in elevationData array where we need to start looping and updating distances
-    const startingIndexToUpdateElevation =
-      pointIndex === 0
-        ? 1
-        : pointIndex === numberOfPoints
-          ? elevationData.length - 1
-          : pointIndex;
+    // // distance to start incrementing from when calculating udpated distances
+    // const startDistance =
+    //   pointIndex == 0
+    //     ? 0
+    //     : elevationData[pointIndex - 1][
+    //       elevationData[pointIndex - 1].length - 1
+    //     ].distance;
+    // // index in elevationData array where we need to start looping and updating distances
+    // const startingIndexToUpdateElevation =
+    //   pointIndex === 0
+    //     ? 1
+    //     : pointIndex === numberOfPoints
+    //       ? elevationData.length - 1
+    //       : pointIndex;
 
-    // get new lines segments and new distance to add to all following points
-    const { newElevationSegments, currentDistance } = parseElevationData(
-      coordinates,
-      instructions,
-      startDistance
-    );
+    // // get new lines segments and new distance to add to all following points
+    // const { newElevationSegments, currentDistance } = parseElevationData(
+    //   coordinates,
+    //   instructions,
+    //   startDistance
+    // );
 
     // create deep copy of object
-    const updatedElevationData = elevationData.map(arr =>
-      arr.map(item => ({ ...item }))
-    );
-    // replace elevation data with updated segments
-    if (pointIndex === 0 || pointIndex === numberOfPoints) {
-      updatedElevationData[startingIndexToUpdateElevation] =
-        newElevationSegments[0];
+    // const updatedElevationData = elevationData.map(arr =>
+    //   arr.map(item => ({ ...item }))
+    // );
+    // // replace elevation data with updated segments
+    // if (pointIndex === 0 || pointIndex === numberOfPoints) {
+    //   updatedElevationData[startingIndexToUpdateElevation] =
+    //     newElevationSegments[0];
 
-      if (pointIndex === 0) {
-        updatedElevationData[0][0].elevation =
-          updatedElevationData[1][0].elevation;
-      }
-    } else {
-      updatedElevationData.splice(
-        startingIndexToUpdateElevation,
-        2,
-        newElevationSegments[0],
-        newElevationSegments[1]
-      );
-    }
+    //   if (pointIndex === 0) {
+    //     updatedElevationData[0][0].elevation =
+    //       updatedElevationData[1][0].elevation;
+    //   }
+    // } else {
+    //   updatedElevationData.splice(
+    //     startingIndexToUpdateElevation,
+    //     2,
+    //     newElevationSegments[0],
+    //     newElevationSegments[1]
+    //   );
+    // }
 
-    // loop over following segments and update their distances
-    const index = pointIndex === 0 ? 2 : pointIndex + 2;
-    if (
-      pointIndex !== numberOfPoints &&
-      index <= updatedElevationData.length - 1
-    ) {
-      let newDistance = currentDistance;
-      for (let i = index; i < updatedElevationData.length; i++) {
-        for (let j = 0; j < updatedElevationData[i].length; j++) {
-          newDistance += updatedElevationData[i][j].segDistance;
-          updatedElevationData[i][j].distance = newDistance;
-        }
-      }
-    }
+    // // loop over following segments and update their distances
+    // const index = pointIndex === 0 ? 2 : pointIndex + 2;
+    // if (
+    //   pointIndex !== numberOfPoints &&
+    //   index <= updatedElevationData.length - 1
+    // ) {
+    //   let newDistance = currentDistance;
+    //   for (let i = index; i < updatedElevationData.length; i++) {
+    //     for (let j = 0; j < updatedElevationData[i].length; j++) {
+    //       newDistance += updatedElevationData[i][j].segDistance;
+    //       updatedElevationData[i][j].distance = newDistance;
+    //     }
+    //   }
+    // }
 
     dispatch(
       updateRouteAfterDragSuccess({
@@ -321,7 +321,7 @@ export const updateRouteAfterDrag = ({
         snappedWaypoints: snapped_waypoints.coordinates,
         lineIndices,
         line: lines,
-        updatedElevationData,
+        updatedElevationData: elevationData,
       })
     );
     dispatch(changeLoadingState(false));
@@ -352,27 +352,29 @@ export const addRoute = ({
   try {
     dispatch(changeLoadingState(true));
     const data = await fetchRoutes(points);
+    console.log(data);
 
     const { coordinates } = data.points;
-    const { instructions } = data;
-    const endDistance = elevationData.slice(-1)[0].slice(-1)[0].distance;
+    const { instructions, distance } = data;
+    // const endDistance = elevationData.slice(-1)[0].slice(-1)[0].distance;
 
-    const { newElevationSegments } = parseElevationData(
-      coordinates,
-      instructions,
-      endDistance
-    );
+    // const { newElevationSegments } = parseElevationData(
+    //   coordinates,
+    //   instructions,
+    //   endDistance
+    // );
 
     dispatch(
       addRoutingInfo({
-        distance: data.distance,
+        distance,
         coordinates,
         newPoint: data.snapped_waypoints.coordinates[1],
-        elevationData: newElevationSegments,
+        elevationData,
       })
     );
     dispatch(changeLoadingState(false));
   } catch (e) {
+    console.log(e);
     dispatch(
       changeNotificationStatus({
         isVisible: true,

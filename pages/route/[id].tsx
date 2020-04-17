@@ -244,7 +244,6 @@ const RoutePage: NextPage<{}> = () => {
                 units,
                 setDistanceAlongPath,
               }}
-              elevationData={data.route.elevation_data}
               lines={data.route.lines}
             />
           </ElevationWrapper>

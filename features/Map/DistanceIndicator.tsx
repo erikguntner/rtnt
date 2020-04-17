@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import * as turfHelpers from '@turf/helpers';
+import length from '@turf/length';
 import {
   calculateDistance,
   abbreviatedDistance,
@@ -16,15 +17,15 @@ interface ElevationData {
 }
 
 interface Props {
-  elevationData: ElevationData[][];
   units: turfHelpers.Units;
   authenticated: string;
+  lines: number[][][];
 }
 
 const DistanceIndicator: React.FC<Props> = ({
-  elevationData,
   units,
   authenticated,
+  lines,
 }) => {
   const [distance, setDistance] = useState<number>(0);
   const dispatch = useDispatch();
@@ -35,11 +36,18 @@ const DistanceIndicator: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    const convertedDistance =
-      elevationData.length === 0 ? 0 : calculateDistance(elevationData, units);
+    if (lines.length > 0) {
+      const lineString = turfHelpers.lineString(lines.flat());
 
-    setDistance(+convertedDistance);
-  }, [elevationData, units]);
+      const lineDistance = length(lineString, { units }).toFixed(1);
+
+      setDistance(+lineDistance);
+    } else {
+      setDistance(0);
+    }
+
+    // setDistance(+convertedDistance);
+  }, [units, lines]);
 
   return (
     <DistanceContainer>

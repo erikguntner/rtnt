@@ -255,7 +255,7 @@ export const renderLineChart = (
 };
 
 export const createChart = (
-  data: ElevationData[][],
+  data: ElevationData[],
   setDistanceAlongPath: Dispatch<SetStateAction<number | null>>,
   units: string,
   dimensions: {
@@ -264,7 +264,7 @@ export const createChart = (
   }
 ) => {
   // renderBarChart(popData);
-  renderLineChart(data.flat(), setDistanceAlongPath, units, dimensions);
+  renderLineChart(data, setDistanceAlongPath, units, dimensions);
 };
 
 interface BarData {
