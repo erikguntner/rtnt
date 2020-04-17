@@ -4,6 +4,7 @@ import * as turf from '@turf/turf';
 import ReactMapGL, { Marker, NavigationControl } from 'react-map-gl';
 import styled from 'styled-components';
 
+import store from '../../app/store';
 import { RootState } from '../../app/rootReducer';
 import { AppDispatch } from '../../app/store';
 import { addRoute, updateRouteAfterDrag, fetchSinglePoint } from './routeSlice';
@@ -69,6 +70,7 @@ const Map = () => {
 
   const handleClick = (event) => {
     const [newLong, newLat] = event.lngLat;
+    // store.dispatch({ type: 'ADD_POINT' });
 
     if (points.length) {
       const newPoint = [newLong, newLat];
@@ -128,7 +130,6 @@ const Map = () => {
           pointIndex,
           waypoints,
           lineIndices,
-          numberOfPoints: points.length - 1,
         })
       );
 

@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { put } from 'redux-saga/effects'
 
 import { AppThunk } from '../../app/store';
 import { fetchRoutes } from '../../utils/fetchRoutes';
@@ -182,14 +183,12 @@ interface DragParams {
   pointIndex: number;
   waypoints: number[][];
   lineIndices: number[];
-  numberOfPoints: number;
 }
 
 export const updateRouteAfterDrag = ({
   pointIndex,
   waypoints,
   lineIndices,
-  numberOfPoints,
 }: DragParams): AppThunk => async dispatch => {
   try {
     dispatch(changeLoadingState(true));
@@ -264,5 +263,15 @@ export const addRoute = ({
     dispatch(changeLoadingState(false));
   }
 };
+
+
+/////////////////////////
+// SAGAS
+/////////////////////////
+
+export function* addPointSaga() {
+  console.log('adding point');
+}
+
 
 export default reducer;

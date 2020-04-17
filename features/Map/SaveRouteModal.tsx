@@ -101,10 +101,10 @@ const SaveRouteModal: React.FC<Props> = ({
       if (response.ok) {
         onSaveAlert('success', 'We successfully saved your route');
       } else {
-        onSaveAlert('error', 'Looks like there was an error saving your route');
+        onSaveAlert('error', 'Our server may have timed out. Please try again');
       }
     } catch (e) {
-      onSaveAlert('error', 'Looks like there was an error saving your route');
+      onSaveAlert('error', 'Our server may have timed out. Please try again');
     }
   };
 
