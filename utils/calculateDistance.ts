@@ -1,9 +1,10 @@
 import * as turfHelpers from '@turf/helpers';
+import length from '@turf/length';
 
-export const calculateDistance = (data, units, precision = 1): string => {
-  const arrLength = data[data.length - 1].length;
-  const distance = data[data.length - 1][arrLength - 1].distance;
-  return turfHelpers.convertLength(distance, 'meters', units).toFixed(precision);
+export const calculateDistance = (data: number[][][], units: 'miles' | 'kilometers', precision = 1): string => {
+  const lineString = turfHelpers.lineString(data.flat());
+
+  return length(lineString, { units }).toFixed(precision);
 };
 
 export const abbreviatedDistance = (units: string): string => {

@@ -18,8 +18,8 @@ interface Props {
   id: number;
   name: string;
   image: string;
-  elevationData: ElevationData[][];
-  units: string;
+  lines: number[][][];
+  units: 'miles' | 'kilometers';
   sports: string[];
   surfaces: string[];
 }
@@ -29,7 +29,7 @@ const RouteCard: React.FC<Props> = ({
   id,
   name,
   image,
-  elevationData,
+  lines,
   units,
   sports,
   surfaces,
@@ -43,7 +43,7 @@ const RouteCard: React.FC<Props> = ({
         <Row>
           <Name>{name}</Name>
           <Distance>
-            <span>{calculateDistance(elevationData, units)}</span>
+            <span>{calculateDistance(lines, units)}</span>
             <span>{abbreviatedDistance(units)}</span>
           </Distance>
         </Row>

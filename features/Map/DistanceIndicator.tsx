@@ -17,7 +17,7 @@ interface ElevationData {
 }
 
 interface Props {
-  units: turfHelpers.Units;
+  units: 'miles' | 'kilometers';
   authenticated: string;
   lines: number[][][];
 }
@@ -37,10 +37,7 @@ const DistanceIndicator: React.FC<Props> = ({
 
   useEffect(() => {
     if (lines.length > 0) {
-      const lineString = turfHelpers.lineString(lines.flat());
-
-      const lineDistance = length(lineString, { units }).toFixed(1);
-
+      const lineDistance = calculateDistance(lines, units);
       setDistance(+lineDistance);
     } else {
       setDistance(0);

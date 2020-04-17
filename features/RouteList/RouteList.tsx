@@ -401,21 +401,14 @@ const RouteList: React.FC<{}> = () => {
             ) : (
               <>
                 {sortedRoutes.map(
-                  ({
-                    id,
-                    name,
-                    image,
-                    elevation_data: elevationData,
-                    sports,
-                    surfaces,
-                  }) => (
+                  ({ id, name, image, lines, sports, surfaces }) => (
                     <RouteCard
                       key={id}
                       {...{
                         id,
                         name,
                         image,
-                        elevationData,
+                        lines,
                         units,
                         sports,
                         surfaces,

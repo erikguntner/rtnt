@@ -54,7 +54,6 @@ const Map = () => {
     points,
     totalDistance,
     lines,
-    elevationData,
     authenticated,
     user: { units },
   } = useSelector((state: RootState) => ({
@@ -62,7 +61,6 @@ const Map = () => {
     points: state.route.present.points,
     totalDistance: state.route.present.totalDistance,
     lines: state.route.present.lines,
-    elevationData: state.route.present.elevationData,
     authenticated: state.auth.authenticated,
     user: state.auth.user,
   }));
@@ -85,7 +83,6 @@ const Map = () => {
           newLong,
           startLat,
           startLong,
-          elevationData,
           clipPath,
           totalDistance,
         })
@@ -132,7 +129,6 @@ const Map = () => {
           waypoints,
           lineIndices,
           numberOfPoints: points.length - 1,
-          elevationData,
         })
       );
 
@@ -193,7 +189,6 @@ const Map = () => {
       <ElevationProfile
         {...{
           showElevation,
-          elevationData,
           lines,
           units,
           setDistanceAlongPath,
@@ -223,10 +218,7 @@ const Map = () => {
         {isDragging && (
           <ConnectingLines points={points} index={index} endPoint={point} />
         )}
-        <SvgPath
-          points={lines}
-          {...{ elevationData, mapRef, setDistanceAlongPath, units }}
-        />
+        <SvgPath points={lines} />
         {/* <GeoJsonPath {...{ lines }} /> */}
         {points.map((point, i) => (
           <Marker

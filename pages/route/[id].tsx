@@ -50,6 +50,7 @@ interface RouteI {
   total_distance: number[];
   elevation_data: ElevationData[][];
   created_on: string;
+  units: 'miles' | 'kilometers';
 }
 
 const fetcher = async (url) => {
@@ -176,9 +177,7 @@ const RoutePage: NextPage<{}> = () => {
             <h1>{data.route.name}</h1>
             <HeaderRight>
               <Distance>
-                <span>
-                  {calculateDistance(data.route.elevation_data, units)}
-                </span>
+                <span>{calculateDistance(data.route.lines, units)}</span>
                 <span>{abbreviatedDistance(units)}</span>
               </Distance>
               <Options ref={options}>
