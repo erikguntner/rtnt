@@ -4,19 +4,24 @@ import * as turf from '@turf/helpers';
 
 interface Props {
   lines: number[][][];
+  transparent?: boolean;
+  width?: number;
 }
 
-const dataLayer = {
-  id: 'path_layer',
-  type: 'line',
-  paint: {
-    'line-width': 4,
-    'line-color': '#667eea',
-  },
-};
-
-const GeoJsonPath: React.FC<Props> = ({ lines }) => {
+const GeoJsonPath: React.FC<Props> = ({
+  lines,
+  transparent = false,
+  width = 4,
+}) => {
   const multiLine = turf.multiLineString(lines);
+  const dataLayer = {
+    id: 'path_layer',
+    type: 'line',
+    paint: {
+      'line-width': width,
+      'line-color': transparent ? '' : '#667eea',
+    },
+  };
 
   return (
     <Source type="geojson" data={multiLine}>

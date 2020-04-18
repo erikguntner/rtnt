@@ -11,6 +11,7 @@ import { addRoute, updateRouteAfterDrag, fetchSinglePoint } from './routeSlice';
 import useWindowSize from '../../utils/useWindowSize';
 
 import SvgPath from './SvgPath';
+import GeoJsonPath from './GeoJsonPath';
 import ConnectingLines from './ConnectingLines';
 import ElevationProfile from './ElevationProfile';
 import Controls from './Controls';
@@ -182,6 +183,25 @@ const Map = () => {
     });
   }, []);
 
+  const handleHover = (event) => {
+    const { features } = event;
+
+    const hoveredFeature =
+      features && features.find((f) => f.layer.id === 'path_layer');
+
+    if (hoveredFeature) {
+      const line = turf.lineString(lines.flat());
+
+      const segment = turf.lineSlice(points[0], event.lngLat, line);
+
+      const length = turf.length(segment, { units });
+
+      setDistanceAlongPath(length);
+    } else if (distanceAlongPath !== 0) {
+      setDistanceAlongPath(0);
+    }
+  };
+
   return (
     <MapContainer {...{ width, height }}>
       <Controls
@@ -204,6 +224,7 @@ const Map = () => {
         height={'100%'}
         style={{ display: 'flex', flex: '1' }}
         onClick={handleClick}
+        onHover={handleHover}
         // onMouseDown={(event) => {
         //   console.log(event);
         //   setTouchPoint(event.lngLat);
@@ -219,7 +240,8 @@ const Map = () => {
         {isDragging && (
           <ConnectingLines points={points} index={index} endPoint={point} />
         )}
-        <SvgPath points={lines} />
+        {/* <SvgPath points={lines} /> */}
+        <GeoJsonPath {...{ lines }} width={6} />
         {/* <GeoJsonPath {...{ lines }} /> */}
         {points.map((point, i) => (
           <Marker
