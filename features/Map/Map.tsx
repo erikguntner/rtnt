@@ -191,9 +191,7 @@ const Map = () => {
 
     if (hoveredFeature) {
       const line = turf.lineString(lines.flat());
-
       const segment = turf.lineSlice(points[0], event.lngLat, line);
-
       const length = turf.length(segment, { units });
 
       setDistanceAlongPath(length);
