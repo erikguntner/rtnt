@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
-import ReactMapGL, { Marker, NavigationControl } from 'react-map-gl';
+import ReactMapGL, {
+  Marker,
+  NavigationControl,
+  PointerEvent,
+} from 'react-map-gl';
 import styled from 'styled-components';
 
 import store from '../../app/store';
@@ -42,13 +46,12 @@ const Map = () => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [point, setPoint] = useState<number[]>([]);
   const [index, setIndex] = useState<number>(0);
-  // const [touchPoint, setTouchPoint] = useState<number[]>([]);
+  const [touchPoint, setTouchPoint] = useState<number[]>([]);
   // state for syncing mouseevents for chart and map
   const [distanceAlongPath, setDistanceAlongPath] = useState<number>(0);
   const [pointAlongPath, setPointAlongPath] = useState<number[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   // const [hoveredPoint, setHoveredPoint] = useState<number[]>();
-  const mapRef = useRef(null);
 
   const dispatch: AppDispatch = useDispatch();
   const {
@@ -178,7 +181,6 @@ const Map = () => {
         longitude: position.coords.longitude,
         zoom: 14,
       });
-
       setPosition([position.coords.latitude, position.coords.longitude]);
     });
   }, []);
@@ -187,7 +189,8 @@ const Map = () => {
     const { features } = event;
 
     const hoveredFeature =
-      features && features.find((f) => f.layer.id === 'path_layer');
+      features &&
+      features.find((f) => f.layer.id.split('-')[0] === 'path_layer');
 
     if (hoveredFeature) {
       const line = turf.lineString(lines.flat());
@@ -214,8 +217,9 @@ const Map = () => {
         }}
       />
       <ReactMapGL
-        ref={(ref) => (mapRef.current = ref && ref.getMap())}
-        {...viewport}
+        latitude={viewport.latitude}
+        longitude={viewport.longitude}
+        zoom={viewport.zoom}
         mapboxApiAccessToken={process.env.MAPBOX_TOKEN}
         reuseMap={true}
         width={'100%'}
@@ -223,10 +227,6 @@ const Map = () => {
         style={{ display: 'flex', flex: '1' }}
         onClick={handleClick}
         onHover={handleHover}
-        // onMouseDown={(event) => {
-        //   console.log(event);
-        //   setTouchPoint(event.lngLat);
-        // }}
         onViewportChange={handleViewportChange}
         mapStyle="mapbox://styles/mapbox/outdoors-v11"
       >
@@ -239,7 +239,9 @@ const Map = () => {
           <ConnectingLines points={points} index={index} endPoint={point} />
         )}
         {/* <SvgPath points={lines} /> */}
-        <GeoJsonPath {...{ lines }} width={6} />
+        {lines.map((line, i) => (
+          <GeoJsonPath key={i} {...{ line, i }} width={6} />
+        ))}
         {/* <GeoJsonPath {...{ lines }} /> */}
         {points.map((point, i) => (
           <Marker
@@ -254,14 +256,12 @@ const Map = () => {
             <Pin index={i} points={points} />
           </Marker>
         ))}
-        {/* {touchPoint.length > 0 && (
-          <Marker longitude={touchPoint[0]} latitude={touchPoint[1]} draggable>
-            <UserMarker style={{ transform: 'translate3d(-5px, -5px, 0)' }} />
-          </Marker>
-        )} */}
         <DistanceMarkers {...{ lines, units }} />
         {pointAlongPath.length ? (
-          <Marker longitude={pointAlongPath[0]} latitude={pointAlongPath[1]}>
+          <Marker
+            longitude={pointAlongPath[0]}
+            latitude={pointAlongPath[1]}
+          >
             <Label>{distanceAlongPath.toFixed(2)}</Label>
             <DistanceMarker />
           </Marker>
