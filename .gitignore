@@ -20,6 +20,7 @@
 .env*
 .env
 /server/db/tables.sql
+firebaseServiceAccountKey.json
 
 # debug
 npm-debug.log*
