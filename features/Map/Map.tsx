@@ -258,10 +258,7 @@ const Map = () => {
         ))}
         <DistanceMarkers {...{ lines, units }} />
         {pointAlongPath.length ? (
-          <Marker
-            longitude={pointAlongPath[0]}
-            latitude={pointAlongPath[1]}
-          >
+          <Marker longitude={pointAlongPath[0]} latitude={pointAlongPath[1]}>
             <Label>{distanceAlongPath.toFixed(2)}</Label>
             <DistanceMarker />
           </Marker>
