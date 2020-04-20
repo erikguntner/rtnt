@@ -70,8 +70,6 @@ const Map = () => {
     user: state.auth.user,
   }));
 
-  const handleViewportChange = (viewport) => setViewport(viewport);
-
   const handleClick = (event) => {
     const [newLong, newLat] = event.lngLat;
     // store.dispatch({ type: 'ADD_POINT' });
@@ -227,7 +225,7 @@ const Map = () => {
         style={{ display: 'flex', flex: '1' }}
         onClick={handleClick}
         onHover={handleHover}
-        onViewportChange={handleViewportChange}
+        onViewportChange={(viewport) => setViewport(viewport)}
         mapStyle="mapbox://styles/mapbox/outdoors-v11"
       >
         {position.length > 0 && (
