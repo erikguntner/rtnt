@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import fetch from 'isomorphic-unfetch';
 import { AppThunk } from '../../app/store';
-import { setCookieOnLogin } from '../../utils/auth';
+import { setCookieOnSignin } from '../../utils/auth';
 import { changeNotificationStatus } from '../Map/notificationSlice';
 import API_URL from '../../utils/url';
 
@@ -50,17 +50,17 @@ const { actions, reducer } = createSlice({
 
 export const { authenticateUser, changeUsersUnits, setValidating } = actions;
 
-interface LoginI {
+interface SigninI {
   username: string;
   password: string;
 }
 
-export const login = ({
+export const signin = ({
   username,
   password,
-}: LoginI): AppThunk => async dispatch => {
+}: SigninI): AppThunk => async dispatch => {
   try {
-    const response = await fetch(`${API_URL}/api/login`, {
+    const response = await fetch(`${API_URL}/api/signin`, {
       method: 'POST',
       headers: {
         Accept: 'application/json, text/plain, */*',
@@ -72,7 +72,7 @@ export const login = ({
     if (response.ok) {
       const { token, user } = await response.json();
 
-      await setCookieOnLogin({ token });
+      await setCookieOnSignin({ token });
       dispatch(authenticateUser({ authenticated: token, user }));
     } else {
       console.log('there was an error');
@@ -108,7 +108,7 @@ export const signup = ({
       const { token, user } = await response.json();
 
       if (token) {
-        await setCookieOnLogin({ token });
+        await setCookieOnSignin({ token });
         dispatch(authenticateUser({ authenticated: token, user }));
       }
     } else { }

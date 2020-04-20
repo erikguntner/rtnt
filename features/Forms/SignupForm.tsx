@@ -16,13 +16,11 @@ import {
   Spinner,
 } from './styles';
 import { authenticateUser } from '../Auth/authSlice';
-import { setCookieOnLogin } from '../../utils/auth';
+import { setCookieOnSignin } from '../../utils/auth';
 import API_URL from '../../utils/url';
 
 const SignupSchema = Yup.object().shape({
-  email: Yup.string()
-    .email()
-    .required('email is required'),
+  email: Yup.string().email().required('email is required'),
   username: Yup.string()
     .required('username is required')
     .min(4, 'username must be between 4-25 characters')
@@ -56,7 +54,9 @@ const SignupForm: React.FC<{}> = () => {
         if (response.ok) {
           const { token, user } = await response.json();
 
-          await setCookieOnLogin({ token });
+          console.log(token, user);
+
+          await setCookieOnSignin({ token });
           dispatch(authenticateUser({ authenticated: token, user }));
           resetForm();
         } else {

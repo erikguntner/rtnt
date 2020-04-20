@@ -15,7 +15,7 @@ import {
   Spinner,
   WithSpinner,
 } from './styles';
-import { setCookieOnLogin } from '../../utils/auth';
+import { setCookieOnSignin } from '../../utils/auth';
 import { authenticateUser } from '../Auth/authSlice';
 import API_URL from '../../utils/url';
 
@@ -39,7 +39,7 @@ const SignupForm: React.FC<{}> = () => {
     onSubmit: async ({ username, password }, { setSubmitting, resetForm }) => {
       setSubmitting(true);
       try {
-        const response = await fetch(`${API_URL}/api/login`, {
+        const response = await fetch(`${API_URL}/api/signin`, {
           method: 'POST',
           headers: {
             Accept: 'application/json, text/plain, */*',
@@ -51,7 +51,7 @@ const SignupForm: React.FC<{}> = () => {
         if (response.ok) {
           const { token, user } = await response.json();
 
-          await setCookieOnLogin({ token });
+          await setCookieOnSignin({ token });
           dispatch(authenticateUser({ authenticated: token, user }));
           resetForm();
         } else {

@@ -3,7 +3,7 @@ import Router from 'next/router';
 import nextCookie from 'next-cookies';
 import cookie from 'js-cookie';
 
-export const setCookieOnLogin = ({ token }) => {
+export const setCookieOnSignin = ({ token }) => {
   cookie.set('token', token, { expires: 5 });
   Router.push('/');
 };
@@ -36,7 +36,7 @@ export const withAuthSync = (WrappedComponent) => {
     const syncLogout = (event) => {
       if (event.key === 'logout') {
         console.log('logged out from storage!');
-        Router.push('/login');
+        Router.push('/signin');
       }
     };
 

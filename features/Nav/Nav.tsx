@@ -69,7 +69,7 @@ const Nav = () => {
     return (
       <>
         <li>
-          <DarkButtonLink href="/login">Login</DarkButtonLink>
+          <DarkButtonLink href="/signin">Sign In</DarkButtonLink>
         </li>
         <li>
           <PrimaryButtonLink href="/signup">Sign Up</PrimaryButtonLink>

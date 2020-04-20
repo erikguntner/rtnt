@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jwt-simple';
 import query from '../../server/db';
+import firebaseAdmin from '../../utils/firebase/admin';
+
 
 const request = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
@@ -8,13 +10,20 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
       const { token } = req.cookies;
 
       if (token) {
-        const { sub } = await jwt.decode(token, process.env.JWT_SECRET);
-        const user = await query('select * from users where id = $1', [sub]);
+        try {
 
-        return res.status(200).json({
-          token,
-          user: user.rows[0],
-        });
+          const { uid } = await firebaseAdmin.auth().verifySessionCookie(token, true);
+
+          const user = await query('select * from users where id = $1', [uid]);
+
+          return res.status(200).json({
+            token,
+            user: user.rows[0],
+          });
+        } catch (error) {
+          console.log(error);
+        }
+
       } else {
         return res.status(401).json({
           message: 'could not retrieve token',

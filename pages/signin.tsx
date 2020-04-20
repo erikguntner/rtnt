@@ -1,13 +1,13 @@
 import React from 'react';
 import { NextPage } from 'next';
 import styled from 'styled-components';
-import LoginForm from '../features/Forms/LoginForm';
+import SigninForm from '../features/Forms/SigninForm';
 // import { withRedux } from '../utils/redux';
 
-const Login: NextPage<{}> = () => {
+const Signin: NextPage<{}> = () => {
   return (
     <Container>
-      <LoginForm />
+      <SigninForm />
     </Container>
   );
 };
@@ -20,4 +20,4 @@ const Container = styled.div`
   background-color: #fff;
 `;
 
-export default Login;
+export default Signin;

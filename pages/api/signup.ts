@@ -61,7 +61,6 @@ import firebase from '../../utils/firebase/client';
 const request = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     const { email, username, password } = req.body;
-    let newUser = null;
 
     if (!email || !username || !password) {
       console.log('not enough info');
@@ -71,7 +70,7 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     try {
-      newUser = await firebaseAdmin.auth().createUser({
+      await firebaseAdmin.auth().createUser({
         email,
         password,
         displayName: username,
@@ -80,7 +79,7 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
       console.log(error);
     }
 
-    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
+    // firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
 
     const { user } = await firebase
       .auth()
@@ -90,40 +89,37 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
       throw new Error('No user found.');
     }
 
-    console.log(newUser);
+    const { uid } = user;
 
-    const token = await user.getIdToken();
+    try {
+      const newUser = await query('insert into users (id, username) values ($1, $2) returning *', [uid, username]);
+      console.log(newUser.rows[0]);
+    } catch (error) {
+      console.log('error saving to db');
+    }
+
+    const idToken = await user.getIdToken();
 
     // Set session expiration to 5 days.
-    // const expiresIn = 60 * 60 * 24 * 5 * 1000;
+    const expiresIn = 60 * 60 * 24 * 5 * 1000;
 
-    // const sessionCookie = await firebaseAdmin
-    //   .auth()
-    //   .createSessionCookie(idToken, {
-    //     expiresIn,
-    //   });
-
-    // console.log('user', user);
-    // console.log('token', sessionCookie);
+    const token = await firebaseAdmin
+      .auth()
+      .createSessionCookie(idToken, {
+        expiresIn,
+      });
 
     // const options = { maxAge: expiresIn, httpOnly: true, secure: true };
 
     // We manage the session ourselves.
     await firebase.auth().signOut();
 
-
-    // try {
-    //   // const decodedClaims = await firebaseAdmin.auth().verifySessionCookie(sessionCookie, true)
-    //   // console.log('decodedClaims', decodedClaims);
-
-    // } catch (error) {
-    //   console.log('error decoding the cookie');
-    //   console.log(error);
-    // }
-
     return res.status(200).json({
       token,
-      user,
+      user: {
+        username,
+        email,
+      },
     });
   } else { }
 }
