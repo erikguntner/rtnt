@@ -38,13 +38,11 @@ const requireAuth = handler => async (req, res) => {
     return res.status(401).json({ message: 'No token provided' });
   }
 
-
   try {
-    const decodedToken = await firebaseAdmin.auth().verifyIdToken(token);
-    // const { sub } = jwt.decode(token, process.env.JWT_SECRET);
+    const { uid } = await firebaseAdmin.auth().verifySessionCookie(token, true);
 
-    // const results = await query('select * from users where id = $1', [sub]);
-    // req.user = results.rows[0];
+    const results = await query('select * from users where id = $1', [uid]);
+    req.user = results.rows[0];
   } catch (e) {
     return res.status(400).json({ message: 'user is not authneticated' });
   }

@@ -41,8 +41,8 @@ interface RouteI {
   image: string;
   points: number[][];
   lines: number[][][];
-  total_distance: number[];
-  created_on: string;
+  distance: number[];
+  created_at: string;
   units: 'miles' | 'kilometers';
 }
 

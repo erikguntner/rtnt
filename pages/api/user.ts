@@ -14,11 +14,14 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
 
           const { uid } = await firebaseAdmin.auth().verifySessionCookie(token, true);
 
-          const user = await query('select * from users where id = $1', [uid]);
+          const { email, displayName } = await firebaseAdmin.auth().getUser(uid);
 
           return res.status(200).json({
             token,
-            user: user.rows[0],
+            user: {
+              username: displayName,
+              email
+            },
           });
         } catch (error) {
           console.log(error);

@@ -5,15 +5,15 @@ interface Route {
   image: string;
   points: number[][];
   lines: number[][][];
-  total_distance: number[];
-  created_on: string;
+  distance: number[];
+  created_at: string;
   sports: string[];
   surfaces: string[];
 }
 
 interface Filters {
   keyword: string;
-  distance: number[];
+  range: number[];
   sports: string[];
   surfaces: string[];
 }
@@ -31,7 +31,7 @@ export const initialState: State = {
   sortingTerm: 'newest',
   filters: {
     keyword: '',
-    distance: [0, 0],
+    range: [0, 0],
     sports: [],
     surfaces: [],
   }
@@ -46,7 +46,7 @@ const { actions, reducer } = createSlice({
       if (action.payload.maxDistance) {
 
         state.maxDistance = action.payload.maxDistance;
-        state.filters.distance = [0, action.payload.maxDistance];
+        state.filters.range = [0, action.payload.maxDistance];
       }
     },
     updateSortingTerm: (state, action: PayloadAction<string>) => {
@@ -58,7 +58,7 @@ const { actions, reducer } = createSlice({
     },
     removeFilter: (state, action: PayloadAction<string>) => {
       const filter = action.payload;
-      if (filter === 'distance') {
+      if (filter === 'range') {
         state.filters[filter] = [0, state.maxDistance];
       } else {
         state.filters[filter] = initialState.filters[filter];

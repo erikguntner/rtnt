@@ -30,15 +30,15 @@ interface RouteI {
   image: string;
   points: number[][];
   lines: number[][][];
-  total_distance: number[];
-  created_on: string;
+  distance: number[];
+  created_at: string;
   sports: string[];
   surfaces: string[];
 }
 
 export interface FiltersTypes {
   keyword: string;
-  distance: number[];
+  range: number[];
   sports: string[];
   surfaces: string[];
 }
@@ -110,7 +110,7 @@ const sortRoutes = (
   units
 ): RouteI[] => {
   let result = routes;
-  const { keyword, distance } = filters;
+  const { keyword, range } = filters;
 
   if (keyword) {
     result = result.filter(
@@ -118,18 +118,22 @@ const sortRoutes = (
     );
   }
 
-  result = result.filter(({ total_distance }) => {
-    const totalDistance = total_distance[total_distance.length - 1];
+  console.log('before range filtering', result);
+
+  result = result.filter(({ distance }) => {
+    const totalDistance = distance[distance.length - 1];
     const convertedDistance = turfHelpers.convertLength(
       totalDistance,
       'meters',
       units
     );
 
-    return distance[0] <= distance[1]
-      ? convertedDistance >= distance[0] && convertedDistance <= distance[1]
-      : convertedDistance <= distance[0] && convertedDistance >= distance[1];
+    return range[0] <= range[1]
+      ? convertedDistance >= range[0] && convertedDistance <= range[1]
+      : convertedDistance <= range[0] && convertedDistance >= range[1];
   });
+
+  console.log('after range filtering', result);
 
   if (filters.sports.length > 0) {
     result = result.filter(({ sports }) => {
@@ -158,23 +162,21 @@ const sortRoutes = (
   switch (sortTerm) {
     case 'newest':
       return result.sort((a, b) =>
-        compareAsc(new Date(b.created_on), new Date(a.created_on))
+        compareAsc(new Date(b.created_at), new Date(a.created_at))
       );
     case 'oldest':
       return result.sort((a, b) =>
-        compareAsc(new Date(a.created_on), new Date(b.created_on))
+        compareAsc(new Date(a.created_at), new Date(b.created_at))
       );
     case 'shortest':
       return result.sort(
         (a, b) =>
-          a.total_distance[a.total_distance.length - 1] -
-          b.total_distance[b.total_distance.length - 1]
+          a.distance[a.distance.length - 1] - b.distance[b.distance.length - 1]
       );
     case 'longest':
       return result.sort(
         (a, b) =>
-          b.total_distance[b.total_distance.length - 1] -
-          a.total_distance[a.total_distance.length - 1]
+          b.distance[b.distance.length - 1] - a.distance[a.distance.length - 1]
       );
     default:
       return result;
@@ -183,8 +185,8 @@ const sortRoutes = (
 
 const calculateMaxDistance = (routes, units) => {
   const distance = routes.reduce((accum, curr) => {
-    const distance = curr.total_distance[curr.total_distance.length - 1];
-    return Math.max(accum, distance);
+    const currentDistance = curr.distance[curr.distance.length - 1];
+    return Math.max(accum, currentDistance);
   }, 0);
 
   return Math.round(turfHelpers.convertLength(distance, 'meters', units));
@@ -231,10 +233,10 @@ const RouteList: React.FC<{}> = () => {
             Keyword: {filters.keyword} X
           </Badge>
         );
-      } else if (filter === 'distance') {
-        const distance = filters.distance;
-        const min = Math.min(distance[0], distance[1]);
-        const max = Math.max(distance[0], distance[1]);
+      } else if (filter === 'range') {
+        const range = filters.range;
+        const min = Math.min(range[0], range[1]);
+        const max = Math.max(range[0], range[1]);
 
         if (min > 0 || max < maxDistance) {
           return (
@@ -263,13 +265,10 @@ const RouteList: React.FC<{}> = () => {
     newValue: number[],
     filters: FiltersTypes
   ) => {
-    if (
-      newValue[0] === filters.distance[0] &&
-      newValue[1] === filters.distance[1]
-    )
+    if (newValue[0] === filters.range[0] && newValue[1] === filters.range[1])
       return;
 
-    dispatch(updateFilter({ filter: 'distance', value: newValue }));
+    dispatch(updateFilter({ filter: 'range', value: newValue }));
   };
 
   const toggleTags = (filter: string, title: string, tags: string[]) => {
@@ -346,7 +345,7 @@ const RouteList: React.FC<{}> = () => {
                     event: React.ChangeEvent<{}>,
                     newValue: number[]
                   ) => handleSlide(event, newValue, filters)}
-                  value={[filters.distance[0], filters.distance[1]]}
+                  value={[filters.range[0], filters.range[1]]}
                   ValueLabelComponent={ValueLabelComponent}
                 />
               </InputGroup>

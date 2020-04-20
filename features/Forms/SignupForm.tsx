@@ -54,8 +54,6 @@ const SignupForm: React.FC<{}> = () => {
         if (response.ok) {
           const { token, user } = await response.json();
 
-          console.log(token, user);
-
           await setCookieOnSignin({ token });
           dispatch(authenticateUser({ authenticated: token, user }));
           resetForm();

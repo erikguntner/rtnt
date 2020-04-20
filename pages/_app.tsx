@@ -64,7 +64,6 @@ const Layout = ({ children }) => {
 
         if (response.ok) {
           const { token, user } = await response.json();
-          console.log(token, user);
 
           dispatch(authenticateUser({ authenticated: token, user }));
         }

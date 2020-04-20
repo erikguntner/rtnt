@@ -79,7 +79,7 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({
                 onChange={(event: React.ChangeEvent<{}>, newValue: number[]) =>
                   handleSlide(event, newValue, filters)
                 }
-                value={[filters.distance[0], filters.distance[1]]}
+                value={[filters.range[0], filters.range[1]]}
                 ValueLabelComponent={ValueLabelComponent}
               />
             </InputGroup>
