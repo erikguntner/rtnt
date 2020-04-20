@@ -20,12 +20,14 @@ import { setCookieOnSignin } from '../../utils/auth';
 import API_URL from '../../utils/url';
 
 const SignupSchema = Yup.object().shape({
-  email: Yup.string().email().required('email is required'),
+  email: Yup.string().email().required('please provide and email!'),
   username: Yup.string()
-    .required('username is required')
+    .required('please provide a username!')
     .min(4, 'username must be between 4-25 characters')
     .max(25, 'username must be between 4-25 characters'),
-  password: Yup.string().required('password is required'),
+  password: Yup.string()
+    .required('please provide a password!')
+    .min(6, 'password must have at least 6 characters'),
 });
 
 const SignupForm: React.FC<{}> = () => {
@@ -58,13 +60,12 @@ const SignupForm: React.FC<{}> = () => {
           dispatch(authenticateUser({ authenticated: token, user }));
           resetForm();
         } else {
-          console.log('there was an error');
-          const { error } = await response.json();
-          setError(error);
+          const { message } = await response.json();
+          setError(message);
         }
-      } catch (e) {
-        console.log('error signing up', e);
-        setError('there was an error singing up');
+      } catch (error) {
+        console.log(error);
+        setError(error.message);
       }
       setSubmitting(false);
     },

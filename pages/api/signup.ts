@@ -11,7 +11,16 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
       console.log('not enough info');
       return res
         .status(400)
-        .json({ error: 'You must provide and username and password' });
+        .json({ message: 'You must provide and username and password' });
+    }
+
+    const usernameInDb = await query('select * from users where username = $1', [username]);
+
+    if (usernameInDb.rows[0]) {
+      console.log('username exists');
+      return res
+        .status(400)
+        .json({ message: 'username in use' });
     }
 
     try {
@@ -21,7 +30,9 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
         displayName: username,
       })
     } catch (error) {
-      console.log(error);
+      return res
+        .status(400)
+        .json({ message: error.message });
     }
 
     const { user } = await firebase
@@ -36,9 +47,10 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
 
     try {
       const newUser = await query('insert into users (id, username) values ($1, $2) returning *', [uid, username]);
-      console.log(newUser.rows[0]);
     } catch (error) {
-      console.log('error saving to db');
+      return res
+        .status(400)
+        .json({ message: 'error saving user' });
     }
 
     const idToken = await user.getIdToken();
