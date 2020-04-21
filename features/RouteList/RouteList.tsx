@@ -17,6 +17,7 @@ import {
   updateSortingTerm,
   updateFilter,
   removeFilter,
+  updateMaxDistance,
 } from './routeListSlice';
 import RouteCard from './RouteCard';
 import MobileFilters from './MobileFilters';
@@ -109,6 +110,8 @@ const sortRoutes = (
   maxDistance: number,
   units
 ): RouteI[] => {
+  console.log(units);
+
   let result = routes;
   const { keyword, range } = filters;
 
@@ -118,19 +121,20 @@ const sortRoutes = (
     );
   }
 
-  console.log('units', units);
-
   result = result.filter(({ distance }) => {
+    const min = Math.min(range[0], range[1]);
+    const max = Math.max(range[0], range[1]);
     const totalDistance = distance[distance.length - 1];
-    const convertedDistance = turfHelpers.convertLength(
-      totalDistance,
-      'meters',
-      units
-    );
+    const convertedDistance = turfHelpers
+      .convertLength(totalDistance, 'meters', units)
+      .toFixed(1);
 
-    return range[0] <= range[1]
-      ? convertedDistance >= range[0] && convertedDistance <= range[1]
-      : convertedDistance <= range[0] && convertedDistance >= range[1];
+    console.log(convertedDistance);
+
+    return (
+      parseFloat(convertedDistance) >= min &&
+      parseFloat(convertedDistance) <= max
+    );
   });
 
   if (filters.sports.length > 0) {
@@ -186,8 +190,7 @@ const calculateMaxDistance = (routes, units) => {
     const currentDistance = curr.distance[curr.distance.length - 1];
     return Math.max(accum, currentDistance);
   }, 0);
-
-  return Math.round(turfHelpers.convertLength(distance, 'meters', units));
+  return Math.ceil(turfHelpers.convertLength(distance, 'meters', units));
 };
 
 const RouteList: React.FC<{}> = () => {
@@ -205,6 +208,7 @@ const RouteList: React.FC<{}> = () => {
       state.routeList.maxDistance,
       state.auth.user.units
     ),
+    routes: state.routeList.routes,
     maxDistance: state.routeList.maxDistance,
     sortingTerm: state.routeList.sortingTerm,
     filters: state.routeList.filters,
@@ -291,13 +295,12 @@ const RouteList: React.FC<{}> = () => {
         });
 
         if (response.ok) {
-          const { routes } = await response.json();
+          const { routes, units } = await response.json();
           const maxDistance = calculateMaxDistance(routes, units);
           dispatch(addRoutes({ routes, maxDistance }));
         }
         setLoading(false);
       } catch (error) {
-        console.log(error);
         setLoading(false);
       }
     };

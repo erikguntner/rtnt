@@ -64,12 +64,16 @@ const { actions, reducer } = createSlice({
         state.filters[filter] = initialState.filters[filter];
       }
     },
+    updateMaxDistance: (state, action: PayloadAction<number>) => {
+      state.maxDistance = action.payload;
+      state.filters.range = [0, action.payload];
+    },
     clearState: (state) => {
       state = initialState;
     }
   },
 });
 
-export const { addRoutes, updateSortingTerm, updateFilter, removeFilter, clearState } = actions;
+export const { addRoutes, updateSortingTerm, updateFilter, removeFilter, clearState, updateMaxDistance } = actions;
 
 export default reducer;

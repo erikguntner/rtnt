@@ -7,6 +7,7 @@ interface UserI {
   email: string;
   username: string;
   password: string;
+  units: string;
 }
 
 interface User {
@@ -18,14 +19,14 @@ type NextApiRequestWithUser = NextApiRequest & User;
 const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   if (req.method === 'GET') {
     try {
-      const { id } = req.user;
+      const { id, units } = req.user;
       const results = await query('select * from routes where user_id = $1', [
         id,
       ]);
 
       const routes = results.rows;
 
-      return res.status(200).json({ routes });
+      return res.status(200).json({ routes, units });
     } catch (err) {
       console.log(err);
       return res

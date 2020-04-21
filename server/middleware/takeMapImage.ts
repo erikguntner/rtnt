@@ -44,7 +44,7 @@ const takeMapImage = handler => async (req, res) => {
     });
 
     await page.goto(
-      `https://pacific-crag-45485.herokuapp.com/test?coords=${coordsStr}`,
+      `https://rtnt-client.now.sh/?coords=${coordsStr}`,
       {
         waitUntil: 'networkidle0',
       }
