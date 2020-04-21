@@ -66,6 +66,7 @@ const SaveRouteModal: React.FC<Props> = ({
     setOpen(false);
     setSaving(false);
     setProgress(-90);
+    setStatus('beginning save process');
     dispatch(
       changeNotificationStatus({
         isVisible: true,
@@ -103,7 +104,7 @@ const SaveRouteModal: React.FC<Props> = ({
       } else {
         onSaveAlert('error', 'Our server may have timed out. Please try again');
       }
-    } catch (e) {
+    } catch (error) {
       onSaveAlert('error', 'Our server may have timed out. Please try again');
     }
   };

@@ -238,10 +238,10 @@ const Map = () => {
         {isDragging && (
           <ConnectingLines points={points} index={index} endPoint={point} />
         )}
-        {/* <SvgPath points={lines} /> */}
-        {lines.map((line, i) => (
+        <SvgPath points={lines} />
+        {/* {lines.map((line, i) => (
           <GeoJsonPath key={i} {...{ line, i }} width={6} />
-        ))}
+        ))} */}
         {/* <GeoJsonPath {...{ lines }} /> */}
         {points.map((point, i) => (
           <Marker
