@@ -38,11 +38,12 @@ const skeletonAnimation = keyframes`
 `;
 
 const SkeletonWrapper = styled.div`
+  opacity: 0.5;
   color: #bdc3c7;
   background-color: #bdc3c7;
   border-color: #bdc3c7;
-  animation-name: ${skeletonAnimation};
+  /* animation-name: ${skeletonAnimation};
   animation-duration: 1.5s;
   animation-iteration-count: infinite;
-  animation-timing-function: linear;
+  animation-timing-function: linear; */
 `;
