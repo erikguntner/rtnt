@@ -118,7 +118,7 @@ const sortRoutes = (
     );
   }
 
-  console.log('before range filtering', result);
+  console.log('units', units);
 
   result = result.filter(({ distance }) => {
     const totalDistance = distance[distance.length - 1];
@@ -132,8 +132,6 @@ const sortRoutes = (
       ? convertedDistance >= range[0] && convertedDistance <= range[1]
       : convertedDistance <= range[0] && convertedDistance >= range[1];
   });
-
-  console.log('after range filtering', result);
 
   if (filters.sports.length > 0) {
     result = result.filter(({ sports }) => {

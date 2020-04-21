@@ -6,6 +6,7 @@ import firebase from '../../utils/firebase/client';
 const request = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     const { email, username, password } = req.body;
+    let newUser;
 
     // check if all necessary fields are provided
     if (!email || !username || !password) {
@@ -53,7 +54,7 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
 
     try {
       // save user to db
-      const newUser = await query('insert into users (id, username) values ($1, $2) returning *', [uid, username]);
+      newUser = await query('insert into users (id, username) values ($1, $2) returning *', [uid, username]);
     } catch (error) {
       return res
         .status(400)
@@ -79,6 +80,7 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
       user: {
         username,
         email,
+        units: newUser.rows[0].units
       },
     });
   } else { }

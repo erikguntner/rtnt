@@ -6,6 +6,7 @@ import firebaseAdmin from '../../utils/firebase/admin';
 
 const request = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
+    let user;
     try {
       const { token } = req.cookies;
 
@@ -14,13 +15,18 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
 
           const { uid } = await firebaseAdmin.auth().verifySessionCookie(token, true);
 
+          user = await query('select * from users where id = $1', [
+            uid,
+          ]);
+
           const { email, displayName } = await firebaseAdmin.auth().getUser(uid);
 
           return res.status(200).json({
             token,
             user: {
               username: displayName,
-              email
+              email,
+              units: user.rows[0].units
             },
           });
         } catch (error) {

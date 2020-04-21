@@ -57,27 +57,27 @@ const PopOut: React.FC<PopOutProps> = ({
   //   }
   // };
 
-  // const handleClick = (e) => {
-  //   if (parentRef.current) {
-  //     if (parentRef.current.contains(e.target)) {
-  //       // inside click
-  //       return;
-  //     }
+  const handleClick = (e) => {
+    if (parentRef.current) {
+      if (parentRef.current.contains(e.target)) {
+        // inside click
+        return;
+      }
 
-  //     setOpen(false);
-  //   }
-  // };
+      setOpen(false);
+    }
+  };
 
-  // useEffect(() => {
-  //   // add when mounted
-  //   document.addEventListener('mousedown', handleClick);
-  //   document.addEventListener('keydown', handleArrowPress);
-  //   // return function to be called when unmounted
-  //   return () => {
-  //     document.removeEventListener('mousedown', handleClick);
-  //     document.removeEventListener('keydown', handleArrowPress);
-  //   };
-  // }, []);
+  useEffect(() => {
+    // add when mounted
+    document.addEventListener('mousedown', handleClick);
+    // document.addEventListener('keydown', handleArrowPress);
+    // return function to be called when unmounted
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      // document.removeEventListener('keydown', handleArrowPress);
+    };
+  }, []);
 
   return (
     <AnimatePresence>

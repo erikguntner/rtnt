@@ -81,7 +81,8 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
       token,
       user: {
         username,
-        email
+        email,
+        units: result.rows[0].units
       },
     });
   } else {
