@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
 import ReactMapGL, {
@@ -168,11 +168,8 @@ const Map = () => {
   useEffect(() => {
     const geo = navigator.geolocation;
     if (!geo) {
-      console.log('no geo', geo);
       return;
     }
-
-    console.log('finidng location');
 
     geo.getCurrentPosition((position) => {
       setViewport({
@@ -226,7 +223,7 @@ const Map = () => {
         height={'100%'}
         style={{ display: 'flex', flex: '1' }}
         onClick={handleClick}
-        onHover={handleHover}
+        // onHover={handleHover}
         onViewportChange={(viewport) => setViewport(viewport)}
         mapStyle="mapbox://styles/mapbox/outdoors-v11"
       >

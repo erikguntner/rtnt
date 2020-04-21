@@ -110,8 +110,6 @@ const sortRoutes = (
   maxDistance: number,
   units
 ): RouteI[] => {
-  console.log(units);
-
   let result = routes;
   const { keyword, range } = filters;
 
@@ -128,8 +126,6 @@ const sortRoutes = (
     const convertedDistance = turfHelpers
       .convertLength(totalDistance, 'meters', units)
       .toFixed(1);
-
-    console.log(convertedDistance);
 
     return (
       parseFloat(convertedDistance) >= min &&
