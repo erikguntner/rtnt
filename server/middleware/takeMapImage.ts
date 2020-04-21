@@ -43,8 +43,10 @@ const takeMapImage = handler => async (req, res) => {
       progress: 55,
     });
 
+    const url = 'https://rtnt-client.now.sh';
+
     await page.goto(
-      `https://rtnt-client.now.sh/?coords=${coordsStr}`,
+      `${url}/?coords=${coordsStr}`,
       {
         waitUntil: 'networkidle0',
       }
@@ -60,7 +62,7 @@ const takeMapImage = handler => async (req, res) => {
       quality: 100,
       clip: {
         x: 0,
-        y: 70,
+        y: 0,
         width: 640,
         height: 360,
       },
