@@ -63,10 +63,13 @@ const { actions, reducer } = createSlice({
       } else {
         state.filters[filter] = initialState.filters[filter];
       }
+    },
+    clearState: (state) => {
+      state = initialState;
     }
   },
 });
 
-export const { addRoutes, updateSortingTerm, updateFilter, removeFilter } = actions;
+export const { addRoutes, updateSortingTerm, updateFilter, removeFilter, clearState } = actions;
 
 export default reducer;

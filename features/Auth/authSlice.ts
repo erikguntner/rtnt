@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import fetch from 'isomorphic-unfetch';
 import { AppThunk } from '../../app/store';
-import { setCookieOnSignin } from '../../utils/auth';
+import { setCookieOnSignin, removeCookieOnSignout } from '../../utils/auth';
 import { changeNotificationStatus } from '../Map/notificationSlice';
+import { clearState } from '../RouteList/routeListSlice';
 import API_URL from '../../utils/url';
 
 interface UserI {
@@ -117,6 +118,17 @@ export const signup = ({
     console.log('error signing up', e);
   }
 };
+
+export const signout = ({ units }): AppThunk => async dispatch => {
+  removeCookieOnSignout();
+  dispatch(authenticateUser({
+    authenticated: '',
+    user: {
+      username: '', email: '', units,
+    }
+  }))
+  dispatch(clearState());
+}
 
 export const updateUnits = (
   units: 'miles' | 'kilometers',

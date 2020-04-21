@@ -10,8 +10,7 @@ import PopOut from '../Utilities/PopOut';
 import Skeleton from '../Utilities/Skeleton';
 
 import { RootState } from '../../app/rootReducer';
-import { removeCookieOnLogout } from '../../utils/auth';
-import { authenticateUser } from '../Auth/authSlice';
+import { signout } from '../Auth/authSlice';
 
 interface Links {
   href: string;
@@ -50,21 +49,6 @@ const Nav = () => {
     })
   );
 
-  const logout = () => {
-    dispatch(
-      authenticateUser({
-        authenticated: '',
-        user: {
-          username: '',
-          email: '',
-          units: user.units,
-        },
-      })
-    );
-
-    removeCookieOnLogout();
-  };
-
   const renderAuthButtons = () => {
     return (
       <>
@@ -102,7 +86,7 @@ const Nav = () => {
             <button
               onClick={() => {
                 setOpen(false);
-                logout();
+                dispatch(signout({ units: user.units }));
               }}
             >
               Sign Out

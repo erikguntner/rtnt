@@ -24,10 +24,9 @@ export const auth = (ctx) => {
   return token;
 };
 
-export const removeCookieOnLogout = () => {
+export const removeCookieOnSignout = () => {
   cookie.remove('token');
   // to support logging out from all windows
-  window.localStorage.setItem('logout', Date.now().toString());
   Router.push('/');
 };
 
