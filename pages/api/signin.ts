@@ -13,6 +13,7 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     const { username, password } = req.body;
     let result;
+    let signedInUser;
 
     // make sure username and password were passed
     if (!username || !password) {
@@ -26,29 +27,38 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
       result = await query('select * from users where username = $1', [
         username,
       ]);
-
     } catch (error) {
-      throw new Error(error);
+      return res.status(400).json({ message: 'username or password is incorrect' });
     }
 
+    if (!result.rows[0]) {
+      return res.status(400).json({ message: 'username or password is incorrect' });
+    }
     // get user info from firebase
     const foundUser = await firebaseAdmin
       .auth()
       .getUser(result.rows[0].id);
 
     if (!foundUser) {
-      throw new Error('No user found.');
+      return res.status(400).json({ message: 'username or password is incorrect' });
     }
 
     const { email } = foundUser;
 
     // sigin in order to generate id token
-    const { user } = await firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password);
+    try {
+      const { user } = await firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password);
+
+      signedInUser = user;
+
+    } catch (error) {
+      return res.status(400).json({ message: 'username or password is incorrect' });
+    }
 
     // generate id token
-    const idToken = await user.getIdToken();
+    const idToken = await signedInUser.getIdToken();
 
     // make sure we have a token
     if (!idToken) {

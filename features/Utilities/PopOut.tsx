@@ -10,33 +10,33 @@ interface PopOutProps {
   parentRef: React.MutableRefObject<HTMLLIElement | HTMLDivElement>;
 }
 
-const useKeyPress = function (targetKey) {
-  const [keyPressed, setKeyPressed] = useState(false);
+// const useKeyPress = function (targetKey) {
+//   const [keyPressed, setKeyPressed] = useState(false);
 
-  function downHandler({ key }) {
-    if (key === targetKey) {
-      setKeyPressed(true);
-    }
-  }
+//   function downHandler({ key }) {
+//     if (key === targetKey) {
+//       setKeyPressed(true);
+//     }
+//   }
 
-  const upHandler = ({ key }) => {
-    if (key === targetKey) {
-      setKeyPressed(false);
-    }
-  };
+//   const upHandler = ({ key }) => {
+//     if (key === targetKey) {
+//       setKeyPressed(false);
+//     }
+//   };
 
-  React.useEffect(() => {
-    window.addEventListener('keydown', downHandler);
-    window.addEventListener('keyup', upHandler);
+//   React.useEffect(() => {
+//     window.addEventListener('keydown', downHandler);
+//     window.addEventListener('keyup', upHandler);
 
-    return () => {
-      window.removeEventListener('keydown', downHandler);
-      window.removeEventListener('keyup', upHandler);
-    };
-  });
+//     return () => {
+//       window.removeEventListener('keydown', downHandler);
+//       window.removeEventListener('keyup', upHandler);
+//     };
+//   });
 
-  return keyPressed;
-};
+//   return keyPressed;
+// };
 
 const PopOut: React.FC<PopOutProps> = ({
   motionKey,
@@ -45,39 +45,39 @@ const PopOut: React.FC<PopOutProps> = ({
   setOpen,
   parentRef,
 }) => {
-  const [cursor, setCursor] = useState<number>(0);
-  const downPress = useKeyPress('ArrowDown');
-  const upPress = useKeyPress('ArrowUp');
+  // const [cursor, setCursor] = useState<number>(0);
+  // const downPress = useKeyPress('ArrowDown');
+  // const upPress = useKeyPress('ArrowUp');
 
-  const handleArrowPress = (e) => {
-    if (e.key === 'ArrowUp') {
-      console.log('arrow up');
-    } else if (e.key === 'ArrowDown') {
-      console.log('arrow down');
-    }
-  };
+  // const handleArrowPress = (e) => {
+  //   if (e.key === 'ArrowUp') {
+  //     console.log('arrow up');
+  //   } else if (e.key === 'ArrowDown') {
+  //     console.log('arrow down');
+  //   }
+  // };
 
-  const handleClick = (e) => {
-    if (parentRef.current) {
-      if (parentRef.current.contains(e.target)) {
-        // inside click
-        return;
-      }
+  // const handleClick = (e) => {
+  //   if (parentRef.current) {
+  //     if (parentRef.current.contains(e.target)) {
+  //       // inside click
+  //       return;
+  //     }
 
-      setOpen(false);
-    }
-  };
+  //     setOpen(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    // add when mounted
-    document.addEventListener('mousedown', handleClick);
-    document.addEventListener('keydown', handleArrowPress);
-    // return function to be called when unmounted
-    return () => {
-      document.removeEventListener('mousedown', handleClick);
-      document.removeEventListener('keydown', handleArrowPress);
-    };
-  }, []);
+  // useEffect(() => {
+  //   // add when mounted
+  //   document.addEventListener('mousedown', handleClick);
+  //   document.addEventListener('keydown', handleArrowPress);
+  //   // return function to be called when unmounted
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleClick);
+  //     document.removeEventListener('keydown', handleArrowPress);
+  //   };
+  // }, []);
 
   return (
     <AnimatePresence>

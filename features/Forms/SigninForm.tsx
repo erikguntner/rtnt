@@ -21,10 +21,10 @@ import API_URL from '../../utils/url';
 
 const SignupSchema = Yup.object().shape({
   username: Yup.string()
-    .required('Username is required')
+    .required('Please provide a username!')
     .min(4, 'Username must be between 4-25 characters')
     .max(25, 'Username must be between 4-25 characters'),
-  password: Yup.string().required('Password is required'),
+  password: Yup.string().required('Please provide a password!'),
 });
 
 const SignupForm: React.FC<{}> = () => {
@@ -55,14 +55,13 @@ const SignupForm: React.FC<{}> = () => {
           dispatch(authenticateUser({ authenticated: token, user }));
           resetForm();
         } else {
-          const { error } = await response.json();
-          console.log(error);
-          setError(error);
+          const { message } = await response.json();
+          setError(message);
         }
-      } catch (e) {
-        console.log('error logging in', e);
-        console.log(e);
-        setError(error);
+      } catch (error) {
+        console.log('error logging in', error);
+        console.log(error);
+        setError(error.message);
       }
 
       setSubmitting(false);
@@ -93,9 +92,13 @@ const SignupForm: React.FC<{}> = () => {
             value={formik.values.username}
             error={formik.touched.username && formik.errors.username}
           />
-          {formik.touched.username && formik.errors.username ? (
-            <Error>{formik.errors.username}</Error>
-          ) : null}
+          <Error
+            visible={
+              formik.touched.username && formik.errors.username ? true : false
+            }
+          >
+            {formik.errors.username}
+          </Error>
         </InputWrapper>
         <InputWrapper>
           <Label htmlFor="password">Password</Label>
@@ -107,23 +110,29 @@ const SignupForm: React.FC<{}> = () => {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.password}
-            error={formik.touched.username && formik.errors.username}
+            error={formik.touched.password && formik.errors.password}
           />
-          {formik.touched.password && formik.errors.password ? (
-            <Error>{formik.errors.password}</Error>
-          ) : null}
+          <Error
+            visible={
+              formik.touched.password && formik.errors.password ? true : false
+            }
+          >
+            {formik.errors.password}
+          </Error>
         </InputWrapper>
-        {error && <Error>{error}</Error>}
-        <SubmitButton type="submit">
-          {formik.isSubmitting ? (
-            <WithSpinner>
-              <div>Processing...</div>
-              <Spinner />
-            </WithSpinner>
-          ) : (
-            'Log In'
-          )}
-        </SubmitButton>
+        <InputWrapper>
+          <SubmitButton type="submit">
+            {formik.isSubmitting ? (
+              <WithSpinner>
+                <div>Processing...</div>
+                <Spinner />
+              </WithSpinner>
+            ) : (
+              'Log In'
+            )}
+          </SubmitButton>
+          <Error visible={error ? true : false}>{error}</Error>
+        </InputWrapper>
       </Form>
     </FormWrapper>
   );

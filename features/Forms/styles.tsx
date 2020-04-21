@@ -37,6 +37,7 @@ export const Form = styled.form`
 `;
 
 export const InputWrapper = styled.div`
+  position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -65,7 +66,10 @@ export const Input = styled.input<InputProps>`
 
   &:focus {
     outline: none;
-    box-shadow: ${(props) => props.theme.boxShadow.outline};
+    box-shadow: ${(props) =>
+      props.error
+        ? props.theme.boxShadow.outlineError
+        : props.theme.boxShadow.outline};
     background-color: #fff;
   }
 `;
@@ -95,14 +99,21 @@ export const Label = styled.label`
   color: ${(props) => props.theme.colors.gray[700]};
 `;
 
-export const Error = styled.div`
+export const Error = styled.div<{ visible: boolean }>`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  opacity: ${({ visible }) => (visible ? 1 : 0)};
   margin-top: 6px;
+  transform: ${({ visible }) =>
+    visible ? 'translateY(105%)' : 'translateY(100%)'};
   /* padding: 6px;
   border: 1px solid ${(props) => props.theme.colors.red[600]};
   border-radius: 2px;
   background-color: ${(props) => props.theme.colors.red[200]}; */
-  font-size: 1.2rem;
-  color: ${(props) => props.theme.colors.red[600]};
+  font-size: 1.4rem;
+  color: ${(props) => props.theme.colors.red[700]};
+  transition: all 0.3s ease;
 `;
 
 const rotate = keyframes`

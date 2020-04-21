@@ -7,6 +7,7 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     const { email, username, password } = req.body;
 
+    // check if all necessary fields are provided
     if (!email || !username || !password) {
       console.log('not enough info');
       return res
@@ -14,8 +15,10 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
         .json({ message: 'You must provide and username and password' });
     }
 
+    // query for username in database because we cant do so in firebase
     const usernameInDb = await query('select * from users where username = $1', [username]);
 
+    // check if username exists
     if (usernameInDb.rows[0]) {
       console.log('username exists');
       return res
@@ -24,17 +27,20 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     try {
+      // create new user
       await firebaseAdmin.auth().createUser({
         email,
         password,
         displayName: username,
       })
     } catch (error) {
+      // throw error if fields are not valid
       return res
         .status(400)
         .json({ message: error.message });
     }
 
+    // signin to get uid
     const { user } = await firebase
       .auth()
       .signInWithEmailAndPassword(email, password);
@@ -46,6 +52,7 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
     const { uid } = user;
 
     try {
+      // save user to db
       const newUser = await query('insert into users (id, username) values ($1, $2) returning *', [uid, username]);
     } catch (error) {
       return res
@@ -63,8 +70,6 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
       .createSessionCookie(idToken, {
         expiresIn,
       });
-
-    // const options = { maxAge: expiresIn, httpOnly: true, secure: true };
 
     // We manage the session ourselves.
     await firebase.auth().signOut();

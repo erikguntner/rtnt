@@ -61,10 +61,11 @@ const SignupForm: React.FC<{}> = () => {
           resetForm();
         } else {
           const { message } = await response.json();
+          console.log('message from response', message);
           setError(message);
         }
       } catch (error) {
-        console.log(error);
+        console.log('message from error', error);
         setError(error.message);
       }
       setSubmitting(false);
@@ -95,9 +96,11 @@ const SignupForm: React.FC<{}> = () => {
             value={formik.values.email}
             error={formik.touched.email && formik.errors.email}
           />
-          {formik.touched.email && formik.errors.email ? (
-            <Error>{formik.errors.email}</Error>
-          ) : null}
+          <Error
+            visible={formik.touched.email && formik.errors.email ? true : false}
+          >
+            {formik.errors.email}
+          </Error>
         </InputWrapper>
         <InputWrapper>
           <Label htmlFor="username">Username</Label>
@@ -111,9 +114,13 @@ const SignupForm: React.FC<{}> = () => {
             value={formik.values.username}
             error={formik.touched.username && formik.errors.username}
           />
-          {formik.touched.username && formik.errors.username ? (
-            <Error>{formik.errors.username}</Error>
-          ) : null}
+          <Error
+            visible={
+              formik.touched.username && formik.errors.username ? true : false
+            }
+          >
+            {formik.errors.username}
+          </Error>
         </InputWrapper>
         <InputWrapper>
           <Label htmlFor="password">Password</Label>
@@ -127,21 +134,27 @@ const SignupForm: React.FC<{}> = () => {
             value={formik.values.password}
             error={formik.touched.password && formik.errors.password}
           />
-          {formik.touched.password && formik.errors.password ? (
-            <Error>{formik.errors.password}</Error>
-          ) : null}
+          <Error
+            visible={
+              formik.touched.password && formik.errors.password ? true : false
+            }
+          >
+            {formik.errors.password}
+          </Error>
         </InputWrapper>
-        <SubmitButton type="submit" disabled={formik.isSubmitting}>
-          {formik.isSubmitting ? (
-            <WithSpinner>
-              <div>Processing...</div>
-              <Spinner />
-            </WithSpinner>
-          ) : (
-            'Sign Up'
-          )}
-        </SubmitButton>
-        {error && <Error>{error}</Error>}
+        <InputWrapper>
+          <SubmitButton type="submit" disabled={formik.isSubmitting}>
+            {formik.isSubmitting ? (
+              <WithSpinner>
+                <div>Processing...</div>
+                <Spinner />
+              </WithSpinner>
+            ) : (
+              'Sign Up'
+            )}
+          </SubmitButton>
+          <Error visible={error ? true : false}>{error}</Error>
+        </InputWrapper>
       </Form>
     </FormWrapper>
   );

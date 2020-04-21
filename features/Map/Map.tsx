@@ -172,6 +172,8 @@ const Map = () => {
       return;
     }
 
+    console.log('finidng location');
+
     geo.getCurrentPosition((position) => {
       setViewport({
         ...viewport,
