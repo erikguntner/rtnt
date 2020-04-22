@@ -6,7 +6,6 @@ import Router from 'next/router';
 import ReactMapGL, { Marker } from 'react-map-gl';
 import * as turf from '@turf/turf';
 import * as turfHelpers from '@turf/helpers';
-// import WebMercatorViewport from '@math.gl/web-mercator';
 import WebMercatorViewport from 'viewport-mercator-project';
 
 import bbox from '@turf/bbox';
@@ -197,7 +196,6 @@ const RoutePage: NextPage<{ data: RouteI }> = ({ data }) => {
             </>
           )}
         </ReactMapGL>
-        {data && (
           <ElevationWrapper>
             <ElevationProfile
               {...{
@@ -207,8 +205,6 @@ const RoutePage: NextPage<{ data: RouteI }> = ({ data }) => {
               lines={data.lines}
             />
           </ElevationWrapper>
-        )}
-        {!data && <LoadingIndicator />}
       </MapContainer>
       <Block />
     </Wrapper>
