@@ -28,9 +28,7 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
       const results = await query(
         'delete from routes where id = $1', [id]
       );
-
       const route = results.rows[0];
-      console.log(route);
 
       return res.status(200).json({ route });
     } catch (err) {

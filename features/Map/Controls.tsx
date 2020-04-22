@@ -16,7 +16,7 @@ import SaveRouteModal from './SaveRouteModal';
 
 import { RootState } from '../../app/rootReducer';
 import { clearRoute } from './routeSlice';
-import { createGPXFile } from '../../utils/createGPXFile';
+import { downloadGPXFile } from '../../utils/createGPXFile';
 
 interface Props {
   clipPath: boolean;
@@ -30,26 +30,23 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
   const [saving, setSaving] = useState<boolean>(false);
 
   const dispatch = useDispatch();
-  const { points, future, past, authenticated } = useSelector(
-    (state: RootState) => ({
-      points: state.route.present.points,
-      future: state.route.future,
-      past: state.route.past,
-      authenticated: state.auth.authenticated,
-    })
-  );
-
-  const downloadGPXFile = () => {
-    const data = createGPXFile();
-    const blob = new Blob([data]);
-    const url = window.URL.createObjectURL(blob);
-
-    const link = document.createElement('a');
-    link.download = 'test.gpx';
-    link.href = url;
-    document.body.appendChild(link); // Required for this to work in FireFox
-    link.click();
-  };
+  const {
+    totalDistance,
+    lines,
+    points,
+    future,
+    past,
+    authenticated,
+    units,
+  } = useSelector((state: RootState) => ({
+    totalDistance: state.route.present.totalDistance,
+    lines: state.route.present.lines,
+    points: state.route.present.points,
+    future: state.route.future,
+    past: state.route.past,
+    authenticated: state.auth.authenticated,
+    units: state.auth.user.units,
+  }));
 
   const isAuthenticated: boolean =
     points.length < 2
@@ -90,12 +87,12 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
         icon={faSave}
         tooltip={'save route'}
       />
-      {/* <ControlButton
+      <ControlButton
         disabled={points.length < 2}
-        handleClick={downloadGPXFile}
+        handleClick={() => downloadGPXFile(lines, totalDistance, units)}
         icon={faFileDownload}
         tooltip={'export as gpx'}
-      /> */}
+      />
       {/* <ControlButton
         handleClick={() =>
           dispatch(

@@ -8,9 +8,11 @@ import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { topoSvgUrl } from '../utils/topographyStyle';
 import fetch from 'isomorphic-unfetch';
 import API_URL from '../utils/url';
-import { removeCookieOnSignout } from '../utils/auth';
+import { signout } from '../features/Auth/authSlice';
 
 const MyProfile: NextPage<{}> = () => {
+  const dispatch = useDispatch();
+
   const { user } = useSelector((state: RootState) => ({
     user: state.auth.user,
   }));
@@ -22,9 +24,7 @@ const MyProfile: NextPage<{}> = () => {
 
     if (response.ok) {
       const data = response.json();
-      console.log(data);
-
-      removeCookieOnSignout();
+      dispatch(signout({ units: user.units }));
     }
   };
 

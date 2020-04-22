@@ -1,9 +1,9 @@
-import { Pool, Client } from 'pg';
+import { Pool } from 'pg';
 require('dotenv').config();
 
 const pool = new Pool({
   connectionString: process.env.PG_CONN_STRING,
-  ssl: true,
+  ssl: { rejectUnauthorized: false },
 });
 
 const query = (text, params) => pool.query(text, params);

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-// import puppeteer from 'puppeteer';
+//import puppeteer from 'puppeteer';
 import chromium from 'chrome-aws-lambda';
 import pusher from '../services/pusher';
 
