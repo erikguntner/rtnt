@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { NextPage } from 'next';
-import Router, { useRouter } from 'next/router';
-import useSWR from 'swr';
-import ReactMapGL, { Marker, NavigationControl } from 'react-map-gl';
+import { NextPage, GetServerSideProps } from 'next';
+import nextCookie from 'next-cookies';
+import Router from 'next/router';
+import ReactMapGL, { Marker } from 'react-map-gl';
 import * as turf from '@turf/turf';
 import * as turfHelpers from '@turf/helpers';
 // import WebMercatorViewport from '@math.gl/web-mercator';
@@ -17,7 +17,6 @@ import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 
 import ElevationProfile from '../../features/Map/ElevationProfile';
 import DistanceMarkers from '../../features/Map/DistanceMarkers';
-import LoadingIndicator from '../../features/Map/LoadingIndicator';
 import { RootState } from '../../app/rootReducer';
 import SvgPath from '../../features/Map/SvgPath';
 import Pin from '../../features/Map/Pin';
@@ -26,6 +25,8 @@ import {
   abbreviatedDistance,
 } from '../../utils/calculateDistance';
 import PopOut from '../../features/Utilities/PopOut';
+import API_URL from '../../utils/url';
+import { ParsedUrlQuery } from 'querystring';
 
 interface Viewport {
   latitude: number;
@@ -37,28 +38,18 @@ interface Viewport {
 
 interface RouteI {
   id: number;
+  user_id: string;
+  created_at: string;
   name: string;
   image: string;
+  start_point: number[];
+  end_point: number[];
   points: number[][];
   lines: number[][][];
   distance: number[];
-  created_at: string;
-  units: 'miles' | 'kilometers';
+  sports: string[];
+  surface: string[];
 }
-
-const fetcher = async (url) => {
-  const response = await fetch(url, {
-    method: 'GET',
-    credentials: 'include',
-  });
-
-  if (response.ok) {
-    const data = response.json();
-    return data;
-  } else {
-    return { message: 'there was an error' };
-  }
-};
 
 const deleteRoute = async (id) => {
   try {
@@ -85,7 +76,7 @@ const deleteRoute = async (id) => {
   }
 };
 
-const RoutePage: NextPage<{}> = () => {
+const RoutePage: NextPage<{ data: RouteI }> = ({ data }) => {
   const [viewport, setViewport] = useState<Viewport>({
     latitude: 34.105999576,
     longitude: -117.718497126,
@@ -105,18 +96,9 @@ const RoutePage: NextPage<{}> = () => {
     user: state.auth.user,
   }));
 
-  const router = useRouter();
-
-  const { id } = router.query;
-
-  const { data, error, isValidating } = useSWR(
-    id ? [`/api/route/${id}`] : null,
-    fetcher
-  );
-
   useEffect(() => {
     if (distanceAlongPath !== 0 && data) {
-      const line = turf.lineString(data.route.lines.flat());
+      const line = turf.lineString(data.lines.flat());
 
       const segment = turf.along(line, distanceAlongPath, { units });
 
@@ -127,74 +109,60 @@ const RoutePage: NextPage<{}> = () => {
   }, [distanceAlongPath]);
 
   useEffect(() => {
-    if (data?.route) {
-      const { transform } = mapRef.current;
-      const line = turfHelpers.multiLineString(data.route.lines);
-      var bBox = bbox(line);
-      const newViewport = new WebMercatorViewport({
-        width: transform.width,
-        height: transform.height,
-      }).fitBounds(
-        [
-          [bBox[0], bBox[1]],
-          [bBox[2], bBox[3]],
-        ],
-        {
-          padding: 30,
-        }
-      );
-      setViewport({
-        ...newViewport,
-      });
-    }
-  }, [data]);
-
-  if (isValidating || !data) {
-    return <LoadingIndicator />;
-  }
-
-  if (data.message || error) {
-    return <h1>There was an error</h1>;
-  }
+    const { transform } = mapRef.current;
+    const line = turfHelpers.multiLineString(data.lines);
+    const bBox = bbox(line);
+    const newViewport = new WebMercatorViewport({
+      width: transform.width,
+      height: transform.height,
+    }).fitBounds(
+      [
+        [bBox[0], bBox[1]],
+        [bBox[2], bBox[3]],
+      ],
+      {
+        padding: 30,
+      }
+    );
+    setViewport({
+      ...newViewport,
+    });
+  }, []);
 
   const startAndEndCoords = [
-    data.route.points[0],
-    data.route.points[data.route.points.length - 1],
+    data.points[0],
+    data.points[data.points.length - 1],
   ];
 
   return (
     <Wrapper>
       <Header>
-        {data && (
-          <>
-            <h1>{data.route.name}</h1>
-            <HeaderRight>
-              <Distance>
-                <span>{calculateDistance(data.route.lines, units)}</span>
-                <span>{abbreviatedDistance(units)}</span>
-              </Distance>
-              <Options ref={options}>
-                <OptionsButton onClick={() => setOpen(!open)}>
-                  <FontAwesomeIcon icon={faEllipsisH} />
-                </OptionsButton>
-                <PopOut
-                  motionKey="optionsPopOut"
-                  parentRef={options}
-                  {...{ open, setOpen }}
-                >
-                  <button
-                    onClick={() => {
-                      setOpen(false);
-                      deleteRoute(data.route.id);
-                    }}
-                  >
-                    Delete Route
-                  </button>
-                </PopOut>
-              </Options>
-            </HeaderRight>
-          </>
-        )}
+        <h1>{data.name}</h1>
+        <HeaderRight>
+          <Distance>
+            <span>{calculateDistance(data.lines, units)}</span>
+            <span>{abbreviatedDistance(units)}</span>
+          </Distance>
+          <Options ref={options}>
+            <OptionsButton onClick={() => setOpen(!open)}>
+              <FontAwesomeIcon icon={faEllipsisH} />
+            </OptionsButton>
+            <PopOut
+              motionKey="optionsPopOut"
+              parentRef={options}
+              {...{ open, setOpen }}
+            >
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  deleteRoute(data.id);
+                }}
+              >
+                Delete Route
+              </button>
+            </PopOut>
+          </Options>
+        </HeaderRight>
       </Header>
       <MapContainer>
         <ReactMapGL
@@ -210,7 +178,7 @@ const RoutePage: NextPage<{}> = () => {
         >
           {data && (
             <>
-              <SvgPath points={data.route.lines} />
+              <SvgPath points={data.lines} />
               {/* <DistanceMarkers {...{ units }} lines={data.route.lines} /> */}
               {pointAlongPath.length ? (
                 <Marker
@@ -236,7 +204,7 @@ const RoutePage: NextPage<{}> = () => {
                 units,
                 setDistanceAlongPath,
               }}
-              lines={data.route.lines}
+              lines={data.lines}
             />
           </ElevationWrapper>
         )}
@@ -245,6 +213,30 @@ const RoutePage: NextPage<{}> = () => {
       <Block />
     </Wrapper>
   );
+};
+
+export const getServerSideProps: GetServerSideProps<
+  {
+    [key: string]: any;
+  },
+  ParsedUrlQuery
+> = async (context) => {
+  const { token } = nextCookie(context);
+  const { id } = context.query;
+
+  const response = await fetch(`${API_URL}/api/route/${id}`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': 'application/json',
+      authorization: JSON.stringify(token),
+    },
+  });
+
+  const data = await response.json();
+
+  return { props: { data: data.route } };
 };
 
 const Wrapper = styled.div`

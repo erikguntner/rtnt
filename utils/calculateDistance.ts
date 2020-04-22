@@ -2,7 +2,8 @@ import * as turfHelpers from '@turf/helpers';
 import length from '@turf/length';
 
 export const calculateDistance = (data: number[][][], units: 'miles' | 'kilometers', precision = 1): string => {
-  const lineString = turfHelpers.lineString(data.flat());
+  const flattened = data.reduce((accum, curr) => accum.concat(curr));
+  const lineString = turfHelpers.lineString(flattened);
 
   return length(lineString, { units }).toFixed(precision);
 };

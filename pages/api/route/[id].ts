@@ -15,7 +15,6 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
       );
 
       const route = results.rows[0];
-
       return res.status(200).json({ route });
     } catch (err) {
       console.log(err);
