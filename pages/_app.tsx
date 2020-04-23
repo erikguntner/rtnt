@@ -7,6 +7,7 @@ import styled, { ThemeProvider } from 'styled-components';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import 'react-datepicker/dist/react-datepicker.css';
 import debounce from 'lodash/debounce';
 import LogRocket from 'logrocket';
 

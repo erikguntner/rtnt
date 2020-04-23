@@ -29,12 +29,17 @@ interface RouteI {
   id: number;
   name: string;
   image: string;
-  points: number[][];
+  user_id: string;
   lines: number[][][];
+  start_point: number[];
+  end_point: number[];
+  points: number[][];
   distance: number[];
   created_at: string;
   sports: string[];
   surfaces: string[];
+  city: string;
+  state: string;
 }
 
 export interface FiltersTypes {

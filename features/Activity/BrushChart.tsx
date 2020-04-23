@@ -18,25 +18,28 @@ import usePrevious from './usePrevious';
 import getHours from 'date-fns/getHours';
 import startOfTomorrow from 'date-fns/startOfTomorrow';
 import startOfToday from 'date-fns/startOfToday';
+import startOfDay from 'date-fns/startOfDay';
 import differenceInSeconds from 'date-fns/differenceInSeconds';
+import format from 'date-fns/format';
 
 interface ElevationData {
   distance: number;
   elevation: number;
 }
-interface Props {}
+interface Props {
+  handleBrush: (time: string, startTime: string) => void;
+}
 
 interface Dimensions {
   width: number;
   height: number;
 }
 
-const BrushChart: React.FC<Props> = ({}) => {
+const BrushChart: React.FC<Props> = ({ handleBrush }) => {
   const containerRef = useRef<HTMLDivElement>();
   const svgRef = useRef();
   const dimensions = useResizeObserver(containerRef);
   const [selection, setSelection] = useState([0, 0]);
-  const [time, setTime] = useState('00:00:00');
   const previousSelection = usePrevious(selection);
 
   const convertToHours = (seconds) => {
@@ -48,7 +51,7 @@ const BrushChart: React.FC<Props> = ({}) => {
   useEffect(() => {
     if (dimensions === null) return;
 
-    const margin = { top: 20, right: 30, bottom: 20, left: 50 };
+    const margin = { top: 20, right: 20, bottom: 20, left: 20 };
     const height = dimensions.height;
     const width = dimensions.width;
     const svg = select('.brush-chart');
@@ -79,13 +82,15 @@ const BrushChart: React.FC<Props> = ({}) => {
       .on('start brush end', () => {
         if (event.selection) {
           const [startTime, endTime] = event.selection.map(xScale.invert);
+          console.log(startTime, endTime);
+          const formatted = format(startTime, 'p');
           const seconds = differenceInSeconds(endTime, startTime);
           const hours = convertToHours(seconds);
-          
+
           // const difference = getDifference(start, end);
-          
           setSelection([startTime, endTime]);
-          setTime(hours);
+
+          handleBrush(hours, formatted);
         }
       });
 
@@ -102,7 +107,6 @@ const BrushChart: React.FC<Props> = ({}) => {
           <g className="brush" />
         </svg>
       </ChartContainer>
-      <h4>{time}</h4>
     </>
   );
 };

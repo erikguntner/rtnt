@@ -31,6 +31,7 @@ const ModalWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow-y: hidden;
 `;
 
 const Background = styled.div`

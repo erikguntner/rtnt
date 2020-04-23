@@ -264,4 +264,87 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
   #nprogress .peg {
     box-shadow: 0 0 10px #fff, 0 0 5px #fff;
   }
+
+  .date-picker {
+
+    &-wrapper {
+      padding: 1rem;
+      font-size: 1.6rem;
+      border-left: 1px solid ${props => props.theme.colors.gray[400]};
+      border-top: 1px solid ${props => props.theme.colors.gray[400]};
+      border-bottom: 1px solid ${props => props.theme.colors.gray[400]};
+      border-right: none;
+      border-radius: 2px 0 0 2px;
+      z-index: 2000;
+
+      &:focus {
+        outline: none;
+        box-shadow: ${props => props.theme.boxShadow.outline};
+      }
+    }
+
+    &-calendar {
+      width: 200px;
+      font-size: 1.2rem;
+    }
+  }
+
+  .react-datepicker{
+    border: 1px solid ${props => props.theme.colors.gray[400]};
+    color: ${props => props.theme.colors.gray[900]};
+
+    &-popper {
+      z-index: 2000;
+    }
+
+    &__triangle {
+      border-bottom-color: ${props => props.theme.colors.gray[400]};
+
+      &:before {
+        border-bottom-color: ${props => props.theme.colors.gray[400]};
+      }
+    }
+
+    &__header {
+      background-color: ${props => props.theme.colors.gray[100]};
+      color: ${props => props.theme.colors.gray[900]};
+      border-bottom: 1px solid ${props => props.theme.colors.gray[400]};
+    }
+
+    &__month-container {
+      width: 100%;
+      color: ${props => props.theme.colors.gray[900]};
+    }
+
+    &__current-month {
+      color: ${props => props.theme.colors.gray[900]};
+      font-size: 1.4rem;
+    }
+
+    &__week {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    &__day {
+      border-radius: 2px;
+      width: 2.4rem;
+      padding: 4px;
+      color: ${props => props.theme.colors.gray[800]};
+
+      &:hover {
+        background-color: ${props => props.theme.colors.gray[100]};
+      }
+
+      &--selected {
+        background-color: ${props => props.theme.colors.primary};
+        color: #fff;
+
+        &:hover {
+          background-color: ${props => props.theme.colors.newBlues[500]};
+        }
+      }
+    }
+  }
 `;
