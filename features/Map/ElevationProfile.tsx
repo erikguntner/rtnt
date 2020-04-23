@@ -102,25 +102,13 @@ const Text = styled.p`
 `;
 
 const ChartContainer = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
+  position: relative;
   width: 100%;
-  height: 30%;
+  height: 100%;
   background-color: ${(props) => props.theme.colors.gray[100]};
   display: block;
   z-index: 25;
   transition: all 0.3s ease;
-
-  .distance-text {
-    /* fill: blue; */
-  }
-
-  .elevation-text {
-    /* fill: blue; */
-  }
 `;
 
 export default ElevationProfile;

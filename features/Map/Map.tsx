@@ -205,14 +205,16 @@ const Map = () => {
       <Controls
         {...{ setClipPath, clipPath, showElevation, setShowElevation }}
       />
-      <ElevationProfile
-        {...{
-          showElevation,
-          lines,
-          units,
-          setDistanceAlongPath,
-        }}
-      />
+      <ElevationWrapper>
+        <ElevationProfile
+          {...{
+            showElevation,
+            lines,
+            units,
+            setDistanceAlongPath,
+          }}
+        />
+      </ElevationWrapper>
       <ReactMapGL
         latitude={viewport.latitude}
         longitude={viewport.longitude}
@@ -308,6 +310,15 @@ const DistanceMarker = styled.div`
   border-radius: 10px;
   border: 2px solid ${(props) => props.theme.colors.indigo[500]};
   transform: translate3d(-50%, -50%, 0);
+`;
+
+const ElevationWrapper = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 35vh;
+  width: 100%;
 `;
 
 export default connect((state) => state)(Map);

@@ -175,36 +175,29 @@ const RoutePage: NextPage<{ data: RouteI }> = ({ data }) => {
           onViewportChange={(viewport) => setViewport(viewport)}
           mapStyle="mapbox://styles/mapbox/outdoors-v10"
         >
-          {data && (
-            <>
-              <SvgPath points={data.lines} />
-              {/* <DistanceMarkers {...{ units }} lines={data.route.lines} /> */}
-              {pointAlongPath.length ? (
-                <Marker
-                  longitude={pointAlongPath[0]}
-                  latitude={pointAlongPath[1]}
-                >
-                  <Label>{distanceAlongPath.toFixed(2)}</Label>
-                  <DistanceMarker />
-                </Marker>
-              ) : null}
-              {startAndEndCoords.map((point, i) => (
-                <Marker key={i} longitude={point[0]} latitude={point[1]}>
-                  <Pin index={i} points={startAndEndCoords} />
-                </Marker>
-              ))}
-            </>
-          )}
+          <SvgPath points={data.lines} />
+          {/* <DistanceMarkers {...{ units }} lines={data.route.lines} /> */}
+          {pointAlongPath.length ? (
+            <Marker longitude={pointAlongPath[0]} latitude={pointAlongPath[1]}>
+              <Label>{distanceAlongPath.toFixed(2)}</Label>
+              <DistanceMarker />
+            </Marker>
+          ) : null}
+          {startAndEndCoords.map((point, i) => (
+            <Marker key={i} longitude={point[0]} latitude={point[1]}>
+              <Pin index={i} points={startAndEndCoords} />
+            </Marker>
+          ))}
         </ReactMapGL>
-          <ElevationWrapper>
-            <ElevationProfile
-              {...{
-                units,
-                setDistanceAlongPath,
-              }}
-              lines={data.lines}
-            />
-          </ElevationWrapper>
+        <ElevationWrapper>
+          <ElevationProfile
+            {...{
+              units,
+              setDistanceAlongPath,
+            }}
+            lines={data.lines}
+          />
+        </ElevationWrapper>
       </MapContainer>
       <Block />
     </Wrapper>
@@ -356,10 +349,6 @@ const ElevationWrapper = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
-
-  & > div {
-    height: 100%;
-  }
 `;
 
 const Label = styled.div`

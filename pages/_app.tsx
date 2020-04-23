@@ -43,7 +43,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 const Container = styled.div`
-  background-color: ${(props) => props.theme.colors.gray[100]};
+  background-color: #fff;
 `;
 
 const Layout = ({ children }) => {
