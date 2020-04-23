@@ -238,7 +238,6 @@ export const addRoute = ({
   try {
     dispatch(changeLoadingState(true));
     const data = await fetchRoutes(points);
-    console.log(data);
 
     const { coordinates } = data.points;
     const { distance } = data;

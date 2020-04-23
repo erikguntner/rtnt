@@ -24,7 +24,7 @@ const saveRoute = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   if (req.method === 'POST') {
     try {
       const { id } = req.user;
-      const { name, lines, points, totalDistance, sports, surfaces } = req.body;
+      const { name, startPoint, endPoint, lines, points, totalDistance, sports, surfaces, city, state } = req.body;
       const { image } = req;
 
       pusher.trigger('save-route', 'status-update', {
@@ -33,20 +33,26 @@ const saveRoute = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       });
 
       const results = await query(
-        'insert into routes (name, image, user_id, lines, points, distance, sports, surfaces) values ($1, $2, $3, $4, $5, $6, $7, $8) returning *',
+        'insert into routes (name, image, user_id, start_point, end_point, lines, points, distance, sports, surfaces, city, state) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning *',
         [
           name,
           image,
           id,
+          JSON.stringify(startPoint),
+          JSON.stringify(endPoint),
           JSON.stringify(lines),
           JSON.stringify(points),
           JSON.stringify(totalDistance),
           JSON.stringify(sports),
           JSON.stringify(surfaces),
+          JSON.stringify(city),
+          JSON.stringify(state),
         ]
       );
 
       const route = results.rows[0];
+
+      console.log(route);
 
       pusher.trigger('save-route', 'status-update', {
         message: 'Saving route',

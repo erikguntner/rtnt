@@ -5,10 +5,6 @@ import BrushChart from './BrushChart';
 interface ActivityFormProps {}
 
 const ActivityForm: React.FC<ActivityFormProps> = ({}) => {
-  const [data, setData] = useState([10, 25, 30, 40, 25, 60]);
-  const onAddDataClick = () =>
-    setData([...data, Math.round(Math.random() * 100)]);
-
   return (
     <ChartContainer>
       <BrushChart />

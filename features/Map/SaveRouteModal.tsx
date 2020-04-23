@@ -80,15 +80,29 @@ const SaveRouteModal: React.FC<Props> = ({
     setSaving(true);
     setValue('');
     try {
+      const startPoint = points[0];
+      const endPoint = points[points.length - 1];
+
+      const res = await fetch(
+        `https://graphhopper.com/api/1/geocode?reverse=true&point=${startPoint[1]},${startPoint[0]}&debug=true&key=${process.env.GRAPH_HOPPER_KEY}`
+      );
+
+      const { hits } = await res.json();
+      const { city, state } = hits[0];
       // Make fetch request
       const body = {
         name: value,
+        startPoint,
+        endPoint,
         lines,
         points,
         totalDistance,
         sports,
         surfaces,
+        city,
+        state,
       };
+
       const response = await fetch(`${API_URL}/api/route`, {
         method: 'POST',
         credentials: 'include',
@@ -105,6 +119,7 @@ const SaveRouteModal: React.FC<Props> = ({
         onSaveAlert('error', 'Our server may have timed out. Please try again');
       }
     } catch (error) {
+      console.log(error);
       onSaveAlert('error', 'Our server may have timed out. Please try again');
     }
   };
@@ -177,9 +192,6 @@ const SaveRouteModal: React.FC<Props> = ({
                     </TagsWrapper>
                   </InputWrapper>
                   <Controls>
-                    <CancelButton onClick={() => setOpen(!open)}>
-                      Cancel
-                    </CancelButton>
                     <AcceptButton onClick={handleSaveRoute}>
                       Save Route
                     </AcceptButton>
@@ -313,21 +325,18 @@ const CancelButton = styled.button`
 `;
 
 const AcceptButton = styled.button`
+  width: 100%;
   padding: 8px 1.2rem;
   border: none;
   border-radius: 2px;
-  background-color: ${(props) => props.theme.colors.green[500]};
+  background-color: ${(props) => props.theme.colors.primary};
   color: #fff;
   font-size: 1.4rem;
   box-shadow: ${(props) => props.theme.boxShadow.sm};
 
   &:hover {
     cursor: pointer;
-    background-color: ${(props) => props.theme.colors.green[400]};
-  }
-
-  &:active {
-    background-color: ${(props) => props.theme.colors.green[500]};
+    background-color: ${(props) => props.theme.colors.newBlues[500]};
   }
 `;
 
