@@ -192,11 +192,20 @@ export const updateRouteAfterDrag = ({
 }: DragParams): AppThunk => async dispatch => {
   try {
     dispatch(changeLoadingState(true));
-    const data = await fetchRoutes(waypoints);
+
+    const pointString = waypoints
+      .map(point => `point=${point[1]},${point[0]}&`)
+      .join('');
+
+    const response = await fetch(
+      `https://graphhopper.com/api/1/route?${pointString}vehicle=foot&debug=true&elevation=true&legs=true&details=street_name&key=${process.env.GRAPH_HOPPER_KEY}&type=json&points_encoded=false`
+    );
+    const data = await response.json();
+
     const {
       snapped_waypoints,
       points: { coordinates },
-    } = data;
+    } = data.paths[0];
 
     const lines: number[][][] = createLineSegments(
       coordinates,
@@ -237,16 +246,24 @@ export const addRoute = ({
 
   try {
     dispatch(changeLoadingState(true));
-    const data = await fetchRoutes(points);
 
-    const { coordinates } = data.points;
-    const { distance } = data;
+    const pointString = points
+      .map(point => `point=${point[1]},${point[0]}&`)
+      .join('');
+
+    const response = await fetch(
+      `https://graphhopper.com/api/1/route?${pointString}vehicle=foot&debug=true&elevation=true&legs=true&details=street_name&key=${process.env.GRAPH_HOPPER_KEY}&type=json&points_encoded=false`
+    );
+    const data = await response.json();
+
+    const { coordinates } = data.paths[0].points;
+    const { distance, snapped_waypoints } = data.paths[0];
 
     dispatch(
       addRoutingInfo({
         distance,
         coordinates,
-        newPoint: data.snapped_waypoints.coordinates[1],
+        newPoint: snapped_waypoints.coordinates[1],
       })
     );
     dispatch(changeLoadingState(false));
