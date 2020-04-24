@@ -1,8 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { put } from 'redux-saga/effects'
 
 import { AppThunk } from '../../app/store';
-import { fetchRoutes } from '../../utils/fetchRoutes';
 import { changeNotificationStatus } from './notificationSlice';
 
 interface RouteState {

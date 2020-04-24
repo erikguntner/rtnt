@@ -1,18 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
-import {
-  brushX,
-  axisBottom,
-  scaleLinear,
-  scaleBand,
-  extent,
-  select,
-  scaleTime,
-  timeHour,
-  zoom,
-  zoomTransform,
-  max,
-  event,
-} from 'd3';
+import React, { useEffect, useRef } from 'react';
+import { brushX, axisBottom, select, scaleTime, timeHour, event } from 'd3';
 import styled from 'styled-components';
 import useResizeObserver from './useResizeObserver';
 import usePrevious from './usePrevious';
@@ -49,6 +36,7 @@ const BrushChart: React.FC<Props> = ({
   const containerRef = useRef<HTMLDivElement>();
   const svgRef = useRef();
   const dimensions = useResizeObserver(containerRef);
+  const previousDimensions = usePrevious(dimensions);
   // const [selection, setSelection] = useState<any>([0, 0]);
   // const previousSelection = usePrevious(selection);
   const previousDate = usePrevious(date);
@@ -60,7 +48,7 @@ const BrushChart: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (dimensions === null) return;
+    if (dimensions === null || previousDimensions === undefined) return;
 
     const margin = { top: 20, right: 15, bottom: 20, left: 15 };
     const height = dimensions.height;
@@ -99,17 +87,27 @@ const BrushChart: React.FC<Props> = ({
           const seconds = differenceInSeconds(endTime, startTime);
           const hours = convertToHours(seconds);
 
-          // const difference = getDifference(start, end);
           setSelection([startTime, endTime]);
 
           handleBrush(hours, formatted);
         }
       });
 
-    if (previousSelection === selection && isEqual(previousDate, date)) {
+    if (!isEqual(date, previousDate)) {
       brushG.call(brush).call(brush.move, selection.map(xScale));
     }
-  }, [dimensions, previousSelection, selection, previousDate, date]);
+
+    if (previousSelection === selection) {
+      brushG.call(brush).call(brush.move, selection.map(xScale));
+    }
+  }, [
+    dimensions,
+    previousDimensions,
+    previousSelection,
+    selection,
+    previousDate,
+    date,
+  ]);
 
   return (
     <>

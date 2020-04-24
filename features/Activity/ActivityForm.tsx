@@ -51,7 +51,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({}) => {
   const [units, setUnits] = useState<'miles' | 'kilometers'>('miles');
   const [selectedRoute, setSelectedRoute] = useState<null | RouteI>(null);
 
-  const [selection, setSelection] = useState<any>([0, 0]);
+  const [selection, setSelection] = useState<Date[]>([new Date(), new Date()]);
   const previousSelection = usePrevious(selection);
 
   const formik = useFormik({
@@ -246,6 +246,10 @@ const Centered = styled.div`
 const FormWrapper = styled.div`
   width: 60rem;
   padding: 2.4rem 0 5.6rem 0;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    width: 100%;
+  }
 `;
 
 const ModalWrapper = styled.div`
