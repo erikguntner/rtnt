@@ -127,7 +127,19 @@ export const fetchSinglePoint = (
 ): AppThunk => async dispatch => {
   try {
     dispatch(changeLoadingState(true));
-    const { snapped_waypoints } = await fetchRoutes([newPoint, newPoint]);
+    const pointString = [newPoint, newPoint]
+      .map(point => `point=${point[1]},${point[0]}&`)
+      .join('');
+
+    const response = await fetch(
+      `https://graphhopper.com/api/1/route?${pointString}vehicle=foot&debug=true&elevation=true&legs=true&details=street_name&key=${process.env.GRAPH_HOPPER_KEY}&type=json&points_encoded=false`
+    );
+    const data = await response.json();
+
+    const {
+      snapped_waypoints,
+    } = data.paths[0];
+
     if (points.length === 0) {
       dispatch(addPoint(snapped_waypoints.coordinates[0]));
     } else {

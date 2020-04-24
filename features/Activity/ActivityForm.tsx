@@ -5,6 +5,7 @@ import DatePicker from 'react-datepicker';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
+import usePrevious from './usePrevious';
 import BrushChart from './BrushChart';
 import RouteModal from './RouteModal';
 import HorizontalRouteCard from './HorizontalRouteCard';
@@ -19,6 +20,11 @@ import {
   WithSpinner,
 } from '../Forms/styles';
 import API_URL from '../../utils/url';
+import getDate from 'date-fns/getDate';
+import getMonth from 'date-fns/getMonth';
+import getYear from 'date-fns/getYear';
+import add from 'date-fns/add';
+import set from 'date-fns/set';
 
 interface ActivityFormProps {}
 
@@ -45,6 +51,9 @@ const ActivityForm: React.FC<ActivityFormProps> = ({}) => {
   const [units, setUnits] = useState<'miles' | 'kilometers'>('miles');
   const [selectedRoute, setSelectedRoute] = useState<null | RouteI>(null);
 
+  const [selection, setSelection] = useState<any>([0, 0]);
+  const previousSelection = usePrevious(selection);
+
   const formik = useFormik({
     initialValues: {
       route: '',
@@ -64,6 +73,21 @@ const ActivityForm: React.FC<ActivityFormProps> = ({}) => {
   };
 
   const handleChange = (date) => {
+    const [startDate, endDate] = selection;
+
+    const newStartSelection = set(startDate, {
+      date: getDate(date),
+      month: getMonth(date),
+      year: getYear(date),
+    });
+    const newEndSelection = set(endDate, {
+      date: getDate(date),
+      month: getMonth(date),
+      year: getYear(date),
+    });
+
+    setSelection([newStartSelection, newEndSelection]);
+
     formik.setFieldValue('date', date);
   };
 
@@ -100,83 +124,96 @@ const ActivityForm: React.FC<ActivityFormProps> = ({}) => {
 
   return (
     <>
-      <Wrapper>
-        <Title>Create Activity</Title>
-        <Form onSubmit={formik.handleSubmit}>
-          <InputWrapper>
-            <Label>Select Route</Label>
-            {formik.values.route ? (
-              <HorizontalRouteCard
-                image={selectedRoute.image}
-                city={selectedRoute.city}
-                lines={selectedRoute.lines}
-                units={units}
-                state={selectedRoute.state}
-                name={selectedRoute.name}
-                handleClick={() => setOpen(true)}
-              />
-            ) : (
-              <AddRouteButton onClick={() => setOpen(true)}>
-                <FontAwesomeIcon style={{ marginRight: '8px' }} icon={faPlus} />
-                add route
-              </AddRouteButton>
-            )}
-          </InputWrapper>
-          <InputWrapper>
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              name="title"
-              type="text"
-              placeholder="title"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.title}
-              error={formik.touched.title && formik.errors.title}
-            />
-            <Error
-              visible={
-                formik.touched.title && formik.errors.title ? true : false
-              }
-            >
-              {formik.errors.title}
-            </Error>
-          </InputWrapper>
-          <InputWrapper>
-            <Label>Time</Label>
-            <Row>
-              <DatePicker
-                dateFormat="cccc, MM/dd/yyyy"
-                selected={formik.values.date}
-                onChange={handleChange}
-                className="date-picker-wrapper"
-                calendarClassName="date-picker-calendar"
-              />
-              <TimeWrapper>
-                <Time>{formik.values.startTime}</Time>
-                <Time>{formatTime(formik.values.time)}</Time>
-              </TimeWrapper>
-            </Row>
-          </InputWrapper>
-          <InputWrapper>
-            <ChartContainer>
-              <BrushChart {...{ handleBrush }} />
-            </ChartContainer>
-          </InputWrapper>
-          <InputWrapper>
-            <SubmitButton type="submit">
-              {formik.isSubmitting ? (
-                <WithSpinner>
-                  <div>Processing...</div>
-                  <Spinner />
-                </WithSpinner>
+      <Centered>
+        <FormWrapper>
+          <Title>Create Activity</Title>
+          <Form onSubmit={formik.handleSubmit}>
+            <InputWrapper>
+              <Label>Select Route</Label>
+              {formik.values.route ? (
+                <HorizontalRouteCard
+                  image={selectedRoute.image}
+                  city={selectedRoute.city}
+                  lines={selectedRoute.lines}
+                  units={units}
+                  state={selectedRoute.state}
+                  name={selectedRoute.name}
+                  handleClick={() => setOpen(true)}
+                />
               ) : (
-                'Save Activity'
+                <AddRouteButton onClick={() => setOpen(true)}>
+                  <FontAwesomeIcon
+                    style={{ marginRight: '8px' }}
+                    icon={faPlus}
+                  />
+                  add route
+                </AddRouteButton>
               )}
-            </SubmitButton>
-          </InputWrapper>
-        </Form>
-      </Wrapper>
+            </InputWrapper>
+            <InputWrapper>
+              <Label htmlFor="title">Title</Label>
+              <Input
+                id="title"
+                name="title"
+                type="text"
+                placeholder="title"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.title}
+                error={formik.touched.title && formik.errors.title}
+              />
+              <Error
+                visible={
+                  formik.touched.title && formik.errors.title ? true : false
+                }
+              >
+                {formik.errors.title}
+              </Error>
+            </InputWrapper>
+            <InputWrapper>
+              <Label>Time</Label>
+              <Row>
+                <DatePicker
+                  dateFormat="cccc, MM/dd/yyyy"
+                  selected={formik.values.date}
+                  onChange={handleChange}
+                  className="date-picker-wrapper"
+                  calendarClassName="date-picker-calendar"
+                />
+                <TimeWrapper>
+                  <Time>{formik.values.startTime}</Time>
+                  <Time>{formatTime(formik.values.time)}</Time>
+                </TimeWrapper>
+              </Row>
+            </InputWrapper>
+            <InputWrapper>
+              <ChartContainer>
+                <BrushChart
+                  {...{
+                    handleBrush,
+                    selection,
+                    setSelection,
+                    previousSelection,
+                  }}
+                  date={formik.values.date}
+                />
+              </ChartContainer>
+            </InputWrapper>
+            <InputWrapper>
+              <SubmitButton type="submit">
+                {formik.isSubmitting ? (
+                  <WithSpinner>
+                    <div>Processing...</div>
+                    <Spinner />
+                  </WithSpinner>
+                ) : (
+                  'Save Activity'
+                )}
+              </SubmitButton>
+            </InputWrapper>
+          </Form>
+        </FormWrapper>
+      </Centered>
       <RouteModal open={open} toggle={setOpen}>
         <ModalWrapper>
           <Header>Select a route</Header>
@@ -197,10 +234,18 @@ const ActivityForm: React.FC<ActivityFormProps> = ({}) => {
 
 const Form = styled.form``;
 
-const Wrapper = styled.div`
-  width: 50rem;
+const Centered = styled.div`
+  display: flex;
+  justify-content: center;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    padding: 0 1.6rem;
+  }
+`;
+
+const FormWrapper = styled.div`
+  width: 60rem;
   padding: 2.4rem 0 5.6rem 0;
-  margin: 0 auto;
 `;
 
 const ModalWrapper = styled.div`
