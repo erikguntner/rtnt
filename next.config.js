@@ -13,5 +13,6 @@ module.exports = {
     PUSHER_KEY: process.env.PUSHER_KEY,
     PUSHER_SECRET: process.env.PUSHER_SECRET,
     PUSHER_CLUSTER: process.env.PUSHER_CLUSTER,
+    NOW_URL: process.env.NOW_URL
   },
 };
