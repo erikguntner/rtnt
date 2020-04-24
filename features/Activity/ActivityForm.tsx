@@ -40,9 +40,10 @@ export interface RouteI {
 }
 
 const ActivityForm: React.FC<ActivityFormProps> = ({}) => {
-  const [open, setOpen] = useState<boolean>(true);
+  const [open, setOpen] = useState<boolean>(false);
   const [routes, setRoutes] = useState<RouteI[]>([]);
   const [units, setUnits] = useState<'miles' | 'kilometers'>('miles');
+  const [selectedRoute, setSelectedRoute] = useState<null | RouteI>(null);
 
   const formik = useFormik({
     initialValues: {
@@ -63,13 +64,19 @@ const ActivityForm: React.FC<ActivityFormProps> = ({}) => {
   };
 
   const handleChange = (date) => {
-    console.log(date);
     formik.setFieldValue('date', date);
   };
 
   const formatTime = (time: string): string => {
     const arr = time.split(':');
     return `${arr[0]}hr ${arr[1]}min ${arr[2]}sec`;
+  };
+
+  const selectRoute = (id: number) => {
+    const route = routes.filter((route) => route.id === id);
+    setSelectedRoute(route[0]);
+    setOpen(false);
+    formik.setFieldValue('route', id);
   };
 
   useEffect(() => {
@@ -91,10 +98,6 @@ const ActivityForm: React.FC<ActivityFormProps> = ({}) => {
     fetchRoutes();
   }, []);
 
-  const selectRoute = (id: string) => {};
-
-  console.log(routes);
-
   return (
     <>
       <Wrapper>
@@ -102,10 +105,22 @@ const ActivityForm: React.FC<ActivityFormProps> = ({}) => {
         <Form onSubmit={formik.handleSubmit}>
           <InputWrapper>
             <Label>Select Route</Label>
-            <AddRouteButton onClick={() => setOpen(true)}>
-              <FontAwesomeIcon style={{ marginRight: '8px' }} icon={faPlus} />
-              add route
-            </AddRouteButton>
+            {formik.values.route ? (
+              <HorizontalRouteCard
+                image={selectedRoute.image}
+                city={selectedRoute.city}
+                lines={selectedRoute.lines}
+                units={units}
+                state={selectedRoute.state}
+                name={selectedRoute.name}
+                handleClick={() => setOpen(true)}
+              />
+            ) : (
+              <AddRouteButton onClick={() => setOpen(true)}>
+                <FontAwesomeIcon style={{ marginRight: '8px' }} icon={faPlus} />
+                add route
+              </AddRouteButton>
+            )}
           </InputWrapper>
           <InputWrapper>
             <Label htmlFor="title">Title</Label>
@@ -170,6 +185,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({}) => {
               <HorizontalRouteCard
                 key={id}
                 {...{ image, city, lines, units, state, name }}
+                handleClick={() => selectRoute(id)}
               />
             ))}
           </List>

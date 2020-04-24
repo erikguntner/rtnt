@@ -5,6 +5,7 @@ import {
   calculateDistance,
   abbreviatedDistance,
 } from '../../utils/calculateDistance';
+import getStateAbbreviation from '../../utils/getStateAbbreviation';
 
 interface HorizontalRouteCardProps {
   name: string;
@@ -13,6 +14,7 @@ interface HorizontalRouteCardProps {
   lines: number[][][];
   city: string;
   state: string;
+  handleClick?: (any) => void;
 }
 
 const HorizontalRouteCard: React.FC<HorizontalRouteCardProps> = ({
@@ -22,19 +24,18 @@ const HorizontalRouteCard: React.FC<HorizontalRouteCardProps> = ({
   lines,
   city,
   state,
+  handleClick
 }) => {
   return (
-    <RouteCard>
+    <RouteCard onClick={handleClick}>
       <Content>
-        <p>{name}</p>
-        <p>
-          <span>{calculateDistance(lines, units)}</span>
-          <span>{abbreviatedDistance(units)}</span>
-        </p>
-        <p>
-          <span>{city}</span>
-          <span>{state}</span>
-        </p>
+        <Name>{name}</Name>
+        <Distance>
+          {calculateDistance(lines, units)} {abbreviatedDistance(units)}
+        </Distance>
+        <Location>
+          {city}, {getStateAbbreviation(state)}
+        </Location>
       </Content>
       <div>
         <ImageFigure>
@@ -66,12 +67,25 @@ const RouteCard = styled.article`
 `;
 
 const Content = styled.div`
-  margin-right: 2rem;
+  width: 20rem;
+`;
+
+const Name = styled.p`
+  font-size: 2rem;
+`;
+
+const Distance = styled.p`
+  color: ${(props) => props.theme.colors.gray[700]};
+`;
+
+const Location = styled.p`
+  color: ${(props) => props.theme.colors.gray[700]};
+  white-space: nowrap;
 `;
 
 const ImageFigure = styled.figure`
-  width: 14rem;
-  height: 8rem;
+  width: 16rem;
+  height: 9rem;
   border-radius: 2px 2px 0 0;
   overflow: hidden;
 

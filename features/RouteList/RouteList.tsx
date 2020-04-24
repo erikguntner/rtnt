@@ -25,7 +25,7 @@ import CustomSelect from './CustomSelect';
 import Skeleton from '../Utilities/Skeleton';
 import Tag from '../Utilities/Tag';
 
-interface RouteI {
+export interface RouteI {
   id: number;
   name: string;
   image: string;

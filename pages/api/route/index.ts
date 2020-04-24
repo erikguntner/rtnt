@@ -45,8 +45,8 @@ const saveRoute = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
           JSON.stringify(totalDistance),
           JSON.stringify(sports),
           JSON.stringify(surfaces),
-          JSON.stringify(city),
-          JSON.stringify(state),
+          city,
+          state,
         ]
       );
 

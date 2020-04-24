@@ -1,15 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-interface Route {
-  id: number;
-  name: string;
-  image: string;
-  points: number[][];
-  lines: number[][][];
-  distance: number[];
-  created_at: string;
-  sports: string[];
-  surfaces: string[];
-}
+import { RouteI } from './RouteList';
 
 interface Filters {
   keyword: string;
@@ -19,7 +9,7 @@ interface Filters {
 }
 
 interface State {
-  routes: Route[];
+  routes: RouteI[];
   maxDistance: number;
   sortingTerm: string;
   filters: Filters;
@@ -41,7 +31,7 @@ const { actions, reducer } = createSlice({
   name: 'routeList',
   initialState,
   reducers: {
-    addRoutes: (state, action: PayloadAction<{ routes: Route[]; maxDistance?: number }>) => {
+    addRoutes: (state, action: PayloadAction<{ routes: RouteI[]; maxDistance?: number }>) => {
       state.routes = action.payload.routes;
       if (action.payload.maxDistance) {
 
