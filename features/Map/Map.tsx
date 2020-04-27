@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
 import ReactMapGL, {
@@ -46,6 +46,7 @@ const Map = () => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [point, setPoint] = useState<number[]>([]);
   const [index, setIndex] = useState<number>(0);
+  const mapRef = useRef(null);
   const [touchPoint, setTouchPoint] = useState<number[]>([]);
   // state for syncing mouseevents for chart and map
   const [distanceAlongPath, setDistanceAlongPath] = useState<number>(0);
@@ -225,6 +226,7 @@ const Map = () => {
         height={'100%'}
         style={{ display: 'flex', flex: '1' }}
         onClick={handleClick}
+        ref={mapRef}
         // onHover={handleHover}
         onViewportChange={(viewport) => setViewport(viewport)}
         mapStyle="mapbox://styles/mapbox/outdoors-v11"
@@ -279,6 +281,10 @@ const MapContainer = styled.div<{ width: number; height: number }>`
   display: flex;
   flex: 1;
   flex-direction: column;
+
+  &:focus {
+    border: 4px solid red;
+  }
 `;
 
 const Label = styled.div`

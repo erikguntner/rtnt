@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import DatePicker from 'react-datepicker';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -23,10 +24,8 @@ import API_URL from '../../utils/url';
 import getDate from 'date-fns/getDate';
 import getMonth from 'date-fns/getMonth';
 import getYear from 'date-fns/getYear';
-import add from 'date-fns/add';
 import set from 'date-fns/set';
-
-interface ActivityFormProps {}
+import format from 'date-fns/format';
 
 export interface RouteI {
   id: number;
@@ -45,31 +44,80 @@ export interface RouteI {
   state: string;
 }
 
-const ActivityForm: React.FC<ActivityFormProps> = ({}) => {
+const convertToHours = (seconds: number): string => {
+  const date = new Date(null);
+  date.setSeconds(seconds);
+  return date.toISOString().substr(11, 8);
+};
+
+const formatTime = (seconds: number): string => {
+  const time = convertToHours(seconds);
+  const arr = time.split(':');
+  return `${arr[0]}hr ${arr[1]}min ${arr[2]}sec`;
+};
+
+const ActivityForm: React.FC<{}> = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [routes, setRoutes] = useState<RouteI[]>([]);
   const [units, setUnits] = useState<'miles' | 'kilometers'>('miles');
-  const [selectedRoute, setSelectedRoute] = useState<null | RouteI>(null);
-
   const [selection, setSelection] = useState<Date[]>([new Date(), new Date()]);
   const previousSelection = usePrevious(selection);
 
   const formik = useFormik({
     initialValues: {
-      route: '',
-      title: '',
+      route: null,
+      name: '',
       date: new Date(),
-      startTime: '00:00',
-      time: '00:00:00',
+      startTime: new Date(),
+      time: 0,
     },
     onSubmit: async (values) => {
-      console.log(values);
+      const { route, name, date, startTime, time } = values;
+      const {
+        image,
+        lines,
+        start_point,
+        end_point,
+        city,
+        state,
+        distance,
+      } = route;
+
+      try {
+        const response = await fetch(`${API_URL}/api/activity`, {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json, text/plain, */*',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            date,
+            name,
+            startTime,
+            distance: distance[distance.length - 1],
+            time,
+            start_point,
+            end_point,
+            image,
+            lines,
+            city,
+            state,
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
 
-  const handleBrush = (time: string, startTime: string) => {
-    formik.setFieldValue('startTime', startTime);
-    formik.setFieldValue('time', time);
+  const setElapsedAndStartTime = (elapsedTime: number, startTime: string) => {
+    formik.setFieldValue('startTime', startTime, false);
+    formik.setFieldValue('time', elapsedTime, false);
   };
 
   const handleChange = (date) => {
@@ -88,19 +136,13 @@ const ActivityForm: React.FC<ActivityFormProps> = ({}) => {
 
     setSelection([newStartSelection, newEndSelection]);
 
-    formik.setFieldValue('date', date);
-  };
-
-  const formatTime = (time: string): string => {
-    const arr = time.split(':');
-    return `${arr[0]}hr ${arr[1]}min ${arr[2]}sec`;
+    formik.setFieldValue('date', date, false);
   };
 
   const selectRoute = (id: number) => {
     const route = routes.filter((route) => route.id === id);
-    setSelectedRoute(route[0]);
     setOpen(false);
-    formik.setFieldValue('route', id);
+    formik.setFieldValue('route', route[0], false);
   };
 
   useEffect(() => {
@@ -122,6 +164,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({}) => {
     fetchRoutes();
   }, []);
 
+  const { route } = formik.values;
   return (
     <>
       <Centered>
@@ -129,19 +172,19 @@ const ActivityForm: React.FC<ActivityFormProps> = ({}) => {
           <Title>Create Activity</Title>
           <Form onSubmit={formik.handleSubmit}>
             <InputWrapper>
-              <Label>Select Route</Label>
-              {formik.values.route ? (
+              <Label htmlFor="route">Select Route *</Label>
+              {route ? (
                 <HorizontalRouteCard
-                  image={selectedRoute.image}
-                  city={selectedRoute.city}
-                  lines={selectedRoute.lines}
+                  image={route.image}
+                  city={route.city}
+                  lines={route.lines}
                   units={units}
-                  state={selectedRoute.state}
-                  name={selectedRoute.name}
+                  state={route.state}
+                  name={route.name}
                   handleClick={() => setOpen(true)}
                 />
               ) : (
-                <AddRouteButton onClick={() => setOpen(true)}>
+                <AddRouteButton type="button" onClick={() => setOpen(true)}>
                   <FontAwesomeIcon
                     style={{ marginRight: '8px' }}
                     icon={faPlus}
@@ -151,37 +194,37 @@ const ActivityForm: React.FC<ActivityFormProps> = ({}) => {
               )}
             </InputWrapper>
             <InputWrapper>
-              <Label htmlFor="title">Title</Label>
+              <Label htmlFor="name">Name *</Label>
               <Input
-                id="title"
-                name="title"
+                id="name"
+                name="name"
                 type="text"
-                placeholder="title"
+                placeholder="name"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.title}
-                error={formik.touched.title && formik.errors.title}
+                value={formik.values.name}
+                error={formik.touched.name && formik.errors.name ? true : false}
               />
               <Error
                 visible={
-                  formik.touched.title && formik.errors.title ? true : false
+                  formik.touched.name && formik.errors.name ? true : false
                 }
               >
-                {formik.errors.title}
+                {formik.errors.name}
               </Error>
             </InputWrapper>
             <InputWrapper>
               <Label>Time</Label>
               <Row>
                 <DatePicker
-                  dateFormat="cccc, MM/dd/yyyy"
+                  dateFormat="E, MM/dd/yyyy"
                   selected={formik.values.date}
                   onChange={handleChange}
                   className="date-picker-wrapper"
                   calendarClassName="date-picker-calendar"
                 />
                 <TimeWrapper>
-                  <Time>{formik.values.startTime}</Time>
+                  <Time>{format(formik.values.startTime, 'p')}</Time>
                   <Time>{formatTime(formik.values.time)}</Time>
                 </TimeWrapper>
               </Row>
@@ -190,7 +233,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({}) => {
               <ChartContainer>
                 <BrushChart
                   {...{
-                    handleBrush,
+                    setElapsedAndStartTime,
                     selection,
                     setSelection,
                     previousSelection,

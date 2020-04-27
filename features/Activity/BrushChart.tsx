@@ -5,7 +5,6 @@ import useResizeObserver from './useResizeObserver';
 import usePrevious from './usePrevious';
 import startOfDay from 'date-fns/startOfDay';
 import differenceInSeconds from 'date-fns/differenceInSeconds';
-import format from 'date-fns/format';
 import add from 'date-fns/add';
 import isEqual from 'date-fns/isEqual';
 
@@ -14,11 +13,11 @@ interface ElevationData {
   elevation: number;
 }
 interface Props {
-  handleBrush: (time: string, startTime: string) => void;
+  setElapsedAndStartTime: (time: number, startTime: string) => void;
   date: Date;
-  selection: any;
-  setSelection: any;
-  previousSelection: any;
+  selection: Date[];
+  setSelection: React.Dispatch<React.SetStateAction<Date[]>>;
+  previousSelection: Date[];
 }
 
 interface Dimensions {
@@ -27,7 +26,7 @@ interface Dimensions {
 }
 
 const BrushChart: React.FC<Props> = ({
-  handleBrush,
+  setElapsedAndStartTime,
   date,
   selection,
   setSelection,
@@ -37,18 +36,10 @@ const BrushChart: React.FC<Props> = ({
   const svgRef = useRef();
   const dimensions = useResizeObserver(containerRef);
   const previousDimensions = usePrevious(dimensions);
-  // const [selection, setSelection] = useState<any>([0, 0]);
-  // const previousSelection = usePrevious(selection);
   const previousDate = usePrevious(date);
 
-  const convertToHours = (seconds) => {
-    const date = new Date(null);
-    date.setSeconds(seconds);
-    return date.toISOString().substr(11, 8);
-  };
-
   useEffect(() => {
-    if (dimensions === null || previousDimensions === undefined) return;
+    if (dimensions === null) return;
 
     const margin = { top: 20, right: 15, bottom: 20, left: 15 };
     const height = dimensions.height;
@@ -56,7 +47,7 @@ const BrushChart: React.FC<Props> = ({
     const svg = select('.brush-chart');
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
-    const startDate = startOfDay(date);
+    const startDate = add(startOfDay(date), { hours: 5 });
     const endDate = startOfDay(add(date, { days: 1 }));
 
     const xScale = scaleTime()
@@ -83,16 +74,13 @@ const BrushChart: React.FC<Props> = ({
       .on('start brush end', () => {
         if (event.selection) {
           const [startTime, endTime] = event.selection.map(xScale.invert);
-          const formatted = format(startTime, 'p');
           const seconds = differenceInSeconds(endTime, startTime);
-          const hours = convertToHours(seconds);
-
           setSelection([startTime, endTime]);
-
-          handleBrush(hours, formatted);
+          setElapsedAndStartTime(seconds, startTime);
         }
       });
 
+    // Update brush when dates change
     if (!isEqual(date, previousDate)) {
       brushG.call(brush).call(brush.move, selection.map(xScale));
     }
