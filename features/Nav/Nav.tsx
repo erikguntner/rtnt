@@ -80,7 +80,7 @@ const Nav = () => {
             <Link href="/myroutes">
               <a onClick={() => setOpen(false)}>My Routes</a>
             </Link>
-            <Link href="/activity">
+            <Link href="/activity/create">
               <a onClick={() => setOpen(false)}>Acitivities</a>
             </Link>
             <Link href="/myprofile">

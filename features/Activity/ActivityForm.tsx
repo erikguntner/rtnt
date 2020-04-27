@@ -44,6 +44,10 @@ export interface RouteI {
   state: string;
 }
 
+const ActivitySchema = Yup.object().shape({
+  name: Yup.string().required('Please provide a name!').min(1),
+});
+
 const convertToHours = (seconds: number): string => {
   const date = new Date(null);
   date.setSeconds(seconds);
@@ -71,7 +75,9 @@ const ActivityForm: React.FC<{}> = () => {
       startTime: new Date(),
       time: 0,
     },
-    onSubmit: async (values) => {
+    validationSchema: ActivitySchema,
+    onSubmit: async (values, { setSubmitting }) => {
+      setSubmitting(true);
       const { route, name, date, startTime, time } = values;
       const {
         image,
@@ -107,11 +113,12 @@ const ActivityForm: React.FC<{}> = () => {
 
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
         }
       } catch (error) {
         console.log(error);
       }
+
+      setSubmitting(false);
     },
   });
 
@@ -184,7 +191,11 @@ const ActivityForm: React.FC<{}> = () => {
                   handleClick={() => setOpen(true)}
                 />
               ) : (
-                <AddRouteButton type="button" onClick={() => setOpen(true)}>
+                <AddRouteButton
+                  type="button"
+                  error={formik.errors.route ? true : false}
+                  onClick={() => setOpen(true)}
+                >
                   <FontAwesomeIcon
                     style={{ marginRight: '8px' }}
                     icon={faPlus}
@@ -349,12 +360,14 @@ const Time = styled.div`
   }
 `;
 
-const AddRouteButton = styled.button`
+const AddRouteButton = styled.button<{ error: boolean }>`
   width: min-content;
   white-space: nowrap;
   padding: 8px 1.2rem;
   margin-right: 1rem;
-  border: 1px solid ${(props) => props.theme.colors.gray[400]};
+  border: 1px solid
+    ${(props) =>
+      props.error ? props.theme.colors.red[600] : props.theme.colors.gray[400]};
   border-radius: 2px;
   background-color: #fff;
   font-size: 1.4rem;
