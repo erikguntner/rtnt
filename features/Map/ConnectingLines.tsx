@@ -3,7 +3,6 @@ import { CanvasOverlay, CanvasRedrawOptions } from 'react-map-gl';
 
 interface ConnectingLinesProps {
   points: number[][];
-  endPoint: number[];
   index: number;
   lineWidth?: number;
   renderWhileDragging?: boolean;
@@ -17,7 +16,6 @@ type ExtendedCanvasRedrawOptions = CanvasRedrawOptions & AdditionalTypes;
 
 const ConnectingLines = ({
   points,
-  endPoint,
   index,
   lineWidth = 2,
   renderWhileDragging = true,
@@ -32,7 +30,7 @@ const ConnectingLines = ({
     ctx.clearRect(0, 0, width, height);
     ctx.globalCompositeOperation = 'lighter';
 
-    if ((renderWhileDragging || !isDragging) && endPoint.length !== 0) {
+    if (renderWhileDragging || !isDragging) {
       let startPixel = null;
       let endPixel = null;
 
@@ -40,7 +38,7 @@ const ConnectingLines = ({
       ctx.strokeStyle = '#667eea';
       ctx.globalAlpha = 0.5;
       ctx.beginPath();
-      const pixel = project([endPoint[0], endPoint[1]]);
+      const pixel = project([points[index][0], points[index][1]]);
       if (index === 0) {
         startPixel = project([points[index + 1][0], points[index + 1][1]]);
         endPixel = project([points[index + 1][0], points[index + 1][1]]);

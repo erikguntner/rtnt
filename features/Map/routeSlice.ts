@@ -78,6 +78,10 @@ const { actions, reducer } = createSlice({
         state.totalDistance[state.totalDistance.length - 1] + distance
       );
     },
+    updatePointCoords: (state, action: PayloadAction<{ index: number; coords: number[] }>) => {
+      const { index, coords } = action.payload;
+      state.points[index] = coords;
+    },
     updateStartAfterDrag: (state, action: PayloadAction<number[]>) => {
       state.points[0] = action.payload;
     },
@@ -115,6 +119,7 @@ export const {
   clearRoute,
   removeLastPoint,
   addRoutingInfo,
+  updatePointCoords,
   updateStartAfterDrag,
   updateRouteAfterDragSuccess,
 } = actions;
@@ -289,7 +294,6 @@ export const addRoute = ({
     dispatch(changeLoadingState(false));
   }
 };
-
 
 /////////////////////////
 // SAGAS

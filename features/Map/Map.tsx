@@ -11,7 +11,12 @@ import styled from 'styled-components';
 import store from '../../app/store';
 import { RootState } from '../../app/rootReducer';
 import { AppDispatch } from '../../app/store';
-import { addRoute, updateRouteAfterDrag, fetchSinglePoint } from './routeSlice';
+import {
+  addRoute,
+  updateRouteAfterDrag,
+  fetchSinglePoint,
+  updatePointCoords,
+} from './routeSlice';
 import useWindowSize from '../../utils/useWindowSize';
 
 import SvgPath from './SvgPath';
@@ -44,7 +49,6 @@ const Map = () => {
     pitch: 0,
   });
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [point, setPoint] = useState<number[]>([]);
   const [index, setIndex] = useState<number>(0);
   const mapRef = useRef(null);
   const [touchPoint, setTouchPoint] = useState<number[]>([]);
@@ -97,6 +101,17 @@ const Map = () => {
     }
   };
 
+  const handleDragStart = (event, index: number) => {
+    if (points.length > 1) {
+      setIsDragging(true);
+    }
+    setIndex(index);
+  };
+
+  const handleDrag = (event, index: number) => {
+    dispatch(updatePointCoords({ index, coords: event.lngLat }));
+  };
+
   const handleDragEnd = (
     newLngLat: number[],
     point: number[],
@@ -139,19 +154,25 @@ const Map = () => {
       if (points.length > 1) {
         setIsDragging(false);
       }
-      setPoint([]);
     }
   };
 
-  const handleDrag = (event) => {
-    setPoint(event.lngLat);
-  };
+  const handleHover = (event) => {
+    const { features } = event;
 
-  const handleDragStart = (event, index: number) => {
-    if (points.length > 1) {
-      setIsDragging(true);
+    const hoveredFeature =
+      features &&
+      features.find((f) => f.layer.id.split('-')[0] === 'path_layer');
+
+    if (hoveredFeature) {
+      const line = turf.lineString(lines.flat());
+      const segment = turf.lineSlice(points[0], event.lngLat, line);
+      const length = turf.length(segment, { units });
+
+      setDistanceAlongPath(length);
+    } else if (distanceAlongPath !== 0) {
+      setDistanceAlongPath(0);
     }
-    setIndex(index);
   };
 
   useEffect(() => {
@@ -182,24 +203,6 @@ const Map = () => {
       setPosition([position.coords.latitude, position.coords.longitude]);
     });
   }, []);
-
-  const handleHover = (event) => {
-    const { features } = event;
-
-    const hoveredFeature =
-      features &&
-      features.find((f) => f.layer.id.split('-')[0] === 'path_layer');
-
-    if (hoveredFeature) {
-      const line = turf.lineString(lines.flat());
-      const segment = turf.lineSlice(points[0], event.lngLat, line);
-      const length = turf.length(segment, { units });
-
-      setDistanceAlongPath(length);
-    } else if (distanceAlongPath !== 0) {
-      setDistanceAlongPath(0);
-    }
-  };
 
   return (
     <MapContainer {...{ width, height }}>
@@ -236,9 +239,7 @@ const Map = () => {
             <UserMarker />
           </Marker>
         )}
-        {isDragging && (
-          <ConnectingLines points={points} index={index} endPoint={point} />
-        )}
+        {isDragging && <ConnectingLines points={points} index={index} />}
         <SvgPath points={lines} />
         {/* {lines.map((line, i) => (
           <GeoJsonPath key={i} {...{ line, i }} width={6} />
@@ -251,7 +252,7 @@ const Map = () => {
             latitude={point[1]}
             draggable
             onDragStart={(event) => handleDragStart(event, i)}
-            onDrag={(event) => handleDrag(event)}
+            onDrag={(event) => handleDrag(event, i)}
             onDragEnd={(event) => handleDragEnd(event.lngLat, point, i)}
           >
             <Pin index={i} points={points} />
