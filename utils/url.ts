@@ -1,5 +1,3 @@
-console.log(process.env.NOW_URL)
-
 const API_URL =
   process.env.NODE_ENV === 'production'
     ? 'https://rtnt.now.sh'

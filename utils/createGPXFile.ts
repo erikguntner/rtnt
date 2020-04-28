@@ -19,7 +19,7 @@ export const formatGPXFile = (lines: number[][][], distance: number[], units: 'm
     </metadata>
     <rte>
       <name>${distanceInUnits} ${unitsAbbrev} route</name>
-      ${points.map((point) => `<rtept lat="${point[1]}" lon="${point[0]}"/>`)}
+      ${points.map((point) => `<rtept lat="${point[1]}" lon="${point[0]}"/>`).join('\n')}
     </rte>
   </gpx>`;
 

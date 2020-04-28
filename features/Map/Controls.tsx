@@ -62,36 +62,42 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
         handleClick={() => dispatch(ActionCreators.undo())}
         icon={faUndoAlt}
         tooltip={'undo'}
+        id={'undo'}
       />
       <ControlButton
         disabled={!future.length}
         handleClick={() => dispatch(ActionCreators.redo())}
         icon={faRedoAlt}
         tooltip={'redo'}
+        id={'redo'}
       />
       <ControlButton
         disabled={!points.length}
         handleClick={() => dispatch(clearRoute())}
         icon={faTimes}
         tooltip={'clear route'}
+        id={'clear'}
       />
       <ControlButton
         handleClick={() => setShowElevation(!showElevation)}
         icon={faMountain}
         activeState={showElevation}
         tooltip={'elevation'}
+        id={'elevation'}
       />
       <ControlButton
         disabled={isAuthenticated}
         handleClick={() => setOpen(!open)}
         icon={faSave}
         tooltip={'save route'}
+        id={'save'}
       />
       <ControlButton
         disabled={points.length < 2}
         handleClick={() => downloadGPXFile(lines, totalDistance, units)}
         icon={faFileDownload}
         tooltip={'export as gpx'}
+        id={'gpx'}
       />
       {/* <ControlButton
         handleClick={() =>

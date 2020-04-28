@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-common-types';
@@ -9,6 +9,7 @@ interface Props {
   icon: IconDefinition;
   tooltip: string;
   activeState?: boolean;
+  id: string;
 }
 
 const ControlButton: React.FC<Props> = ({
@@ -17,7 +18,11 @@ const ControlButton: React.FC<Props> = ({
   icon,
   tooltip,
   activeState = false,
+  id,
 }) => {
+  const [focused, setFocused] = useState<boolean>(false);
+  const btnRef = useRef(null);
+
   const click = () => {
     if (!disabled) {
       handleClick();
@@ -25,8 +30,13 @@ const ControlButton: React.FC<Props> = ({
   };
 
   return (
-    <Button {...{ activeState, disabled }} disabled={disabled}>
-      <InnerButton {...{ activeState, disabled }} onClick={click}>
+    <Button
+      ref={btnRef}
+      id={id}
+      {...{ activeState, disabled, focused }}
+      disabled={disabled}
+    >
+      <InnerButton {...{ activeState, disabled, focused }} onClick={click}>
         <FontAwesomeIcon icon={icon} />
       </InnerButton>
       <Tooltip>{tooltip}</Tooltip>
@@ -35,6 +45,7 @@ const ControlButton: React.FC<Props> = ({
 };
 
 interface ButtonProps {
+  focused: boolean;
   activeState: boolean;
   disabled: boolean;
 }
@@ -45,7 +56,10 @@ const Button = styled.button<ButtonProps>`
   width: 12rem;
   border: none;
   padding: 0;
-  background-color: ${(props) => props.theme.colors.gray[200]};
+  background-color: ${(props) =>
+    props.focused
+      ? props.theme.colors.green[600]
+      : props.theme.colors.gray[200]};
 
   &:not(:last-child) {
     border-right: 1px solid ${(props) => props.theme.colors.gray[200]};
@@ -144,6 +158,10 @@ const InnerButton = styled.div<ButtonProps>`
 
   &:not(:last-child) {
     border-right: 1px solid ${(props) => props.theme.colors.gray[200]};
+  }
+
+  &:focus {
+    background-color: blue;
   }
 `;
 

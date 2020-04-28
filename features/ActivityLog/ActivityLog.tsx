@@ -39,6 +39,9 @@ const ActivityLog: React.FC<{}> = ({}) => {
     fetchRoutes();
   }, []);
 
+  const formatDates = activities.map(({ startDate }) => new Date(startDate));
+  console.log(formatDates);
+
   return <div>Activity Log</div>;
 };
 
