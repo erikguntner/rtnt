@@ -1,7 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import query from '../../server/db';
-
-import firebaseAdmin from '../../utils/firebase/admin';
 import firebase from '../../utils/firebase/client';
 import API_URL from '../../utils/url';
 
