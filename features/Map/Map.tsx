@@ -157,24 +157,6 @@ const Map = () => {
     }
   };
 
-  const handleHover = (event) => {
-    const { features } = event;
-
-    const hoveredFeature =
-      features &&
-      features.find((f) => f.layer.id.split('-')[0] === 'path_layer');
-
-    if (hoveredFeature) {
-      const line = turf.lineString(lines.flat());
-      const segment = turf.lineSlice(points[0], event.lngLat, line);
-      const length = turf.length(segment, { units });
-
-      setDistanceAlongPath(length);
-    } else if (distanceAlongPath !== 0) {
-      setDistanceAlongPath(0);
-    }
-  };
-
   useEffect(() => {
     if (distanceAlongPath !== 0) {
       const line = turf.lineString(lines.flat());
@@ -205,7 +187,7 @@ const Map = () => {
   }, []);
 
   return (
-    <MapContainer {...{ width, height }}>
+    <MapContainer tabIndex={0} {...{ width, height }}>
       <Controls
         {...{ setClipPath, clipPath, showElevation, setShowElevation }}
       />

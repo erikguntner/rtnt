@@ -4,23 +4,26 @@ export const formatGPXFile = (lines: number[][][], distance: number[], units: 'm
   const distanceInUnits = calculateDistance(lines, units, 2);
   const unitsAbbrev = abbreviatedDistance(units);
   const points = lines.reduce((accum, curr) => accum.concat(curr));
+  const xml = `
+  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  <gpx version="1.1" creator="https://rtnt.now.sh" xmlns="http://www.topografix.com/GPX/1/1">
+    <metadata>
+      <name>${distanceInUnits} ${unitsAbbrev} route</name>
+      <link href="https://rtnt.now.sh">
+        <text>On The Go Map</text>
+      </link>
+      <time>${new Date()}</time>
+      <copyright author="Run Tracker">
+        <year>2020</year>
+      </copyright>
+    </metadata>
+    <rte>
+      <name>${distanceInUnits} ${unitsAbbrev} route</name>
+      ${points.map((point) => `<rtept lat="${point[1]}" lon="${point[0]}"/>`)}
+    </rte>
+  </gpx>`;
 
-  let string = '';
-
-  string += '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
-  string += '<gpx version="1.1" creator="https://rtnt.now.sh.com" xmlns="http://www.topografix.com/GPX/1/1">';
-  string += '<metadata>';
-  string += '<name>' + distanceInUnits + '-' + unitsAbbrev + '-route</name>';
-  string += '<link href="https://rtnt.now.csh"><text>Run Tracker</text></link>'
-  string += '</metadata>';
-  string += '<rte>';
-  for (let i = 0; i < points.length; i++) {
-    string += '<rtept lat=' + points[i][1] + ' lon=' + points[i][0] + ' />'
-  }
-  string += '</rte>';
-  string += '</gpx>';
-
-  return string;
+  return xml;
 }
 
 
