@@ -1,8 +1,9 @@
 import React from 'react';
 import { NextPage } from 'next';
+import ActivityLog from '../../features/ActivityLog/ActivityLog';
 
 const MyRoutes: NextPage<{}> = () => {
-  return <div></div>;
+  return <ActivityLog />;
 };
 
 export default MyRoutes;

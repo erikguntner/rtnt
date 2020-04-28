@@ -17,7 +17,25 @@ interface User {
 type NextApiRequestWithUser = NextApiRequest & User;
 
 const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
-  if (req.method === 'POST') {
+  if (req.method === 'GET') {
+    const { id, units } = req.user;
+    try {
+      const results = await query(`select name, 
+        start_date as "startDate", name, distance, elapsed_time as "elapsedTime", start_point as "startPoint", 
+        end_point as "endPoint", map_image as image, city, state
+        from activities where user_id = $1 
+        order by start_date DESC`, [
+        id,
+      ]);
+
+      const activities = results.rows;
+      return res.status(200).json({ activities, units });
+    } catch (error) {
+      return res.status(200).json({ message: 'there was an error' });
+    }
+
+
+  } else if (req.method === 'POST') {
     try {
       const { id } = req.user;
       const {
@@ -59,7 +77,6 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
         .status(422)
         .json({ message: 'there was an error saving activities' });
     }
-  } else {
   }
 };
 
