@@ -5,7 +5,7 @@ import firebase from '../../utils/firebase/client';
 
 const request = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
-    const { email, username, password } = req.body;
+    const { email, username, password, rememberMe } = req.body;
     let newUser;
 
     // check if all necessary fields are provided
@@ -63,8 +63,8 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const idToken = await user.getIdToken();
 
-    // Set session expiration to 5 days.
-    const expiresIn = 60 * 60 * 24 * 5 * 1000;
+    // Set session expiration to 30 days or 1.
+    const expiresIn = rememberMe ? 60 * 60 * 24 * 14 * 1000 : 60 * 60 * 24 * 1 * 1000;
 
     const token = await firebaseAdmin
       .auth()

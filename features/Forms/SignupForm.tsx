@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import fetch from 'isomorphic-unfetch';
@@ -14,6 +15,8 @@ import {
   SubmitButton,
   WithSpinner,
   Spinner,
+  Checkbox,
+  CheckboxLabel,
 } from './styles';
 import { authenticateUser } from '../Auth/authSlice';
 import { setCookieOnSignin } from '../../utils/auth';
@@ -35,11 +38,11 @@ const SignupForm: React.FC<{}> = () => {
   const dispatch = useDispatch();
 
   const formik = useFormik({
-    initialValues: { email: '', username: '', password: '' },
+    initialValues: { email: '', username: '', password: '', rememberMe: false },
     validationSchema: SignupSchema,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onSubmit: async (
-      { email, username, password },
+      { email, username, password, rememberMe },
       { setSubmitting, resetForm }
     ) => {
       setSubmitting(true);
@@ -50,13 +53,13 @@ const SignupForm: React.FC<{}> = () => {
             Accept: 'application/json, text/plain, */*',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email, username, password }),
+          body: JSON.stringify({ email, username, password, rememberMe }),
         });
 
         if (response.ok) {
           const { token, user } = await response.json();
 
-          await setCookieOnSignin({ token });
+          await setCookieOnSignin({ token, rememberMe });
           dispatch(authenticateUser({ authenticated: token, user }));
           resetForm();
         } else {
@@ -143,6 +146,23 @@ const SignupForm: React.FC<{}> = () => {
           </Error>
         </InputWrapper>
         <InputWrapper>
+          <Checkbox>
+            <input
+              id="rememberMe"
+              type="checkbox"
+              checked={formik.values.rememberMe}
+              onChange={() =>
+                formik.setFieldValue(
+                  'rememberMe',
+                  !formik.values.rememberMe,
+                  false
+                )
+              }
+            />
+            <CheckboxLabel htmlFor="rememberMe">Remember me</CheckboxLabel>
+          </Checkbox>
+        </InputWrapper>
+        <InputWrapper>
           <SubmitButton type="submit" disabled={formik.isSubmitting}>
             {formik.isSubmitting ? (
               <WithSpinner>
@@ -159,4 +179,5 @@ const SignupForm: React.FC<{}> = () => {
     </FormWrapper>
   );
 };
+
 export default SignupForm;

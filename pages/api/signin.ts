@@ -11,7 +11,7 @@ interface User {
 
 const request = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
-    const { username, password } = req.body;
+    const { username, password, rememberMe } = req.body;
     let result;
     let signedInUser;
 
@@ -34,6 +34,7 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!result.rows[0]) {
       return res.status(400).json({ message: 'username or password is incorrect' });
     }
+
     // get user info from firebase
     const foundUser = await firebaseAdmin
       .auth()
@@ -65,8 +66,8 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
       throw new Error('Not able to create an id cookie.');
     }
 
-    // Set session expiration to 5 days.
-    const expiresIn = 60 * 60 * 24 * 5 * 1000;
+    // Set session expiration to 30 days or 1.
+    const expiresIn = rememberMe ? 60 * 60 * 24 * 14 * 1000 : 60 * 60 * 24 * 1 * 1000;
 
     const token = await firebaseAdmin
       .auth()

@@ -3,8 +3,9 @@ import Router from 'next/router';
 import nextCookie from 'next-cookies';
 import cookie from 'js-cookie';
 
-export const setCookieOnSignin = ({ token }) => {
-  cookie.set('token', token, { expires: 5 });
+export const setCookieOnSignin = ({ token, rememberMe }) => {
+  const expires = rememberMe ? 14 : 1;
+  cookie.set('token', token, { expires });
   Router.push('/');
 };
 

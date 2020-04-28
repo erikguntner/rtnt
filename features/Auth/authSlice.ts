@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import fetch from 'isomorphic-unfetch';
 import { AppThunk } from '../../app/store';
-import { setCookieOnSignin, removeCookieOnSignout } from '../../utils/auth';
+import { removeCookieOnSignout } from '../../utils/auth';
 import { changeNotificationStatus } from '../Map/notificationSlice';
 import { clearState } from '../RouteList/routeListSlice';
 import API_URL from '../../utils/url';
@@ -51,73 +51,11 @@ const { actions, reducer } = createSlice({
 
 export const { authenticateUser, changeUsersUnits, setValidating } = actions;
 
-interface SigninI {
-  username: string;
-  password: string;
-}
-
-export const signin = ({
-  username,
-  password,
-}: SigninI): AppThunk => async dispatch => {
-  try {
-    const response = await fetch(`${API_URL}/api/signin`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json, text/plain, */*',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    });
-
-    if (response.ok) {
-      const { token, user } = await response.json();
-
-      await setCookieOnSignin({ token });
-      dispatch(authenticateUser({ authenticated: token, user }));
-    } else {
-      console.log('there was an error');
-    }
-  } catch (e) {
-    console.log('error logging in', e);
-  }
-};
-
 interface NewUser {
   email: string;
   username: string;
   password: string;
 }
-
-export const signup = ({
-  email,
-  username,
-  password,
-}: NewUser): AppThunk => async dispatch => {
-  try {
-    const response = await fetch(`${API_URL}/api/signup`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json, text/plain, */*',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, username, password }),
-    });
-
-    if (response.ok) {
-
-      const { token, user } = await response.json();
-
-      if (token) {
-        await setCookieOnSignin({ token });
-        dispatch(authenticateUser({ authenticated: token, user }));
-      }
-    } else { }
-
-  } catch (e) {
-    console.log('error signing up', e);
-  }
-};
 
 export const signout = ({ units }): AppThunk => async dispatch => {
   removeCookieOnSignout();

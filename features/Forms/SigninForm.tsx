@@ -14,6 +14,8 @@ import {
   SubmitButton,
   Spinner,
   WithSpinner,
+  Checkbox,
+  CheckboxLabel,
 } from './styles';
 import { setCookieOnSignin } from '../../utils/auth';
 import { authenticateUser } from '../Auth/authSlice';
@@ -33,10 +35,13 @@ const SignupForm: React.FC<{}> = () => {
   const dispatch = useDispatch();
 
   const formik = useFormik({
-    initialValues: { username: '', password: '' },
+    initialValues: { username: '', password: '', rememberMe: false },
     validationSchema: SignupSchema,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onSubmit: async ({ username, password }, { setSubmitting, resetForm }) => {
+    onSubmit: async (
+      { username, password, rememberMe },
+      { setSubmitting, resetForm }
+    ) => {
       setSubmitting(true);
       try {
         const response = await fetch(`${API_URL}/api/signin`, {
@@ -51,7 +56,7 @@ const SignupForm: React.FC<{}> = () => {
         if (response.ok) {
           const { token, user } = await response.json();
 
-          await setCookieOnSignin({ token });
+          await setCookieOnSignin({ token, rememberMe });
           dispatch(authenticateUser({ authenticated: token, user }));
           resetForm();
         } else {
@@ -119,6 +124,23 @@ const SignupForm: React.FC<{}> = () => {
           >
             {formik.errors.password}
           </Error>
+        </InputWrapper>
+        <InputWrapper>
+          <Checkbox>
+            <input
+              id="remember_me"
+              type="checkbox"
+              checked={formik.values.rememberMe}
+              onChange={() =>
+                formik.setFieldValue(
+                  'rememberMe',
+                  !formik.values.rememberMe,
+                  false
+                )
+              }
+            />
+            <CheckboxLabel htmlFor="remember_me">Remember me</CheckboxLabel>
+          </Checkbox>
         </InputWrapper>
         <InputWrapper>
           <SubmitButton type="submit">
