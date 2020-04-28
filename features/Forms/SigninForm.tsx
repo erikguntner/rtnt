@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
+import Link from 'next/link';
 import fetch from 'isomorphic-unfetch';
 import * as Yup from 'yup';
 import {
@@ -16,6 +17,8 @@ import {
   WithSpinner,
   Checkbox,
   CheckboxLabel,
+  ForgotPassword,
+  Row,
 } from './styles';
 import { setCookieOnSignin } from '../../utils/auth';
 import { authenticateUser } from '../Auth/authSlice';
@@ -126,21 +129,26 @@ const SignupForm: React.FC<{}> = () => {
           </Error>
         </InputWrapper>
         <InputWrapper>
-          <Checkbox>
-            <input
-              id="remember_me"
-              type="checkbox"
-              checked={formik.values.rememberMe}
-              onChange={() =>
-                formik.setFieldValue(
-                  'rememberMe',
-                  !formik.values.rememberMe,
-                  false
-                )
-              }
-            />
-            <CheckboxLabel htmlFor="remember_me">Remember me</CheckboxLabel>
-          </Checkbox>
+          <Row>
+            <Checkbox>
+              <input
+                id="rememberMe"
+                type="checkbox"
+                checked={formik.values.rememberMe}
+                onChange={() =>
+                  formik.setFieldValue(
+                    'rememberMe',
+                    !formik.values.rememberMe,
+                    false
+                  )
+                }
+              />
+              <CheckboxLabel htmlFor="rememberMe">Remember me</CheckboxLabel>
+            </Checkbox>
+            <Link href="/resetpassword">
+              <ForgotPassword>Forgot password?</ForgotPassword>
+            </Link>
+          </Row>
         </InputWrapper>
         <InputWrapper>
           <SubmitButton type="submit">

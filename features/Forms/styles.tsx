@@ -154,6 +154,22 @@ export const CheckboxLabel = styled.label`
   display: inline;
 `;
 
+export const Row = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const ForgotPassword = styled.a`
+  text-decoration: none;
+  font-size: 1.4rem;
+  color: ${(props) => props.theme.colors.primary};
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
 export const Spacer = styled.div`
   display: flex;
   justify-content: center;
