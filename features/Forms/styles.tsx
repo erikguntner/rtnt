@@ -120,38 +120,12 @@ export const Error = styled.div<{ visible: boolean }>`
   }
 `;
 
-export const Checkbox = styled.div`
-  & > input[type='checkbox'] {
-    display: none;
-
-    & + label {
-      background-color: #fafafa;
-      border: 1px solid #cacece;
-      padding: 9px;
-      border-radius: 3px;
-      display: inline-block;
-      position: relative;
-    }
-
-    &:checked + label {
-      background-color: #e9ecee;
-      border: 1px solid #adb8c0;
-      color: #99a1a7;
-    }
-
-    &:checked + label:after {
-      content: '\2714';
-      font-size: 14px;
-      position: absolute;
-      top: 0px;
-      left: 3px;
-      color: #99a1a7;
-    }
-  }
-`;
+export const Checkbox = styled.div``;
 
 export const CheckboxLabel = styled.label`
   display: inline;
+  font-size: 1.4rem;
+  margin-left: 6px;
 `;
 
 export const Row = styled.div`
