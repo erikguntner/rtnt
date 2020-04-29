@@ -98,8 +98,8 @@ export const renderLineChart = (
     .append('path')
     .attr('class', 'line-path')
     .attr('fill', 'none')
-    .attr('stroke', '#0070f3')
-    .attr('stroke-width', '2')
+    .attr('stroke', '#4a5568')
+    .attr('stroke-width', '3')
     //@ts-ignore
     .attr('d', lineGenerator(data));
 
@@ -122,7 +122,7 @@ export const renderLineChart = (
 
 
   g.append("path")
-    .attr("fill", "url(#temperature-gradient)")
+    .attr("fill", "#e2e8f0")
     //@ts-ignore
     .attr("d", areaGenerator(data));
 
@@ -146,9 +146,9 @@ export const renderLineChart = (
   mouseOnLine
     .append('circle')
     .attr('r', 7)
-    .style('stroke', 'black')
+    .style('stroke', '#0070f3')
     .style('fill', 'none')
-    .style('stroke-width', '1px')
+    .style('stroke-width', '2px')
     .style('opacity', '0');
 
   mouseOnLine

@@ -230,6 +230,12 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     height: 100%;
   }
 
+  .mapboxgl-canvas {
+    &:focus {
+      outline: 1px solid blue;
+    }
+  }
+
   .mapboxgl-ctrl-top-right {
     position: absolute;
     bottom: 2rem;

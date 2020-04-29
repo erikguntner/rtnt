@@ -159,10 +159,6 @@ const InnerButton = styled.div<ButtonProps>`
   &:not(:last-child) {
     border-right: 1px solid ${(props) => props.theme.colors.gray[200]};
   }
-
-  &:focus {
-    background-color: blue;
-  }
 `;
 
 const Tooltip = styled.span`

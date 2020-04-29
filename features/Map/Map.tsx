@@ -28,6 +28,7 @@ import Pin from './Pin';
 import DistanceMarkers from './DistanceMarkers';
 import DistanceIndicator from './DistanceIndicator';
 import LoadingIndicator from './LoadingIndicator';
+import CrossHairs from './CrossHairs';
 
 interface Viewport {
   latitude: number;
@@ -38,6 +39,7 @@ interface Viewport {
 }
 const Map = () => {
   const [width, height] = useWindowSize();
+  const [mapFocus, setMapFocus] = useState<boolean>(false);
   const [clipPath, setClipPath] = useState<boolean>(false);
   const [position, setPosition] = useState<number[]>([]);
   const [showElevation, setShowElevation] = useState<boolean>(false);
@@ -186,8 +188,54 @@ const Map = () => {
     });
   }, []);
 
+  const calculateNewLngLat = (lngOrLat: number, meters: number): number => {
+    const earth = 6378.137; //radius of the earth in kilometer
+    const pi = Math.PI;
+    const m = 1 / (((2 * pi) / 360) * earth) / 1000;
+    return lngOrLat + meters * m;
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const map = mapRef.current.getMap();
+      const center = map.transform._center;
+
+      if (e.keyCode === 9) {
+        if (document.activeElement.className === 'mapboxgl-canvas') {
+          setMapFocus(true);
+        } else {
+          if (mapFocus === true) {
+            setMapFocus(false);
+          }
+        }
+      } else if (e.keyCode === 32) {
+        if (document.activeElement.className === 'mapboxgl-canvas') {
+          handleClick({ lngLat: [center.lng, center.lat] });
+        }
+      } else if (e.keyCode === 38) {
+        const newLat = calculateNewLngLat(center.lat, 40);
+        setViewport({ ...viewport, latitude: newLat });
+      } else if (e.keyCode === 40) {
+        const newLat = calculateNewLngLat(center.lat, -40);
+        setViewport({ ...viewport, latitude: newLat });
+      } else if (e.keyCode === 37) {
+        const newLng = calculateNewLngLat(center.lng, -40);
+        setViewport({ ...viewport, longitude: newLng });
+      } else if (e.keyCode === 39) {
+        const newLng = calculateNewLngLat(center.lng, 40);
+        setViewport({ ...viewport, longitude: newLng });
+      }
+    };
+
+    window.addEventListener('keyup', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keyup', handleKeyDown);
+    };
+  }, [mapFocus, points, viewport]);
+
   return (
-    <MapContainer tabIndex={0} {...{ width, height }}>
+    <MapContainer {...{ width, height }}>
       <Controls
         {...{ setClipPath, clipPath, showElevation, setShowElevation }}
       />
@@ -212,8 +260,12 @@ const Map = () => {
         style={{ display: 'flex', flex: '1' }}
         onClick={handleClick}
         ref={mapRef}
+        keyboard={false}
         // onHover={handleHover}
-        onViewportChange={(viewport) => setViewport(viewport)}
+        onViewportChange={(viewport) => {
+          console.log('viewport updated');
+          setViewport(viewport);
+        }}
         mapStyle="mapbox://styles/mapbox/outdoors-v11"
       >
         {position.length > 0 && (
@@ -251,6 +303,7 @@ const Map = () => {
           <NavigationControl showCompass={false} />
         </div>
       </ReactMapGL>
+      {mapFocus && <CrossHairs />}
       {isLoading && <LoadingIndicator />}
       <DistanceIndicator {...{ units, authenticated, lines }} />
     </MapContainer>
@@ -266,7 +319,15 @@ const MapContainer = styled.div<{ width: number; height: number }>`
   flex-direction: column;
 
   &:focus {
+    outline: none;
     border: 4px solid red;
+  }
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    &:focus {
+      outline: none;
+      border: none;
+    }
   }
 `;
 
