@@ -20,11 +20,36 @@ const DistanceIndicator: React.FC<Props> = ({
 }) => {
   const [distance, setDistance] = useState<number>(0);
   const dispatch = useDispatch();
+  const [focused, setFocused] = useState<boolean>(false);
 
   const handleClick = () => {
     const newUnits = units === 'miles' ? 'kilometers' : 'miles';
     dispatch(updateUnits(newUnits, authenticated));
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.keyCode === 9) {
+        if (document.activeElement.id === 'distance-indicator') {
+          setFocused(true);
+        } else {
+          if (focused === true) {
+            setFocused(false);
+          }
+        }
+      } else if (e.keyCode === 13) {
+        if (document.activeElement.id === 'distance-indicator') {
+          handleClick();
+        }
+      }
+    };
+
+    window.addEventListener('keyup', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keyup', handleKeyDown);
+    };
+  }, [focused, handleClick]);
 
   useEffect(() => {
     if (lines.length > 0) {
@@ -40,9 +65,17 @@ const DistanceIndicator: React.FC<Props> = ({
   return (
     <DistanceContainer>
       <Background />
-      <Display onClick={handleClick}>
-        <span>{distance || 0}</span>
-        <span>{abbreviatedDistance(units)}</span>
+      <Display
+        {...{ focused }}
+        id="distance-indicator"
+        tabIndex={0}
+        onClick={handleClick}
+      >
+        <div>
+          <span>{distance || 0}</span>
+          <span>{abbreviatedDistance(units)}</span>
+        </div>
+        <p>click to change units</p>
       </Display>
     </DistanceContainer>
   );
@@ -61,9 +94,10 @@ const Background = styled.div`
   z-index: 10;
 `;
 
-const Display = styled.div`
+const Display = styled.div<{ focused: boolean }>`
   position: absolute;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   top: 0;
@@ -71,11 +105,14 @@ const Display = styled.div`
   height: 100%;
   width: 100%;
   z-index: 15;
+  outline: ${(props) =>
+    props.focused ? props.theme.boxShadow.outline : 'none'};
 
-  & > span {
+  & span {
     color: #fff;
     font-size: 1.8rem;
     align-self: baseline;
+    line-height: 1;
 
     @media screen and (max-width: 600px) {
       font-size: 1.2rem;
@@ -84,11 +121,21 @@ const Display = styled.div`
     &:first-child {
       margin-right: 3px;
       font-size: 3.2rem;
+      line-height: 1;
 
       @media screen and (max-width: 600px) {
         font-size: 2.4rem;
       }
     }
+  }
+
+  & p {
+    font-size: 8px;
+    color: #fff;
+    line-height: 1;
+    text-align: center;
+    margin-top: 4px;
+    opacity: 0.8;               
   }
 `;
 
@@ -97,7 +144,7 @@ const DistanceContainer = styled.div`
   display: flex;
   right: 1.6rem;
   bottom: 2.5rem;
-  height: 5rem;
+  height: 5.5rem;
   width: 10rem;
   border-radius: 3px;
 

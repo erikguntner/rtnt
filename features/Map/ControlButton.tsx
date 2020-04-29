@@ -29,6 +29,30 @@ const ControlButton: React.FC<Props> = ({
     }
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.keyCode === 9) {
+        if (document.activeElement.id === id) {
+          setFocused(true);
+        } else {
+          if (focused === true) {
+            setFocused(false);
+          }
+        }
+      } else if (e.keyCode === 13) {
+        if (document.activeElement.id === id) {
+          click();
+        }
+      }
+    };
+
+    window.addEventListener('keyup', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keyup', handleKeyDown);
+    };
+  }, [focused, click, disabled]);
+
   return (
     <Button
       ref={btnRef}
@@ -56,10 +80,7 @@ const Button = styled.button<ButtonProps>`
   width: 12rem;
   border: none;
   padding: 0;
-  background-color: ${(props) =>
-    props.focused
-      ? props.theme.colors.green[600]
-      : props.theme.colors.gray[200]};
+  background-color: ${(props) => props.theme.colors.gray[200]};
 
   &:not(:last-child) {
     border-right: 1px solid ${(props) => props.theme.colors.gray[200]};
@@ -69,13 +90,16 @@ const Button = styled.button<ButtonProps>`
     cursor: pointer;
   }
 
-  /* &:focus {
-    span {
-      visibility: visible;
-      opacity: 1;
-      transform: translate3d(10%, 133%, 0);
-    }
-  } */
+  & > span {
+    visibility: ${({ focused }) => (focused ? 'visible' : 'hidden')};
+    opacity: ${({ focused }) => (focused ? 1 : 0)};
+    transform: ${({ focused }) =>
+      focused ? 'translate3d(10%, 133%, 0)' : 'translate3d(10%, 100%, 0)'};
+  }
+
+  &:focus {
+    outline: none;
+  }
 
   &:hover div:first-of-type {
     cursor: pointer;
@@ -99,10 +123,6 @@ const Button = styled.button<ButtonProps>`
 
   &:active div:first-of-type {
     transform: translate3d(0, -3px, 0);
-  }
-
-  &:focus {
-    outline: none;
   }
 
   &:visited {
