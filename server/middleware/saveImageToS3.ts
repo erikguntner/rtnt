@@ -14,14 +14,14 @@ const saveImageToS3 = handler => async (req, res) => {
     const { id } = req.user;
     const { buffer } = req;
 
-    const key = `${id}/${uuid()}.jpeg`;
+    const key = `${id}/${uuid()}.png`;
 
     const params = {
       Bucket: 'run-tracker-bucket',
       Key: key,
       Body: buffer,
       ContentEncoding: 'base64',
-      ContentType: 'image/jpeg',
+      ContentType: 'image/png',
     };
 
     pusher.trigger('save-route', 'status-update', {

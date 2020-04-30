@@ -262,10 +262,7 @@ const Map = () => {
         ref={mapRef}
         keyboard={false}
         // onHover={handleHover}
-        onViewportChange={(viewport) => {
-          console.log('viewport updated');
-          setViewport(viewport);
-        }}
+        onViewportChange={(viewport) => setViewport(viewport)}
         mapStyle="mapbox://styles/mapbox/outdoors-v11"
       >
         {position.length > 0 && (

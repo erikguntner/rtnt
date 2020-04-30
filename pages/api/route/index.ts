@@ -4,6 +4,7 @@ import requireAuth from '../../../server/middleware/requireAuth';
 import takeMapImage from '../../../server/middleware/takeMapImage';
 import saveImageToS3 from '../../../server/middleware/saveImageToS3';
 import pusher from '../../../server/services/pusher';
+import staticMapImage from '../../../server/middleware/staticMapImages';
 
 interface UserI {
   id: number;
@@ -74,4 +75,5 @@ const saveRoute = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   }
 };
 
-export default requireAuth(takeMapImage(saveImageToS3(saveRoute)));
+// export default requireAuth(takeMapImage(saveImageToS3(saveRoute)));
+export default requireAuth(staticMapImage(saveImageToS3(saveRoute)));
