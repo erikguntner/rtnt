@@ -12,7 +12,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true
   },
@@ -22,6 +22,9 @@
     "**/*.ts",
     "**/*.tsx",
     "utils/d3/utils.ts",
-    "utils/withReduxStore.js", "features/Utilities/Counter.js"
+    "utils/withReduxStore.js",
+    "features/Utilities/Counter.js",
+    "jest.config.js",
+    "setupTests.js"
   ]
 }

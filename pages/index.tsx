@@ -7,6 +7,7 @@ import Notifications from '../features/Map/Notifications';
 const Home: NextPage<{}> = () => {
   return (
     <>
+      <h1>Hello</h1>
       <Map />
       <Notifications />
     </>

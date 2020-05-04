@@ -8,7 +8,7 @@ import {
 } from '../../utils/calculateDistance';
 import { icons } from '../Utilities/Tag';
 
-interface Props {
+export interface Props {
   id: number;
   name: string;
   image: string;
