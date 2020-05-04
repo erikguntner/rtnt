@@ -24,6 +24,7 @@ import MobileFilters from './MobileFilters';
 import CustomSelect from './CustomSelect';
 import Skeleton from '../Utilities/Skeleton';
 import Tag from '../Utilities/Tag';
+import CustomSlider from './CustomSlider';
 
 export interface RouteI {
   id: number;
@@ -274,6 +275,10 @@ const RouteList: React.FC<{}> = () => {
     dispatch(updateFilter({ filter: 'range', value: newValue }));
   };
 
+  const handleCustomSlide = (newValue: number[]) => {
+    dispatch(updateFilter({ filter: 'range', value: newValue }));
+  };
+
   const toggleTags = (filter: string, title: string, tags: string[]) => {
     let value;
 
@@ -352,6 +357,12 @@ const RouteList: React.FC<{}> = () => {
                 />
               </InputGroup>
             </FilterGroup>
+            {/* <FilterGroup>
+              <Label>Distance</Label>
+              <InputGroup>
+                <CustomSlider {...{ max: maxDistance, handleCustomSlide }} />
+              </InputGroup>
+            </FilterGroup> */}
             <FilterGroup>
               <Label>Sports</Label>
               <TagsWrapper>
@@ -556,6 +567,7 @@ export const Filters = styled.div`
   align-items: center;
   padding: 2.4rem;
   background-color: #fff;
+  overflow: scroll;
 
   @media screen and (max-width: ${(props) => props.theme.screens.md}) {
     display: none;
