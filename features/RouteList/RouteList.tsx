@@ -514,9 +514,8 @@ const Badges = styled.div`
 `;
 
 const Badge = styled.div`
-  padding: 4px 6px;
+  padding: 6px 8px;
   font-size: 1.2rem;
-  border: 1px solid ${(props) => props.theme.colors.teal[800]};
   border-radius: 2px;
   color: ${(props) => props.theme.colors.teal[800]};
   background-color: ${(props) => props.theme.colors.teal[100]};
