@@ -23,6 +23,7 @@ const ActivityLog: React.FC<{}> = ({}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [isSticky, setIsSticky] = useState<boolean>(false);
+  const [units, setUnits] = useState<'miles' | 'kilometers'>('miles');
   const headerRef = useRef(null);
 
   useEffect(() => {
@@ -37,6 +38,7 @@ const ActivityLog: React.FC<{}> = ({}) => {
         if (response.ok) {
           const { activities, units } = await response.json();
           setActivities(activities);
+          setUnits(units);
         }
         setLoading(false);
       } catch (error) {
@@ -99,6 +101,7 @@ const ActivityLog: React.FC<{}> = ({}) => {
                       id={`${year}-${month}-${week}`}
                     >
                       <WeeklyBlock
+                        units={units}
                         year={parseInt(year)}
                         week={parseInt(week)}
                         data={timeline[year][month][week].reverse()}
@@ -126,8 +129,11 @@ const Header = styled.div<{ isSticky: boolean }>`
   width: 100%;
   display: grid;
   grid-template-columns: 20rem 70rem;
-  background-color: #fff;
   padding: 1.6rem 0;
+  transition: box-shadow 0.2s ease;
+  background-color: #fff;
+  box-shadow: ${(props) =>
+    props.isSticky ? props.theme.boxShadow.bottom : 'none'};
   z-index: 20;
 `;
 
@@ -139,6 +145,7 @@ const Month = styled.p`
 const Days = styled.ul`
   display: flex;
   justify-content: space-around;
+  align-items: center;
 
   & li {
     list-style: none;

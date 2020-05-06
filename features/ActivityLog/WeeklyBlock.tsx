@@ -5,17 +5,24 @@ import addWeeks from 'date-fns/addWeeks';
 import startOfWeek from 'date-fns/startOfWeek';
 import endOfWeek from 'date-fns/endOfWeek';
 import format from 'date-fns/format';
+import { convertLength } from '@turf/helpers';
 
 import ActivityChart from './ActivityChart';
 import { Activity } from './ActivityLog';
 
 interface WeeklyBlockProps {
+  units: 'miles' | 'kilometers';
   year: number;
   week: number;
   data: Activity[];
 }
 
-const WeeklyBlock: React.FC<WeeklyBlockProps> = ({ year, week, data }) => {
+const WeeklyBlock: React.FC<WeeklyBlockProps> = ({
+  units,
+  year,
+  week,
+  data,
+}) => {
   const start = startOfYear(new Date(year, 0, 1));
   const datePlusWeeks = addWeeks(start, week - 1);
   const startDate = format(
@@ -34,9 +41,11 @@ const WeeklyBlock: React.FC<WeeklyBlockProps> = ({ year, week, data }) => {
         <DateText>
           {startDate} - {endDate}
         </DateText>
-        <Distance>{totalDistance}</Distance>
+        <Distance>
+          {convertLength(totalDistance, 'meters', units).toFixed(1)}
+        </Distance>
       </Details>
-      <ActivityChart {...{ year, week, data }} />
+      <ActivityChart {...{ units, year, week, data }} />
     </Block>
   );
 };

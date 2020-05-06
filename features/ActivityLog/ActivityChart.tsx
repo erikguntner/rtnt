@@ -8,17 +8,24 @@ import endOfWeek from 'date-fns/endOfWeek';
 import eachDayOfInterval from 'date-fns/eachDayOfInterval';
 import format from 'date-fns/format';
 import isThisWeek from 'date-fns/isThisWeek';
+import { convertLength } from '@turf/helpers';
 
 import { Activity } from './ActivityLog';
 import useResizeObserver from '../Activity/useResizeObserver';
 
 interface ActivityChartProps {
+  units: 'miles' | 'kilometers';
   year: number;
   week: number;
   data: Activity[];
 }
 
-const ActivityChart: React.FC<ActivityChartProps> = ({ year, week, data }) => {
+const ActivityChart: React.FC<ActivityChartProps> = ({
+  units,
+  year,
+  week,
+  data,
+}) => {
   const ref = useRef(null);
   const svgRef = useRef(null);
   const dimensions = useResizeObserver(ref);
@@ -26,12 +33,13 @@ const ActivityChart: React.FC<ActivityChartProps> = ({ year, week, data }) => {
   useEffect(() => {
     if (dimensions === null) return;
     // dimensions of graph
-    const margin = { top: 20, right: 15, bottom: 20, left: 15 };
+    const margin = { top: 20, right: 1, bottom: 20, left: 0 };
     const height = dimensions.height;
     const width = dimensions.width;
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
     const svg = select(svgRef.current);
+    const circleRadius = 24;
 
     // finding all dates in a given week
     const start = startOfYear(new Date(year, 0, 1));
@@ -64,7 +72,9 @@ const ActivityChart: React.FC<ActivityChartProps> = ({ year, week, data }) => {
         .attr(
           'transform',
           () =>
-            `translate(${xScale(format(new Date(), 'L/dd'))} ${innerHeight})`
+            `translate(${xScale(format(new Date(), 'L/dd')) - 5} ${
+              innerHeight + 7
+            })`
         )
         .attr('points', '0,10 12,10 6,0 0,10')
         .style('fill', '#0070f3')
@@ -95,20 +105,34 @@ const ActivityChart: React.FC<ActivityChartProps> = ({ year, week, data }) => {
       .attr('y2', -50)
       .style('stroke', 'black');
 
-    // create group and add a circle for each activity
-    gEnter
+    // create group for all circles
+    const leaf = gEnter
       .append('g')
       .attr('class', 'circle-group')
-      .attr('transform', `translate(0 -57)`)
-      .selectAll('.circle')
+      .attr('transform', `translate(0 ${-50 - circleRadius})`)
+      .selectAll('.leaf-group')
       .data(({ value }: { key: string; value: Activity[] }) => value)
       .enter()
+      .append('g')
+      .attr('class', 'leaf-group');
+
+    // create each circle
+    leaf
       .append('circle')
-      .attr('r', 7)
+      .attr('r', circleRadius)
       .attr('class', 'circle')
-      .style('stroke', '#0070f3')
-      .style('fill', 'none')
-      .style('stroke-width', '2px');
+      .style('stroke', '#4c51bf')
+      .style('fill', '#ebf4ff')
+      .style('stroke-width', '1px');
+
+    // add distance text to each leaf
+    leaf
+      .append('text')
+      .text((d) =>
+        convertLength(parseInt(d.distance), 'meters', units).toFixed(1)
+      )
+      .attr('transform', 'translate(-10 4)')
+      .style('font-size', '16px');
   }, [data, dimensions]);
 
   return (
