@@ -31,10 +31,9 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       const activities = results.rows;
       return res.status(200).json({ activities, units });
     } catch (error) {
+      console.log(error);
       return res.status(200).json({ message: 'there was an error' });
     }
-
-
   } else if (req.method === 'POST') {
     try {
       const { id } = req.user;

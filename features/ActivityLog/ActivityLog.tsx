@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import API_URL from '../../utils/url';
+import styled from 'styled-components';
 
-interface Activity {
+import ActivityChart from './ActivityChart';
+
+import API_URL from '../../utils/url';
+import constructDateObject from '../../utils/constructDateObject';
+
+export interface Activity {
   startDate: Date;
   name: string;
   distance: string;
@@ -39,10 +44,46 @@ const ActivityLog: React.FC<{}> = ({}) => {
     fetchRoutes();
   }, []);
 
-  const formatDates = activities.map(({ startDate }) => new Date(startDate));
-  console.log(formatDates);
+  if (activities.length === 0) {
+    return <h1>There are no activies</h1>;
+  }
 
-  return <div>Activity Log</div>;
+  const timeline = constructDateObject(activities);
+
+  return (
+    <Container>
+      {Object.keys(timeline).map((year) => (
+        <div key={year} id={year}>
+          {Object.keys(timeline[year])
+            .reverse()
+            .map((month) => (
+              <div key={`${year}-${month}`} id={`${year}-${month}`}>
+                {Object.keys(timeline[year][month])
+                  .reverse()
+                  .map((week) => (
+                    <div
+                      key={`${year}-${month}-${week}`}
+                      id={`${year}-${month}-${week}`}
+                    >
+                      <ActivityChart
+                        year={parseInt(year)}
+                        week={parseInt(week)}
+                        data={timeline[year][month][week].reverse()}
+                      />
+                    </div>
+                  ))}
+              </div>
+            ))}
+        </div>
+      ))}
+    </Container>
+  );
 };
+
+const Container = styled.div`
+  display: grid;
+  grid-template-columns: 700px;
+  margin: 0 auto;
+`;
 
 export default ActivityLog;
