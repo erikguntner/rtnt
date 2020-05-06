@@ -37,7 +37,6 @@ const constructDateObject = (activities: Activity[]): DateObject => {
     const currentYear = getYear(curr);
     const currentMonth = getMonth(curr);
     const currentWeek = getWeek(curr, { weekStartsOn: 1 });
-    console.log(curr);
 
     if (!accum.hasOwnProperty(currentYear)) {
       accum[currentYear] = {};

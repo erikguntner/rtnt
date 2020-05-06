@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 
 import ActivityChart from './ActivityChart';
+import WeeklyBlock from './WeeklyBlock';
 
 import API_URL from '../../utils/url';
 import constructDateObject from '../../utils/constructDateObject';
@@ -21,6 +22,8 @@ export interface Activity {
 const ActivityLog: React.FC<{}> = ({}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [isSticky, setIsSticky] = useState<boolean>(false);
+  const headerRef = useRef(null);
 
   useEffect(() => {
     const fetchRoutes = async () => {
@@ -44,6 +47,24 @@ const ActivityLog: React.FC<{}> = ({}) => {
     fetchRoutes();
   }, []);
 
+  const handleScroll = (e) => {
+    if (headerRef) {
+      if (window.scrollY >= 65) {
+        setIsSticky(true);
+      } else if (window.scrollY < 65 && isSticky === true) {
+        setIsSticky(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isSticky]);
+
   if (activities.length === 0) {
     return <h1>There are no activies</h1>;
   }
@@ -52,6 +73,18 @@ const ActivityLog: React.FC<{}> = ({}) => {
 
   return (
     <Container>
+      <Header ref={headerRef} {...{ isSticky }}>
+        <Month>May, 2020</Month>
+        <Days>
+          <li>M</li>
+          <li>T</li>
+          <li>W</li>
+          <li>T</li>
+          <li>F</li>
+          <li>S</li>
+          <li>S</li>
+        </Days>
+      </Header>
       {Object.keys(timeline).map((year) => (
         <div key={year} id={year}>
           {Object.keys(timeline[year])
@@ -65,7 +98,7 @@ const ActivityLog: React.FC<{}> = ({}) => {
                       key={`${year}-${month}-${week}`}
                       id={`${year}-${month}-${week}`}
                     >
-                      <ActivityChart
+                      <WeeklyBlock
                         year={parseInt(year)}
                         week={parseInt(week)}
                         data={timeline[year][month][week].reverse()}
@@ -82,8 +115,34 @@ const ActivityLog: React.FC<{}> = ({}) => {
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: 700px;
+  grid-template-columns: 900px;
   margin: 0 auto;
+`;
+
+const Header = styled.div<{ isSticky: boolean }>`
+  position: ${(props) => (props.isSticky ? 'sticky' : 'relative')};
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 20rem 70rem;
+  background-color: #fff;
+  padding: 1.6rem 0;
+  z-index: 20;
+`;
+
+const Month = styled.p`
+  text-align: center;
+  font-size: 2.4rem;
+`;
+
+const Days = styled.ul`
+  display: flex;
+  justify-content: space-around;
+
+  & li {
+    list-style: none;
+  }
 `;
 
 export default ActivityLog;
