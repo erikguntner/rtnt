@@ -61,10 +61,6 @@ const ActivityLog: React.FC<{}> = ({}) => {
         setIsSticky(false);
       }
     }
-
-    if (yearRef) {
-      for (let i = 0; i < yearRef.current.childNode; i++) {}
-    }
   };
 
   useEffect(() => {
@@ -82,52 +78,60 @@ const ActivityLog: React.FC<{}> = ({}) => {
   const timeline = constructDateObject(activities);
 
   return (
-    <Container>
-      <Header ref={headerRef} {...{ isSticky }}>
-        <HeaderDate>
-          {format(new Date(2020, headerMonth, 1), 'MMMM')}, 2020
-        </HeaderDate>
-        <Days>
-          <li>M</li>
-          <li>T</li>
-          <li>W</li>
-          <li>T</li>
-          <li>F</li>
-          <li>S</li>
-          <li>S</li>
-        </Days>
-      </Header>
-      {Object.keys(timeline).map((year) => (
-        <div ref={yearRef} key={year} id={year}>
-          {Object.keys(timeline[year])
-            .reverse()
-            .map((month) => (
-              <Month
-                key={`${year}-${month}`}
-                {...{ year, month, headerMonth, setHeaderMonth }}
-              >
-                {Object.keys(timeline[year][month])
-                  .reverse()
-                  .map((week) => (
-                    <div
-                      key={`${year}-${month}-${week}`}
-                      id={`${year}-${month}-${week}`}
-                    >
-                      <WeeklyBlock
-                        units={units}
-                        year={parseInt(year)}
-                        week={parseInt(week)}
-                        data={timeline[year][month][week].reverse()}
-                      />
-                    </div>
-                  ))}
-              </Month>
-            ))}
-        </div>
-      ))}
-    </Container>
+    <Center>
+      <Container>
+        <Header ref={headerRef} {...{ isSticky }}>
+          <HeaderDate>
+            {format(new Date(2020, headerMonth, 1), 'MMMM')}, 2020
+          </HeaderDate>
+          <Days>
+            <li>M</li>
+            <li>T</li>
+            <li>W</li>
+            <li>T</li>
+            <li>F</li>
+            <li>S</li>
+            <li>S</li>
+          </Days>
+        </Header>
+        {Object.keys(timeline).map((year) => (
+          <div ref={yearRef} key={year} id={year}>
+            {Object.keys(timeline[year])
+              .reverse()
+              .map((month) => (
+                <Month
+                  key={`${year}-${month}`}
+                  {...{ year, month, headerMonth, setHeaderMonth }}
+                >
+                  {Object.keys(timeline[year][month])
+                    .reverse()
+                    .map((week) => (
+                      <div
+                        key={`${year}-${month}-${week}`}
+                        id={`${year}-${month}-${week}`}
+                      >
+                        <WeeklyBlock
+                          units={units}
+                          year={parseInt(year)}
+                          week={parseInt(week)}
+                          data={timeline[year][month][week].reverse()}
+                        />
+                      </div>
+                    ))}
+                </Month>
+              ))}
+          </div>
+        ))}
+      </Container>
+    </Center>
   );
 };
+
+const Center = styled.div`
+  display: flex;
+  flex: 1;
+  justify-content: center;
+`;
 
 const Container = styled.div`
   display: grid;

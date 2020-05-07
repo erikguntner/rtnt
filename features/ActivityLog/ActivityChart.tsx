@@ -32,7 +32,7 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
 
   useEffect(() => {
     if (dimensions === null) return;
-    // dimensions of graph
+    // constants
     const margin = { top: 20, right: 1, bottom: 20, left: 0 };
     const height = dimensions.height;
     const width = dimensions.width;
@@ -41,6 +41,14 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
     const svg = select(svgRef.current);
     const circleRadius = 24;
     const lineHeight = 50;
+    const animationDuration = 400;
+    // define transitions deepending on how many activities were done in the day
+    const transitions = {
+      2: [
+        [circleRadius * -1, 0],
+        [circleRadius, 0],
+      ],
+    };
 
     // finding all dates in a given week
     const start = startOfYear(new Date(year, 0, 1));
@@ -116,56 +124,59 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
       .attr('y2', -50)
       .style('stroke', 'black');
 
+    // animation for updating text opacity
+    const changeTextOpacity = (element: Element, opacity: number) => {
+      select(element)
+        .transition()
+        .style('opacity', opacity)
+        .duration(animationDuration);
+    };
+
+    // defines necessary elements for animations
+    const defineElements = (svg: SVGElement) => ({
+      childNodeCount: svg.childElementCount,
+      children: svg.children,
+      numberText: svg.parentElement.firstElementChild,
+    });
+
     // create group for all circles
     const circleGroup = gEnter
       .append('g')
       .attr('class', 'circle-group')
       .attr('transform', `translate(0 ${-50 - circleRadius})`)
       .on('mouseenter', function () {
-        const childNodeCount = this.childElementCount;
-        const children = this.children;
-        const numberText = this.parentElement.firstElementChild;
+        const { childNodeCount, children, numberText } = defineElements(this);
+
         if (childNodeCount === 1) return;
         else {
-          if (childNodeCount === 2) {
-            const child1 = select(children[0]);
-            const child2 = select(children[1]);
+          changeTextOpacity(numberText, 0);
 
-            select(numberText).transition().style('opacity', 0).duration(500);
-
-            child1
+          // loop over the transition vales based on number of child elements
+          // and apply them to the corresponding svg element
+          transitions[childNodeCount].forEach(([tranX, tranY], i) => {
+            const childNode = select(children[i]);
+            childNode
               .transition()
-              .attr('transform', `translate(${circleRadius * -1} 0)`)
-              .duration(500);
-
-            child2
-              .transition()
-              .attr('transform', `translate(${circleRadius} 0)`)
-              .duration(500);
-          }
+              .attr('transform', `translate(${tranX} ${tranY})`)
+              .duration(animationDuration);
+          });
         }
       })
       .on('mouseleave', function () {
-        const childNodeCount = this.childElementCount;
-        const children = this.children;
-        const numberText = this.parentElement.firstElementChild;
+        const { childNodeCount, children, numberText } = defineElements(this);
 
         if (childNodeCount === 1) return;
         else {
-          if (childNodeCount === 2) {
-            const child1 = select(children[0]);
-            const child2 = select(children[1]);
+          changeTextOpacity(numberText, 1);
 
-            select(numberText).transition().style('opacity', 1).duration(500);
-            child1
+          // loop over children and return to starting position
+          Array.from(children).forEach((element) => {
+            const childNode = select(element);
+            childNode
               .transition()
               .attr('transform', `translate(0 0)`)
-              .duration(500);
-            child2
-              .transition()
-              .attr('transform', `translate(0 0)`)
-              .duration(500);
-          }
+              .duration(animationDuration);
+          });
         }
       });
 
