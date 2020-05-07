@@ -159,6 +159,13 @@ const Map = () => {
     }
   };
 
+  const calculateNewLngLat = (lngOrLat: number, meters: number): number => {
+    const earth = 6378.137; //radius of the earth in kilometer
+    const pi = Math.PI;
+    const m = 1 / (((2 * pi) / 360) * earth) / 1000;
+    return lngOrLat + meters * m;
+  };
+
   useEffect(() => {
     if (distanceAlongPath !== 0) {
       const line = turf.lineString(lines.flat());
@@ -187,13 +194,6 @@ const Map = () => {
       setPosition([position.coords.latitude, position.coords.longitude]);
     });
   }, []);
-
-  const calculateNewLngLat = (lngOrLat: number, meters: number): number => {
-    const earth = 6378.137; //radius of the earth in kilometer
-    const pi = Math.PI;
-    const m = 1 / (((2 * pi) / 360) * earth) / 1000;
-    return lngOrLat + meters * m;
-  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

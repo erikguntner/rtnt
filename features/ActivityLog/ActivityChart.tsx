@@ -40,6 +40,7 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
     const innerHeight = height - margin.top - margin.bottom;
     const svg = select(svgRef.current);
     const circleRadius = 24;
+    const lineHeight = 50;
 
     // finding all dates in a given week
     const start = startOfYear(new Date(year, 0, 1));
@@ -73,7 +74,7 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
           'transform',
           () =>
             `translate(${xScale(format(new Date(), 'L/dd')) - 5} ${
-              innerHeight + 7
+              innerHeight + 10
             })`
         )
         .attr('points', '0,10 12,10 6,0 0,10')
@@ -96,6 +97,16 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
       )
       .attr('width', xScale.bandwidth());
 
+    gEnter
+      .append('text')
+      .text(({ value }: { key: string; value: Activity[] }) =>
+        value.length > 1 ? `+ ${value.length - 1}` : ''
+      )
+      .attr('text-anchor', 'middle')
+      .attr('transform', `translate(0 -${circleRadius * 2 + lineHeight + 10})`)
+      .style('font-size', '12px')
+      .style('opacity', '1');
+
     // create line
     gEnter
       .append('line')
@@ -106,18 +117,67 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
       .style('stroke', 'black');
 
     // create group for all circles
-    const leaf = gEnter
+    const circleGroup = gEnter
       .append('g')
       .attr('class', 'circle-group')
       .attr('transform', `translate(0 ${-50 - circleRadius})`)
+      .on('mouseenter', function () {
+        const childNodeCount = this.childElementCount;
+        const children = this.children;
+        const numberText = this.parentElement.firstElementChild;
+        if (childNodeCount === 1) return;
+        else {
+          if (childNodeCount === 2) {
+            const child1 = select(children[0]);
+            const child2 = select(children[1]);
+
+            select(numberText).transition().style('opacity', 0).duration(500);
+
+            child1
+              .transition()
+              .attr('transform', `translate(${circleRadius * -1} 0)`)
+              .duration(500);
+            child2
+              .transition()
+              .attr('transform', `translate(${circleRadius} 0)`)
+              .duration(500);
+          }
+        }
+      })
+      .on('mouseleave', function () {
+        const childNodeCount = this.childElementCount;
+        const children = this.children;
+        const numberText = this.parentElement.firstElementChild;
+
+        if (childNodeCount === 1) return;
+        else {
+          if (childNodeCount === 2) {
+            const child1 = select(children[0]);
+            const child2 = select(children[1]);
+
+            select(numberText).transition().style('opacity', 1).duration(500);
+            child1
+              .transition()
+              .attr('transform', `translate(0 0)`)
+              .duration(500);
+            child2
+              .transition()
+              .attr('transform', `translate(0 0)`)
+              .duration(500);
+          }
+        }
+      });
+
+    const leafGroup = circleGroup
       .selectAll('.leaf-group')
       .data(({ value }: { key: string; value: Activity[] }) => value)
       .enter()
       .append('g')
+      .attr('transform', `translate(0 0)`)
       .attr('class', 'leaf-group');
 
     // create each circle
-    leaf
+    leafGroup
       .append('circle')
       .attr('r', circleRadius)
       .attr('class', 'circle')
@@ -126,12 +186,13 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
       .style('stroke-width', '1px');
 
     // add distance text to each leaf
-    leaf
+    leafGroup
       .append('text')
       .text((d) =>
         convertLength(parseInt(d.distance), 'meters', units).toFixed(1)
       )
-      .attr('transform', 'translate(-10 4)')
+      .attr('text-anchor', 'middle')
+      .attr('transform', `translate(0 5)`)
       .style('font-size', '16px');
   }, [data, dimensions]);
 

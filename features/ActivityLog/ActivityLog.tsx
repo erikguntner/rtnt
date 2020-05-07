@@ -25,6 +25,7 @@ const ActivityLog: React.FC<{}> = ({}) => {
   const [isSticky, setIsSticky] = useState<boolean>(false);
   const [units, setUnits] = useState<'miles' | 'kilometers'>('miles');
   const headerRef = useRef(null);
+  const yearRef = useRef(null);
 
   useEffect(() => {
     const fetchRoutes = async () => {
@@ -55,6 +56,12 @@ const ActivityLog: React.FC<{}> = ({}) => {
         setIsSticky(true);
       } else if (window.scrollY < 65 && isSticky === true) {
         setIsSticky(false);
+      }
+    }
+
+    if (yearRef) {
+      for(let i = 0; i < yearRef.current.childNode; i++) {
+        
       }
     }
   };
@@ -88,7 +95,7 @@ const ActivityLog: React.FC<{}> = ({}) => {
         </Days>
       </Header>
       {Object.keys(timeline).map((year) => (
-        <div key={year} id={year}>
+        <div ref={yearRef} key={year} id={year}>
           {Object.keys(timeline[year])
             .reverse()
             .map((month) => (
