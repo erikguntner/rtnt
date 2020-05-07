@@ -3,6 +3,8 @@ import styled from 'styled-components';
 
 import ActivityChart from './ActivityChart';
 import WeeklyBlock from './WeeklyBlock';
+import Month from './Month';
+import format from 'date-fns/format';
 
 import API_URL from '../../utils/url';
 import constructDateObject from '../../utils/constructDateObject';
@@ -23,6 +25,7 @@ const ActivityLog: React.FC<{}> = ({}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [isSticky, setIsSticky] = useState<boolean>(false);
+  const [headerMonth, setHeaderMonth] = useState<number>(new Date().getMonth());
   const [units, setUnits] = useState<'miles' | 'kilometers'>('miles');
   const headerRef = useRef(null);
   const yearRef = useRef(null);
@@ -60,9 +63,7 @@ const ActivityLog: React.FC<{}> = ({}) => {
     }
 
     if (yearRef) {
-      for(let i = 0; i < yearRef.current.childNode; i++) {
-        
-      }
+      for (let i = 0; i < yearRef.current.childNode; i++) {}
     }
   };
 
@@ -83,7 +84,9 @@ const ActivityLog: React.FC<{}> = ({}) => {
   return (
     <Container>
       <Header ref={headerRef} {...{ isSticky }}>
-        <Month>May, 2020</Month>
+        <HeaderDate>
+          {format(new Date(2020, headerMonth, 1), 'MMMM')}, 2020
+        </HeaderDate>
         <Days>
           <li>M</li>
           <li>T</li>
@@ -99,7 +102,10 @@ const ActivityLog: React.FC<{}> = ({}) => {
           {Object.keys(timeline[year])
             .reverse()
             .map((month) => (
-              <div key={`${year}-${month}`} id={`${year}-${month}`}>
+              <Month
+                key={`${year}-${month}`}
+                {...{ year, month, headerMonth, setHeaderMonth }}
+              >
                 {Object.keys(timeline[year][month])
                   .reverse()
                   .map((week) => (
@@ -115,7 +121,7 @@ const ActivityLog: React.FC<{}> = ({}) => {
                       />
                     </div>
                   ))}
-              </div>
+              </Month>
             ))}
         </div>
       ))}
@@ -144,7 +150,7 @@ const Header = styled.div<{ isSticky: boolean }>`
   z-index: 20;
 `;
 
-const Month = styled.p`
+const HeaderDate = styled.p`
   text-align: center;
   font-size: 2.4rem;
 `;
@@ -155,6 +161,7 @@ const Days = styled.ul`
   align-items: center;
 
   & li {
+    font-size: 1.2rem;
     list-style: none;
   }
 `;

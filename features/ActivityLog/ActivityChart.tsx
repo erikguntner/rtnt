@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { axisBottom, select, scalePoint, event, entries } from 'd3';
+import { axisBottom, select, scalePoint, event, entries, easeBounce } from 'd3';
 import styled from 'styled-components';
 import startOfYear from 'date-fns/startOfYear';
 import addWeeks from 'date-fns/addWeeks';
@@ -137,6 +137,7 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
               .transition()
               .attr('transform', `translate(${circleRadius * -1} 0)`)
               .duration(500);
+
             child2
               .transition()
               .attr('transform', `translate(${circleRadius} 0)`)
