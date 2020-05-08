@@ -9,9 +9,9 @@ import { convertLength } from '@turf/helpers';
 
 import ActivityChart from './ActivityChart';
 import { Activity, ActivityData } from './ActivityLog';
+import { formatTime } from '../../utils/formatTime';
 
 interface WeeklyBlockProps {
-  setPosition: React.Dispatch<React.SetStateAction<number[]>>;
   setActivity: React.Dispatch<React.SetStateAction<null | ActivityData>>;
   activity: null | ActivityData;
   units: 'miles' | 'kilometers';
@@ -21,7 +21,6 @@ interface WeeklyBlockProps {
 }
 
 const WeeklyBlock: React.FC<WeeklyBlockProps> = ({
-  setPosition,
   setActivity,
   activity,
   units,
@@ -37,23 +36,30 @@ const WeeklyBlock: React.FC<WeeklyBlockProps> = ({
   );
   const endDate = format(endOfWeek(datePlusWeeks, { weekStartsOn: 1 }), 'L/dd');
 
-  const totalDistance = data.reduce((accum, curr) => {
-    return (accum += parseInt(curr.distance));
-  }, 0);
+  const { totalDistance, totalTime } = data.reduce(
+    (accum, curr) => {
+      accum.totalDistance += parseInt(curr.distance);
+      accum.totalTime += curr.elapsedTime;
+      return accum;
+    },
+    { totalDistance: 0, totalTime: 0 }
+  );
 
+  const [hrs, mins] = formatTime(totalTime);
   return (
     <Block>
       <Details>
         <DateText>
           {startDate} - {endDate}
         </DateText>
+        <DateText>
+          {hrs}hr {mins}min
+        </DateText>
         <Distance>
           {convertLength(totalDistance, 'meters', units).toFixed(1)}
         </Distance>
       </Details>
-      <ActivityChart
-        {...{ setPosition, setActivity, activity, units, year, week, data }}
-      />
+      <ActivityChart {...{ setActivity, activity, units, year, week, data }} />
     </Block>
   );
 };

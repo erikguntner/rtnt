@@ -15,7 +15,6 @@ import ActivityPopUp from './ActivityPopUp';
 import useResizeObserver from '../Activity/useResizeObserver';
 
 interface ActivityChartProps {
-  setPosition: React.Dispatch<React.SetStateAction<number[]>>;
   setActivity: React.Dispatch<React.SetStateAction<null | ActivityData>>;
   activity: null | ActivityData;
   units: 'miles' | 'kilometers';
@@ -25,7 +24,6 @@ interface ActivityChartProps {
 }
 
 const ActivityChart: React.FC<ActivityChartProps> = ({
-  setPosition,
   setActivity,
   units,
   year,
@@ -54,6 +52,11 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
       2: [
         [circleRadius * -1, 0],
         [circleRadius, 0],
+      ],
+      3: [
+        [circleRadius * -1, circleRadius / 2],
+        [0, circleRadius * -1.25],
+        [circleRadius, circleRadius / 2],
       ],
     };
 
@@ -208,7 +211,6 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
         const topPositioning = top >= windowHeight / 2 ? true : false;
         const yPos = topPositioning ? y + top - circleRadius : y + bottom;
 
-        setPosition([xPos, yPos]);
         setActivity({
           top: topPositioning,
           position: [xPos, yPos],
@@ -217,7 +219,6 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
       })
       .on('mouseleave', function (d) {
         select(this.children[0]).style('stroke-width', '1');
-        // setPosition([]);
         setActivity({
           top: false,
           position: [],

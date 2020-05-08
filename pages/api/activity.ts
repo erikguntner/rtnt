@@ -20,7 +20,7 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   if (req.method === 'GET') {
     const { id, units } = req.user;
     try {
-      const results = await query(`select name, 
+      const results = await query(`select id, name, 
         start_date as "startDate", name, distance, elapsed_time as "elapsedTime", start_point as "startPoint", 
         end_point as "endPoint", map_image as image, city, state
         from activities where user_id = $1 

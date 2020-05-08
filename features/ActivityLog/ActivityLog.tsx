@@ -10,6 +10,7 @@ import API_URL from '../../utils/url';
 import constructDateObject from '../../utils/constructDateObject';
 
 export interface Activity {
+  id?: number;
   startDate: Date;
   name: string;
   distance: string;
@@ -33,7 +34,6 @@ const ActivityLog: React.FC<{}> = ({}) => {
   const [isSticky, setIsSticky] = useState<boolean>(false);
   const [headerMonth, setHeaderMonth] = useState<number>(new Date().getMonth());
   const [units, setUnits] = useState<'miles' | 'kilometers'>('miles');
-  const [position, setPosition] = useState<number[]>([]);
   const [activity, setActivity] = useState<ActivityData>({
     top: false,
     position: [],
@@ -53,6 +53,7 @@ const ActivityLog: React.FC<{}> = ({}) => {
 
         if (response.ok) {
           const { activities, units } = await response.json();
+          console.log(activities);
           setActivities(activities);
           setUnits(units);
         }
@@ -66,10 +67,11 @@ const ActivityLog: React.FC<{}> = ({}) => {
   }, []);
 
   const handleScroll = (e) => {
-    if (headerRef) {
-      if (window.scrollY >= 65) {
+    if (headerRef.current) {
+      const { top } = headerRef.current.getBoundingClientRect();
+      if (top <= 0) {
         setIsSticky(true);
-      } else if (window.scrollY < 65 && isSticky === true) {
+      } else if (top > 0 && isSticky === true) {
         setIsSticky(false);
       }
     }
@@ -123,7 +125,6 @@ const ActivityLog: React.FC<{}> = ({}) => {
                         id={`${year}-${month}-${week}`}
                       >
                         <WeeklyBlock
-                          setPosition={setPosition}
                           setActivity={setActivity}
                           activity={activity}
                           units={units}

@@ -53,6 +53,7 @@ const constructDateObject = (activities: Activity[]): DateObject => {
     return accum;
   }, {});
 
+
   for (let i = 0; i < activities.length; i++) {
     const { startDate } = activities[i];
     const year = getYear(new Date(startDate));
