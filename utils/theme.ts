@@ -352,6 +352,13 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
           background-color: ${props => props.theme.colors.newBlues[500]};
         }
       }
+
+      &--disabled {
+        color: ${props => props.theme.colors.gray[400]};
+        &:hover {
+          background-color: #fff;
+        }
+      }
     }
   }
 `;

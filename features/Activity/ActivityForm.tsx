@@ -10,6 +10,7 @@ import usePrevious from './usePrevious';
 import BrushChart from './BrushChart';
 import RouteModal from './RouteModal';
 import HorizontalRouteCard from './HorizontalRouteCard';
+import { formatTime } from '../../utils/formatTime';
 import {
   Error,
   Input,
@@ -47,18 +48,6 @@ export interface RouteI {
 const ActivitySchema = Yup.object().shape({
   name: Yup.string().required('Please provide a name!').min(1),
 });
-
-const convertToHours = (seconds: number): string => {
-  const date = new Date(null);
-  date.setSeconds(seconds);
-  return date.toISOString().substr(11, 8);
-};
-
-const formatTime = (seconds: number): string => {
-  const time = convertToHours(seconds);
-  const arr = time.split(':');
-  return `${arr[0]}hr ${arr[1]}min ${arr[2]}sec`;
-};
 
 const ActivityForm: React.FC<{}> = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -172,6 +161,7 @@ const ActivityForm: React.FC<{}> = () => {
   }, []);
 
   const { route } = formik.values;
+  const [hrs, mins, secs] = formatTime(formik.values.time);
   return (
     <>
       <Centered>
@@ -233,10 +223,13 @@ const ActivityForm: React.FC<{}> = () => {
                   onChange={handleChange}
                   className="date-picker-wrapper"
                   calendarClassName="date-picker-calendar"
+                  maxDate={new Date()}
                 />
                 <TimeWrapper>
                   <Time>{format(formik.values.startTime, 'p')}</Time>
-                  <Time>{formatTime(formik.values.time)}</Time>
+                  <Time>
+                    {hrs}hrs {mins}mins
+                  </Time>
                 </TimeWrapper>
               </Row>
             </InputWrapper>
