@@ -22,9 +22,6 @@ const Month: React.FC<MonthProps> = ({
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting === true) {
-          console.log(
-            `${format(new Date(2020, parseInt(month), 1), 'MMMM')} is visible`
-          );
           setHeaderMonth(parseInt(month));
         }
       },

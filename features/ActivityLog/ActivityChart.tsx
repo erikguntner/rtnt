@@ -11,9 +11,13 @@ import isThisWeek from 'date-fns/isThisWeek';
 import { convertLength } from '@turf/helpers';
 
 import { Activity } from './ActivityLog';
+import ActivityPopUp from './ActivityPopUp';
 import useResizeObserver from '../Activity/useResizeObserver';
 
 interface ActivityChartProps {
+  setPosition: React.Dispatch<React.SetStateAction<number[]>>;
+  setActivity: React.Dispatch<React.SetStateAction<Activity>>;
+  activity: null | Activity;
   units: 'miles' | 'kilometers';
   year: number;
   week: number;
@@ -21,10 +25,13 @@ interface ActivityChartProps {
 }
 
 const ActivityChart: React.FC<ActivityChartProps> = ({
+  setPosition,
+  setActivity,
   units,
   year,
   week,
   data,
+  activity,
 }) => {
   const ref = useRef(null);
   const svgRef = useRef(null);
@@ -186,7 +193,24 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
       .enter()
       .append('g')
       .attr('transform', `translate(0 0)`)
-      .attr('class', 'leaf-group');
+      .attr('class', 'leaf-group')
+      .style('position', 'relative')
+      .on('mouseover', function (d) {
+        select(this).style('cursor', 'pointer');
+        select(this.children[0]).style('stroke-width', '1.5');
+        const x = window.scrollX;
+        const y = window.scrollY + 10;
+        const { bottom, left } = this.getBoundingClientRect();
+
+        setPosition([x + left, y + bottom]);
+        setActivity(d);
+      })
+      .on('mouseleave', function (d) {
+        select(this.children[0]).style('stroke-width', '1');
+        // setPosition([]);
+        setActivity(null);
+        console.log('mouse leaving leaf');
+      });
 
     // create each circle
     leafGroup

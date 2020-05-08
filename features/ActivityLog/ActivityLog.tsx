@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
+import format from 'date-fns/format';
 
-import ActivityChart from './ActivityChart';
 import WeeklyBlock from './WeeklyBlock';
 import Month from './Month';
-import format from 'date-fns/format';
+import ActivityPopUp from './ActivityPopUp';
 
 import API_URL from '../../utils/url';
 import constructDateObject from '../../utils/constructDateObject';
@@ -27,6 +27,8 @@ const ActivityLog: React.FC<{}> = ({}) => {
   const [isSticky, setIsSticky] = useState<boolean>(false);
   const [headerMonth, setHeaderMonth] = useState<number>(new Date().getMonth());
   const [units, setUnits] = useState<'miles' | 'kilometers'>('miles');
+  const [position, setPosition] = useState<number[]>([]);
+  const [activity, setActivity] = useState<null | Activity>(null);
   const headerRef = useRef(null);
   const yearRef = useRef(null);
 
@@ -111,6 +113,9 @@ const ActivityLog: React.FC<{}> = ({}) => {
                         id={`${year}-${month}-${week}`}
                       >
                         <WeeklyBlock
+                          setPosition={setPosition}
+                          setActivity={setActivity}
+                          activity={activity}
                           units={units}
                           year={parseInt(year)}
                           week={parseInt(week)}
@@ -123,6 +128,7 @@ const ActivityLog: React.FC<{}> = ({}) => {
           </div>
         ))}
       </Container>
+      <ActivityPopUp {...{ position, activity }} />
     </Center>
   );
 };

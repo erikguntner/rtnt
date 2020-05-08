@@ -11,6 +11,9 @@ import ActivityChart from './ActivityChart';
 import { Activity } from './ActivityLog';
 
 interface WeeklyBlockProps {
+  setPosition: React.Dispatch<React.SetStateAction<number[]>>;
+  setActivity: React.Dispatch<React.SetStateAction<Activity>>;
+  activity: null | Activity;
   units: 'miles' | 'kilometers';
   year: number;
   week: number;
@@ -18,6 +21,9 @@ interface WeeklyBlockProps {
 }
 
 const WeeklyBlock: React.FC<WeeklyBlockProps> = ({
+  setPosition,
+  setActivity,
+  activity,
   units,
   year,
   week,
@@ -45,7 +51,9 @@ const WeeklyBlock: React.FC<WeeklyBlockProps> = ({
           {convertLength(totalDistance, 'meters', units).toFixed(1)}
         </Distance>
       </Details>
-      <ActivityChart {...{ units, year, week, data }} />
+      <ActivityChart
+        {...{ setPosition, setActivity, activity, units, year, week, data }}
+      />
     </Block>
   );
 };
