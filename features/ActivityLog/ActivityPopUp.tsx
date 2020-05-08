@@ -1,61 +1,84 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import format from 'date-fns/format';
 import { convertLength } from '@turf/helpers';
 
 import Portal from '../Utilities/Portal';
-import { Activity } from './ActivityLog';
+import { Activity, ActivityData } from './ActivityLog';
 import getStateAbbreviation from '../../utils/getStateAbbreviation';
 
 interface ActivityPopUpProps {
-  position: number[];
-  activity: Activity;
+  activity: ActivityData;
 }
 
-const WIDTH = 200;
-
 const ActivityPopUp: React.FC<ActivityPopUpProps> = ({
-  position,
-  activity,
+  activity: { top, position, data },
 }) => {
   return (
     <Portal selector={'#portal'}>
-      {activity && (
-        <Container {...{ position, activity }}>
+      {data && (
+        <Container {...{ position, data, top }}>
           <div>
             <p>
-              {format(new Date(activity.startDate), 'MMMM d, yyyy')}{' '}
-              {activity.city}, {getStateAbbreviation(activity.state)}
+              {format(new Date(data.startDate), 'MMMM d, yyyy')} {data.city},{' '}
+              {getStateAbbreviation(data.state)}
             </p>
-            <p>{activity.name}</p>
+            <p>{data.name}</p>
           </div>
           <div>
             <p>
               Distance:{' '}
               {convertLength(
-                parseInt(activity.distance),
+                parseInt(data.distance),
                 'meters',
                 'miles'
               ).toFixed(1)}
             </p>
-            <p>Time: {activity.elapsedTime}</p>
+            <p>Time: {data.elapsedTime}</p>
           </div>
         </Container>
       )}
     </Portal>
   );
 };
-const Container = styled.div<{ position: number[]; activity: null | Activity }>`
+
+// styles for triangle when menu is on top
+const isTopInner = css`
+  border-top: 8px solid #fff;
+  bottom: -8px;
+`;
+
+const isTopOutter = css`
+  border-top: 9px solid ${(props) => props.theme.colors.gray[400]};
+  bottom: -9px;
+`;
+
+// styles for triangle when menu is on bottom
+const isBottomInner = css`
+  border-bottom: 8px solid #fff;
+  top: -8px;
+`;
+
+const isBottomOutter = css`
+  border-bottom: 9px solid ${(props) => props.theme.colors.gray[400]};
+  top: -9px;
+`;
+
+const Container = styled.div<{
+  position: number[];
+  data: Activity;
+  top: boolean;
+}>`
   position: absolute;
   top: ${({ position }) => `${position[1]}px`};
   left: ${({ position }) => `${position[0]}px`};
   width: 20rem;
   height: min-content;
   padding: 1.6rem;
-  transform: translate(-76px, 0);
+  transform: ${({ top }) =>
+    top ? 'translate(-76px, -100%)' : 'translate(-76px, 0)'};
   background-color: #fff;
   pointer-events: auto;
-  opacity: ${({ activity }) => (activity ? '1' : '0')};
   z-index: 1000;
   border: 1px solid ${(props) => props.theme.colors.gray[400]};
 
@@ -89,25 +112,23 @@ const Container = styled.div<{ position: number[]; activity: null | Activity }>`
 
   &::before {
     content: '';
+    position: absolute;
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
-    border-bottom: 8px solid #fff;
-    position: absolute;
+    ${({ top }) => (top ? isTopInner : isBottomInner)}
     left: 87px;
-    top: -8px;
     z-index: 1090;
     left: 50%;
     transform: translateX(-50%);
   }
 
   &::after {
+    position: absolute;
     content: '';
     border-left: 9px solid transparent;
     border-right: 9px solid transparent;
-    border-bottom: 9px solid ${(props) => props.theme.colors.gray[400]};
-    position: absolute;
+    ${({ top }) => (top ? isTopOutter : isBottomOutter)}
     left: 87px;
-    top: -9px;
     z-index: 1089;
     left: 50%;
     transform: translateX(-50%);

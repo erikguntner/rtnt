@@ -21,6 +21,12 @@ export interface Activity {
   state: string;
 }
 
+export interface ActivityData {
+  top: boolean;
+  position: number[];
+  data: null | Activity;
+}
+
 const ActivityLog: React.FC<{}> = ({}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -28,7 +34,11 @@ const ActivityLog: React.FC<{}> = ({}) => {
   const [headerMonth, setHeaderMonth] = useState<number>(new Date().getMonth());
   const [units, setUnits] = useState<'miles' | 'kilometers'>('miles');
   const [position, setPosition] = useState<number[]>([]);
-  const [activity, setActivity] = useState<null | Activity>(null);
+  const [activity, setActivity] = useState<ActivityData>({
+    top: false,
+    position: [],
+    data: null,
+  });
   const headerRef = useRef(null);
   const yearRef = useRef(null);
 
@@ -128,7 +138,7 @@ const ActivityLog: React.FC<{}> = ({}) => {
           </div>
         ))}
       </Container>
-      <ActivityPopUp {...{ position, activity }} />
+      <ActivityPopUp {...{ activity }} />
     </Center>
   );
 };

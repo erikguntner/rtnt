@@ -8,12 +8,12 @@ import format from 'date-fns/format';
 import { convertLength } from '@turf/helpers';
 
 import ActivityChart from './ActivityChart';
-import { Activity } from './ActivityLog';
+import { Activity, ActivityData } from './ActivityLog';
 
 interface WeeklyBlockProps {
   setPosition: React.Dispatch<React.SetStateAction<number[]>>;
-  setActivity: React.Dispatch<React.SetStateAction<Activity>>;
-  activity: null | Activity;
+  setActivity: React.Dispatch<React.SetStateAction<null | ActivityData>>;
+  activity: null | ActivityData;
   units: 'miles' | 'kilometers';
   year: number;
   week: number;

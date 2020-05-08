@@ -10,14 +10,14 @@ import format from 'date-fns/format';
 import isThisWeek from 'date-fns/isThisWeek';
 import { convertLength } from '@turf/helpers';
 
-import { Activity } from './ActivityLog';
+import { Activity, ActivityData } from './ActivityLog';
 import ActivityPopUp from './ActivityPopUp';
 import useResizeObserver from '../Activity/useResizeObserver';
 
 interface ActivityChartProps {
   setPosition: React.Dispatch<React.SetStateAction<number[]>>;
-  setActivity: React.Dispatch<React.SetStateAction<Activity>>;
-  activity: null | Activity;
+  setActivity: React.Dispatch<React.SetStateAction<null | ActivityData>>;
+  activity: null | ActivityData;
   units: 'miles' | 'kilometers';
   year: number;
   week: number;
@@ -82,6 +82,7 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
 
     svg.select('.x-axis').style('transform', 'translateY(150px)').call(xAxis);
 
+    // create day of pointer
     if (isThisWeek(startDate, { weekStartsOn: 1 })) {
       svg
         .append('polyline')
@@ -198,18 +199,30 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
       .on('mouseover', function (d) {
         select(this).style('cursor', 'pointer');
         select(this.children[0]).style('stroke-width', '1.5');
+        const windowHeight = window.innerHeight;
         const x = window.scrollX;
         const y = window.scrollY + 10;
-        const { bottom, left } = this.getBoundingClientRect();
+        const { top, bottom, left } = this.getBoundingClientRect();
 
-        setPosition([x + left, y + bottom]);
-        setActivity(d);
+        const xPos = x + left;
+        const topPositioning = top >= windowHeight / 2 ? true : false;
+        const yPos = topPositioning ? y + top - circleRadius : y + bottom;
+
+        setPosition([xPos, yPos]);
+        setActivity({
+          top: topPositioning,
+          position: [xPos, yPos],
+          data: d,
+        });
       })
       .on('mouseleave', function (d) {
         select(this.children[0]).style('stroke-width', '1');
         // setPosition([]);
-        setActivity(null);
-        console.log('mouse leaving leaf');
+        setActivity({
+          top: false,
+          position: [],
+          data: null,
+        });
       });
 
     // create each circle
