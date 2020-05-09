@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "jest --watchAll"
+    "test": "jest"
   },
   "dependencies": {
     "@fortawesome/fontawesome-common-types": "^0.2.26",

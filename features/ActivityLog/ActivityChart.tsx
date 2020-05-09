@@ -58,6 +58,12 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
         [0, circleRadius * -1.25],
         [circleRadius, circleRadius / 2],
       ],
+      4: [
+        [circleRadius * -1, circleRadius / 2],
+        [circleRadius * -1, circleRadius * -1.5],
+        [circleRadius, circleRadius * -1.5],
+        [circleRadius, circleRadius / 2],
+      ],
     };
 
     // finding all dates in a given week
