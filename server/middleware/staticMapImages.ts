@@ -2,19 +2,22 @@ import staticClient from '@mapbox/mapbox-sdk/services/static';
 import * as turfHelpers from '@turf/helpers';
 import bbox from '@turf/bbox';
 import WebMercatorViewport from 'viewport-mercator-project';
+import simplify from 'simplify-geojson';
 
 
 const staticMapImage = handler => async (req, res) => {
 
   const staticMbxClient = staticClient({ accessToken: process.env.MAPBOX_TOKEN });
   const { lines } = req.body;
-  const geoJson = turfHelpers.multiLineString(lines, {
+  const multiLine = turfHelpers.multiLineString(lines, {
     "stroke-width": 4,
     "stroke": "#0070f3",
   });
+  const geoJson = simplify(multiLine, .001);
 
-  const width = 600;
-  const height = 600;
+
+  const width = 640;
+  const height = 360;
 
   const bBox = bbox(geoJson);
   const { longitude, latitude, zoom } = new WebMercatorViewport({
@@ -26,7 +29,7 @@ const staticMapImage = handler => async (req, res) => {
       [bBox[2], bBox[3]],
     ],
     {
-      padding: 80,
+      padding: 40,
     }
   );
 
