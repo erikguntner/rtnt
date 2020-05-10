@@ -4,12 +4,12 @@ import routeReducer, { loadingReducer } from '../features/Map/routeSlice';
 import notificationReducer from '../features/Map/notificationSlice';
 import authReducer from '../features/Auth/authSlice';
 import routeListReducer from '../features/RouteList/routeListSlice';
-import { updatePointCoords } from '../features/Map/routeSlice';
+import { updatePointCoords, changeLoadingState } from '../features/Map/routeSlice';
 
 const rootReducer = combineReducers({
   route: undoable(routeReducer, {
     limit: 10,
-    filter: excludeAction(updatePointCoords.type)
+    filter: excludeAction([updatePointCoords.type, changeLoadingState.type])
   }),
   routeList: routeListReducer,
   loading: loadingReducer,
