@@ -23,6 +23,7 @@ import {
   calculateDistance,
   abbreviatedDistance,
 } from '../../utils/calculateDistance';
+import { downloadGpxFile } from '../../utils/downloadGpxFile';
 import PopOut from '../../features/Utilities/PopOut';
 import API_URL from '../../utils/url';
 import { ParsedUrlQuery } from 'querystring';
@@ -50,7 +51,10 @@ interface RouteI {
   surface: string[];
 }
 
-const deleteRoute = async (id) => {
+const deleteRoute = async (id: number, image: string) => {
+  const imageId: string = image.split('/')[4];
+  console.log(imageId);
+
   try {
     const response = await fetch(`/api/route/${id}`, {
       method: 'DELETE',
@@ -59,7 +63,7 @@ const deleteRoute = async (id) => {
         Accept: 'application/json, text/plain, */*',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id }),
+      body: JSON.stringify({ imageId }),
     });
 
     if (response.ok) {
@@ -154,7 +158,15 @@ const RoutePage: NextPage<{ data: RouteI }> = ({ data }) => {
               <button
                 onClick={() => {
                   setOpen(false);
-                  deleteRoute(data.id);
+                  downloadGpxFile(data.lines, data.distance, units);
+                }}
+              >
+                Download as GPX
+              </button>
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  deleteRoute(data.id, data.image);
                 }}
               >
                 Delete Route
@@ -224,6 +236,7 @@ export const getServerSideProps: GetServerSideProps<
   });
 
   const data = await response.json();
+  console.log(data);
 
   return { props: { data: data.route } };
 };

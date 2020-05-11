@@ -16,7 +16,7 @@ import SaveRouteModal from './SaveRouteModal';
 
 import { RootState } from '../../app/rootReducer';
 import { clearRoute } from './routeSlice';
-import { downloadGPXFile } from '../../utils/createGPXFile';
+import { downloadGpxFile } from '../../utils/downloadGpxFile';
 
 interface Props {
   clipPath: boolean;

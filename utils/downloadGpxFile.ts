@@ -13,7 +13,7 @@ const createXmlString = (lines: number[][][]): string => {
   return result;
 }
 
-export const downloadGPXFile = (
+export const downloadGpxFile = (
   lines: number[][][],
   distance: number[],
   units: 'miles' | 'kilometers'
