@@ -1,4 +1,8 @@
-const stateList = {
+interface State {
+  [key: string]: string;
+}
+
+const stateList: State = {
   'Arizona': 'AZ',
   'Alabama': 'AL',
   'Alaska': 'AK',
@@ -51,8 +55,12 @@ const stateList = {
   'Wyoming': 'WY'
 }
 
-const getStateAbbreviation = (state: string) => {
-  return stateList[state];
+const getStateAbbreviation = (state: string): string => {
+  if (stateList[state]) {
+    return stateList[state];
+  } else {
+    return '';
+  }
 }
 
 export default getStateAbbreviation;

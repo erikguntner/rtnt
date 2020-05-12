@@ -53,8 +53,6 @@ const saveRoute = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
 
       const route = results.rows[0];
 
-      console.log(route);
-
       pusher.trigger('save-route', 'status-update', {
         message: 'Saving route',
         progress: 0,

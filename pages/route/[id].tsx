@@ -236,7 +236,6 @@ export const getServerSideProps: GetServerSideProps<
   });
 
   const data = await response.json();
-  console.log(data);
 
   return { props: { data: data.route } };
 };

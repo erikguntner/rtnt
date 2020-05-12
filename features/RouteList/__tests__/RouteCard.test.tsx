@@ -1,8 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import { ThemeProvider } from 'styled-components';
-import { theme } from '../../../utils/theme';
-
+import { render, fireEvent } from '../../../utils/test-utils';
 import RouteCard, { Props } from '../RouteCard';
 
 const lines = [
@@ -31,27 +28,23 @@ const lines = [
   ],
 ];
 
-const defaultProps: Props = {
-  id: 1,
-  name: 'asdf',
-  image: 'asdfasdf',
-  lines,
-  units: 'miles',
-  sports: ['run'],
-  surfaces: ['paved'],
-};
-
 function renderRouteCard(props: Partial<Props> = {}) {
-  return render(
-    <ThemeProvider theme={theme}>
-      <RouteCard {...defaultProps} {...props} />
-    </ThemeProvider>
-  );
+  const defaultProps: Props = {
+    id: 1,
+    name: 'asdf',
+    image: 'asdfasdf',
+    lines,
+    units: 'miles',
+    sports: ['run'],
+    surfaces: ['paved'],
+  };
+
+  return render(<RouteCard {...defaultProps} {...props} />);
 }
 
 describe('<RouteCard />', () => {
   test('should display the name of the route', async () => {
-    const { getByLabelText } = renderRouteCard();
-    // ???
+    const { getByText } = renderRouteCard();
+    getByText('asdf');
   });
 });

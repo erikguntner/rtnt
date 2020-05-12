@@ -135,7 +135,7 @@ const Display = styled.div<{ focused: boolean }>`
     line-height: 1;
     text-align: center;
     margin-top: 4px;
-    opacity: 0.8;               
+    opacity: 0.8;
   }
 `;
 

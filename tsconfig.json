@@ -21,7 +21,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "utils/d3/utils.ts",
+    "utils",
     "utils/withReduxStore.js"
   ]
 }

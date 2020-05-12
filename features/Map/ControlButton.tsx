@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-common-types';
 
-interface Props {
+export interface Props {
   disabled?: boolean;
   handleClick: () => void;
   icon: IconDefinition;
@@ -24,9 +24,11 @@ const ControlButton: React.FC<Props> = ({
   const btnRef = useRef(null);
 
   const click = () => {
-    if (!disabled) {
-      handleClick();
+    if (disabled) {
+      return;
     }
+
+    handleClick();
   };
 
   useEffect(() => {
@@ -60,7 +62,11 @@ const ControlButton: React.FC<Props> = ({
       {...{ activeState, disabled, focused }}
       disabled={disabled}
     >
-      <InnerButton {...{ activeState, disabled, focused }} onClick={click}>
+      <InnerButton
+        data-testid={'control-btn'}
+        {...{ activeState, disabled, focused }}
+        onClick={click}
+      >
         <FontAwesomeIcon icon={icon} />
       </InnerButton>
       <Tooltip>{tooltip}</Tooltip>
