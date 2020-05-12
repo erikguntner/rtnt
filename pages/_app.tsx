@@ -14,7 +14,7 @@ import LogRocket from 'logrocket';
 import Nav from '../features/Nav/Nav';
 import { authenticateUser, setValidating } from '../features/Auth/authSlice';
 import { theme, GlobalStyle } from '../utils/theme';
-import { configStore } from '../app/store';
+import { initializeStore, configStore } from '../app/store';
 import API_URL from '../utils/url';
 
 config.autoAddCss = false;

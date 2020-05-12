@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import Link from 'next/link';
 import styled from 'styled-components';
 import format from 'date-fns/format';
 
@@ -94,10 +95,14 @@ const ActivityLog: React.FC<{}> = ({}) => {
   return (
     <Center>
       <Container>
-        <Header ref={headerRef} {...{ isSticky }}>
-          <HeaderDate>
-            {format(new Date(2020, headerMonth, 1), 'MMMM')}, 2020
-          </HeaderDate>
+        <Header>
+          <h1>Activity Log</h1>
+          <Link href="/activity/create" passHref>
+            <a>Add activity</a>
+          </Link>
+        </Header>
+        <DateHeader ref={headerRef} {...{ isSticky }}>
+          <p>{format(new Date(2020, headerMonth, 1), 'MMMM')}, 2020</p>
           <Days>
             <li>M</li>
             <li>T</li>
@@ -107,7 +112,7 @@ const ActivityLog: React.FC<{}> = ({}) => {
             <li>S</li>
             <li>S</li>
           </Days>
-        </Header>
+        </DateHeader>
         {Object.keys(timeline).map((year) => (
           <div ref={yearRef} key={year} id={year}>
             {Object.keys(timeline[year])
@@ -156,7 +161,33 @@ const Container = styled.div`
   margin: 0 auto;
 `;
 
-const Header = styled.div<{ isSticky: boolean }>`
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.6rem 0;
+
+  h1 {
+    font-size: 3.2rem;
+  }
+
+  a {
+    padding: 8px 1.2rem;
+    font-size: 1.4rem;
+    text-decoration: none;
+    border: 1px solid ${(props) => props.theme.colors.primary};
+    color: ${(props) => props.theme.colors.primary};
+    transition: all 0.2s ease;
+    border-radius: 2px;
+
+    &:hover {
+      background-color: ${(props) => props.theme.colors.primary};
+      color: #fff;
+    }
+  }
+`;
+
+const DateHeader = styled.div<{ isSticky: boolean }>`
   position: ${(props) => (props.isSticky ? 'sticky' : 'relative')};
   top: 0;
   left: 0;
@@ -169,11 +200,11 @@ const Header = styled.div<{ isSticky: boolean }>`
   box-shadow: ${(props) =>
     props.isSticky ? props.theme.boxShadow.bottom : 'none'};
   z-index: 20;
-`;
 
-const HeaderDate = styled.p`
-  text-align: center;
-  font-size: 2.4rem;
+  & p {
+    text-align: center;
+    font-size: 2.4rem;
+  }
 `;
 
 const Days = styled.ul`

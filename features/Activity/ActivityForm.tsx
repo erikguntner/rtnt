@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import DatePicker from 'react-datepicker';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import Link from 'next/link';
 
 import usePrevious from './usePrevious';
 import BrushChart from './BrushChart';
@@ -166,7 +167,12 @@ const ActivityForm: React.FC<{}> = () => {
     <>
       <Centered>
         <FormWrapper>
-          <Title>Create Activity</Title>
+          <Header>
+            <Title>Create Activity</Title>
+            <Link href="/activity/log" passHref>
+              <a>View Log</a>
+            </Link>
+          </Header>
           <Form onSubmit={formik.handleSubmit}>
             <InputWrapper>
               <Label htmlFor="route">Select Route *</Label>
@@ -263,7 +269,7 @@ const ActivityForm: React.FC<{}> = () => {
       </Centered>
       <RouteModal open={open} toggle={setOpen}>
         <ModalWrapper>
-          <Header>Select a route</Header>
+          <ModalTitle>Select a route</ModalTitle>
           <List>
             {routes.map(({ id, image, city, state, lines, name }: RouteI) => (
               <HorizontalRouteCard
@@ -299,11 +305,37 @@ const FormWrapper = styled.div`
   }
 `;
 
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.6rem 0;
+
+  & h1 {
+    margin-bottom: 0;
+  }
+
+  a {
+    padding: 8px 1.2rem;
+    font-size: 1.4rem;
+    text-decoration: none;
+    border: 1px solid ${(props) => props.theme.colors.primary};
+    color: ${(props) => props.theme.colors.primary};
+    transition: all 0.2s ease;
+    border-radius: 2px;
+
+    &:hover {
+      background-color: ${(props) => props.theme.colors.primary};
+      color: #fff;
+    }
+  }
+`;
+
 const ModalWrapper = styled.div`
   padding: 1.6rem;
 `;
 
-const Header = styled.h3`
+const ModalTitle = styled.h3`
   width: 100%;
   text-align: left;
   font-size: 2.4rem;
