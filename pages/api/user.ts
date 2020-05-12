@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import jwt from 'jwt-simple';
 import query from '../../server/db';
 import firebaseAdmin from '../../utils/firebase/admin';
 import requireAuth from '../../server/middleware/requireAuth';

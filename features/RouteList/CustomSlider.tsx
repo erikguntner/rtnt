@@ -1,15 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import {
-  axisBottom,
-  select,
-  format,
-  min,
-  max,
-  event,
-  symbol,
-  symbolCircle,
-} from 'd3';
-import { sliderBottom, sliderTop } from 'd3-simple-slider';
+import { select, format } from 'd3';
+import { sliderTop } from 'd3-simple-slider';
 import styled from 'styled-components';
 import useResizeObserver from '../Activity/useResizeObserver';
 import usePrevious from '../Activity/usePrevious';

@@ -19,10 +19,20 @@ interface TagProps {
   handleClick: () => void;
 }
 
-export const sportsArr = ['run', 'bike', 'walk'];
-export const surfacesArr = ['paved', 'unpaved', 'trail'];
+export const sportsArr: string[] = ['run', 'bike', 'walk'];
+export const surfacesArr: string[] = ['paved', 'unpaved', 'trail'];
 
-export const icons = {
+interface Icons {
+  run: JSX.Element;
+  bike: JSX.Element;
+  walk: JSX.Element;
+  paved: JSX.Element;
+  unpaved: JSX.Element;
+  trail: JSX.Element;
+  [key: string]: JSX.Element;
+}
+
+export const icons: Icons = {
   run: <FontAwesomeIcon icon={faRunning} />,
   bike: <FontAwesomeIcon icon={faBiking} />,
   walk: <FontAwesomeIcon icon={faWalking} />,

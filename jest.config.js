@@ -1,16 +1,19 @@
 module.exports = {
-  collectCoverageFrom: [
-    '**/*.{js,jsx,ts,tsx}',
-    '!**/*.d.ts',
-    '!**/node_modules/**',
-  ],
+  preset: 'ts-jest/presets/js-with-ts',
+  testEnvironment: 'jsdom',
+  moduleFileExtensions: ['ts', 'tsx', 'js'],
+  transform: {
+    '^.+\\.(ts|tsx)$': 'ts-jest',
+  },
+  testMatch: ['**/__tests__/*.(ts|tsx)'],
   setupFilesAfterEnv: [
     '@testing-library/jest-dom/extend-expect',
     'jest-styled-components',
   ],
-  testPathIgnorePatterns: ['/node_modules/', '/.next/'],
-  transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': 'ts-jest',
+  testPathIgnorePatterns: ['./.next/', './node_modules/'],
+  globals: {
+    'ts-jest': {
+      tsConfig: 'tsconfig.jest.json',
+    },
   },
-  transformIgnorePatterns: ['/node_modules/'],
 };

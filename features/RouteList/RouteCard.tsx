@@ -43,8 +43,16 @@ const RouteCard: React.FC<Props> = ({
         </Row>
         <Row>
           <Icons>
-            <>{sports.map((sport) => icons[sport])}</>
-            <>{surfaces.map((surface) => icons[surface])}</>
+            <>
+              {sports.map((sport) => (
+                <div key={sport}>{icons[sport]}</div>
+              ))}
+            </>
+            <>
+              {surfaces.map((surface) => (
+                <div key={surface}>{icons[surface]}</div>
+              ))}
+            </>
           </Icons>
           <Link href="/route/[id]" as={`/route/${id}`}>
             <ViewLink>View</ViewLink>
