@@ -68,7 +68,6 @@ const SignupForm: React.FC<{}> = () => {
         }
       } catch (error) {
         console.log('error logging in', error);
-        console.log(error);
         setError(error.message);
       }
 

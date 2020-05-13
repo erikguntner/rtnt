@@ -134,6 +134,10 @@ const PopOutWrapper = styled(motion.div)`
     color: ${(props) => props.theme.colors.gray[600]};
     font-size: 1.4rem;
 
+    svg {
+      margin-right: 8px;
+    }
+
     &:hover,
     &:focus {
       background-color: ${(props) => props.theme.colors.gray[300]};
