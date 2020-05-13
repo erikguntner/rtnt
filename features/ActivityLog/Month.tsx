@@ -33,26 +33,6 @@ const Month: React.FC<MonthProps> = ({
     observer.observe(ref.current);
   }, [ref]);
 
-  // const handleScroll = () => {
-  //   const scrollPos = window.scrollY;
-  //   const { top, bottom } = ref.current.getBoundingClientRect();
-  //   const currMonth = parseInt(month);
-
-  //   if (top >= 0 && bottom <= window.innerHeight) {
-  //     if (headerMonth !== currMonth) {
-  //       setHeaderMonth(currMonth);
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   window.addEventListener('scroll', handleScroll, { passive: true });
-
-  //   return () => {
-  //     window.removeEventListener('scroll', handleScroll);
-  //   };
-  // }, []);
-
   return <div ref={ref}>{children}</div>;
 };
 

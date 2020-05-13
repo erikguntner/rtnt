@@ -261,7 +261,6 @@ const Map = () => {
         onClick={handleClick}
         ref={mapRef}
         keyboard={false}
-        // onHover={handleHover}
         onViewportChange={(viewport) => setViewport(viewport)}
         mapStyle="mapbox://styles/mapbox/outdoors-v11"
       >
@@ -272,10 +271,6 @@ const Map = () => {
         )}
         {isDragging && <ConnectingLines points={points} index={index} />}
         <SvgPath points={lines} />
-        {/* {lines.map((line, i) => (
-          <GeoJsonPath key={i} {...{ line, i }} width={6} />
-        ))} */}
-        {/* <GeoJsonPath {...{ lines }} /> */}
         {points.map((point, i) => (
           <Marker
             key={i}

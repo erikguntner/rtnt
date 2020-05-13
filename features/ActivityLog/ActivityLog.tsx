@@ -165,7 +165,7 @@ const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.6rem 0;
+  padding: 1.6rem;
 
   h1 {
     font-size: 3.2rem;

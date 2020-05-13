@@ -94,7 +94,7 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
       />
       <ControlButton
         disabled={points.length < 2}
-        handleClick={() => downloadGPXFile(lines, totalDistance, units)}
+        handleClick={() => downloadGpxFile(lines, totalDistance, units)}
         icon={faFileDownload}
         tooltip={'export as gpx'}
         id={'gpx'}
