@@ -39,10 +39,10 @@ const SaveRouteModal: React.FC<Props> = ({
   const [progress, setProgress] = useState<number>(-90);
 
   const dispatch = useDispatch();
-  const { points, lines, totalDistance } = useSelector((state: RootState) => ({
+  const { points, lines, distance } = useSelector((state: RootState) => ({
     points: state.route.present.points,
     lines: state.route.present.lines,
-    totalDistance: state.route.present.totalDistance,
+    distance: state.route.present.distance,
     authenticated: state.auth.authenticated,
   }));
 
@@ -96,7 +96,7 @@ const SaveRouteModal: React.FC<Props> = ({
         endPoint,
         lines,
         points,
-        totalDistance,
+        distance,
         sports,
         surfaces,
         city,

@@ -31,7 +31,7 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
 
   const dispatch = useDispatch();
   const {
-    totalDistance,
+    distance,
     lines,
     points,
     future,
@@ -39,7 +39,7 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
     authenticated,
     units,
   } = useSelector((state: RootState) => ({
-    totalDistance: state.route.present.totalDistance,
+    distance: state.route.present.distance,
     lines: state.route.present.lines,
     points: state.route.present.points,
     future: state.route.future,
@@ -94,7 +94,7 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
       />
       <ControlButton
         disabled={points.length < 2}
-        handleClick={() => downloadGpxFile(lines, totalDistance, units)}
+        handleClick={() => downloadGpxFile(lines, distance, units)}
         icon={faFileDownload}
         tooltip={'export as gpx'}
         id={'gpx'}

@@ -1,12 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import query from '../../../server/db';
+import { QueryArrayResult } from 'pg';
 import requireAuth from '../../../server/middleware/requireAuth';
 import takeMapImage from '../../../server/middleware/takeMapImage';
 import saveImageToS3 from '../../../server/middleware/saveImageToS3';
 import pusher from '../../../server/services/pusher';
 import staticMapImage from '../../../server/middleware/staticMapImages';
 
-interface UserI {
+interface User {
   id: number;
   email: string;
   username: string;
@@ -15,8 +16,25 @@ interface UserI {
 }
 
 interface AdditionalTypes {
-  user: UserI;
+  user: User;
   image: string;
+}
+
+export interface Route {
+  id: number;
+  name: string;
+  image: string;
+  user_id: string;
+  lines: number[][][];
+  start_point: number[];
+  end_point: number[];
+  points: number[][];
+  distance: number;
+  created_at: string;
+  sports: string[];
+  surfaces: string[];
+  city: string;
+  state: string;
 }
 
 type NextApiRequestWithUser = NextApiRequest & AdditionalTypes;
@@ -25,7 +43,7 @@ const saveRoute = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   if (req.method === 'POST') {
     try {
       const { id } = req.user;
-      const { name, startPoint, endPoint, lines, points, totalDistance, sports, surfaces, city, state } = req.body;
+      const { name, startPoint, endPoint, lines, points, distance, sports, surfaces, city, state } = req.body;
       const { image } = req;
 
       pusher.trigger('save-route', 'status-update', {
@@ -43,7 +61,7 @@ const saveRoute = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
           JSON.stringify(endPoint),
           JSON.stringify(lines),
           JSON.stringify(points),
-          JSON.stringify(totalDistance),
+          distance,
           JSON.stringify(sports),
           JSON.stringify(surfaces),
           city,

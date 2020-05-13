@@ -1,4 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { multiLineString } from '@turf/helpers';
+import length from '@turf/length';
 
 import { AppThunk } from '../../app/store';
 import { changeNotificationStatus } from './notificationSlice';
@@ -8,7 +10,7 @@ interface RouteState {
   lines: number[][][];
   startPoint: number[];
   endPoint: number[];
-  totalDistance: number[];
+  distance: number;
   segmentDistances: number[][];
 }
 
@@ -18,7 +20,7 @@ interface RouteParams {
   newLong: number;
   startLat: number;
   startLong: number;
-  totalDistance: number[];
+  distance: number;
   transportationType?: string;
   clipPath: boolean;
 }
@@ -34,6 +36,7 @@ interface UpdatedRouteResults {
   snappedWaypoints: number[][];
   lineIndices: number[];
   line: number[][][];
+  distance: number;
 }
 
 export const initialState: RouteState = {
@@ -41,7 +44,7 @@ export const initialState: RouteState = {
   lines: [],
   startPoint: [],
   endPoint: [],
-  totalDistance: [0],
+  distance: 0,
   segmentDistances: [],
 };
 
@@ -74,9 +77,7 @@ const { actions, reducer } = createSlice({
       const { distance, coordinates, newPoint } = action.payload;
       state.points.push(newPoint);
       state.lines.push(coordinates);
-      state.totalDistance.push(
-        state.totalDistance[state.totalDistance.length - 1] + distance
-      );
+      state.distance += distance;
     },
     updatePointCoords: (state, action: PayloadAction<{ index: number; coords: number[] }>) => {
       const { index, coords } = action.payload;
@@ -93,6 +94,7 @@ const { actions, reducer } = createSlice({
         pointIndex,
         snappedWaypoints,
         line,
+        distance
       } = action.payload;
       if (pointIndex === 0) {
         // drag first point
@@ -108,6 +110,7 @@ const { actions, reducer } = createSlice({
         state.lines[pointIndex - 1] = line[0];
         state.lines[pointIndex] = line[1];
       }
+      state.distance = distance;
     },
   },
 });
@@ -194,15 +197,29 @@ const createLineSegments = (coordinates, waypoints): number[][][] => {
   return lines;
 };
 
+const calculateNewDistance = (distance: number, lines: number[][][], lineIndices: number[]): number => {
+  console.log(lineIndices);
+  const array = [...lines];
+  const deleteCount = lineIndices.length;
+  array.splice(lineIndices[0], deleteCount);
+  console.log(array);
+  const lineString = multiLineString(array);
+  // const lineLength = length(lineString, { units: 'meters' });
+
+  return length(lineString, { units: 'meters' }) + distance;
+}
+
 interface DragParams {
   pointIndex: number;
   waypoints: number[][];
+  lines: number[][][];
   lineIndices: number[];
 }
 
 export const updateRouteAfterDrag = ({
   pointIndex,
   waypoints,
+  lines,
   lineIndices,
 }: DragParams): AppThunk => async dispatch => {
   try {
@@ -220,19 +237,23 @@ export const updateRouteAfterDrag = ({
     const {
       snapped_waypoints,
       points: { coordinates },
+      distance
     } = data.paths[0];
 
-    const lines: number[][][] = createLineSegments(
+    const lineSegments: number[][][] = createLineSegments(
       coordinates,
       snapped_waypoints
     );
+
+    const updatedDistance = calculateNewDistance(distance, lines, lineIndices);
 
     dispatch(
       updateRouteAfterDragSuccess({
         pointIndex,
         snappedWaypoints: snapped_waypoints.coordinates,
         lineIndices,
-        line: lines,
+        line: lineSegments,
+        distance: updatedDistance
       })
     );
     dispatch(changeLoadingState(false));

@@ -15,13 +15,13 @@ const createXmlString = (lines: number[][][]): string => {
 
 export const downloadGpxFile = (
   lines: number[][][],
-  distance: number[],
+  distance: number,
   units: 'miles' | 'kilometers'
 ) => {
   const xml = createXmlString(lines);
   const url = 'data:text/json;charset=utf-8,' + xml;
   const link = document.createElement('a');
-  link.download = `${distance[distance.length - 1]}-${units}.gpx`;
+  link.download = `${distance}-${units}.gpx`;
   link.href = url;
   document.body.appendChild(link); // Required for this to work in FireFox
   link.click();

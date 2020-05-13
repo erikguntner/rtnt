@@ -64,14 +64,14 @@ const Map = () => {
   const {
     isLoading,
     points,
-    totalDistance,
+    distance,
     lines,
     authenticated,
     user: { units },
   } = useSelector((state: RootState) => ({
     isLoading: state.loading.isLoading,
     points: state.route.present.points,
-    totalDistance: state.route.present.totalDistance,
+    distance: state.route.present.distance,
     lines: state.route.present.lines,
     authenticated: state.auth.authenticated,
     user: state.auth.user,
@@ -95,7 +95,7 @@ const Map = () => {
           startLat,
           startLong,
           clipPath,
-          totalDistance,
+          distance,
         })
       );
     } else {
@@ -119,7 +119,9 @@ const Map = () => {
     point: number[],
     pointIndex: number
   ) => {
+    // array of start point, stops, and endpoints from which to calculate the new line
     const waypoints: number[][] = [];
+    // index of lines to replace
     const lineIndices: number[] = [];
 
     // If only one point, update that points position
@@ -134,7 +136,7 @@ const Map = () => {
       } else if (pointIndex === lines.length) {
         // If you drag the end point
         waypoints.push(points[points.length - 2], newLngLat);
-        lineIndices.push(pointIndex);
+        lineIndices.push(pointIndex - 1);
       } else {
         // if you drag a middle point
         waypoints.push(
@@ -149,6 +151,7 @@ const Map = () => {
         updateRouteAfterDrag({
           pointIndex,
           waypoints,
+          lines,
           lineIndices,
         })
       );

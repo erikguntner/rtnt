@@ -35,7 +35,7 @@ export interface RouteI {
   start_point: number[];
   end_point: number[];
   points: number[][];
-  distance: number[];
+  distance: number;
   created_at: string;
   sports: string[];
   surfaces: string[];
@@ -128,9 +128,8 @@ const sortRoutes = (
   result = result.filter(({ distance }) => {
     const min = Math.min(range[0], range[1]);
     const max = Math.max(range[0], range[1]);
-    const totalDistance = distance[distance.length - 1];
     const convertedDistance = turfHelpers
-      .convertLength(totalDistance, 'meters', units)
+      .convertLength(distance, 'meters', units)
       .toFixed(1);
 
     return (
@@ -173,15 +172,9 @@ const sortRoutes = (
         compareAsc(new Date(a.created_at), new Date(b.created_at))
       );
     case 'shortest':
-      return result.sort(
-        (a, b) =>
-          a.distance[a.distance.length - 1] - b.distance[b.distance.length - 1]
-      );
+      return result.sort((a, b) => a.distance - b.distance);
     case 'longest':
-      return result.sort(
-        (a, b) =>
-          b.distance[b.distance.length - 1] - a.distance[a.distance.length - 1]
-      );
+      return result.sort((a, b) => b.distance - a.distance);
     default:
       return result;
   }
@@ -189,8 +182,7 @@ const sortRoutes = (
 
 const calculateMaxDistance = (routes, units) => {
   const distance = routes.reduce((accum, curr) => {
-    const currentDistance = curr.distance[curr.distance.length - 1];
-    return Math.max(accum, currentDistance);
+    return Math.max(accum, curr.distance);
   }, 0);
   return Math.ceil(turfHelpers.convertLength(distance, 'meters', units));
 };
@@ -302,6 +294,7 @@ const RouteList: React.FC<{}> = () => {
 
         if (response.ok) {
           const { routes, units } = await response.json();
+          console.log(routes);
           const maxDistance = calculateMaxDistance(routes, units);
           dispatch(addRoutes({ routes, maxDistance }));
         }

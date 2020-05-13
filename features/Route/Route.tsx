@@ -44,7 +44,7 @@ interface Route {
   end_point: number[];
   points: number[][];
   lines: number[][][];
-  distance: number[];
+  distance: number;
   sports: string[];
   surface: string[];
 }
