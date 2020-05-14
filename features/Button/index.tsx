@@ -46,13 +46,12 @@ const StyledDarkButton = styled.button`
   border: none;
   border-radius: 2px;
   background-color: transparent;
-  color: ${(props) => props.theme.colors.gray[400]};
+  color: #fff;
   font-size: 1.4rem;
 
   &:hover {
     cursor: pointer;
     background-color: #071735;
-    color: #fff;
   }
 `;
 

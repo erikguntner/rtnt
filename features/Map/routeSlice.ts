@@ -177,15 +177,18 @@ interface Instructions {
 const createLineSegments = (coordinates, waypoints): number[][][] => {
   const lines = [];
   let middlePointIndex: number | undefined = undefined;
+  // check if we need to split the line segments
   const isMiddlePoint: boolean = waypoints.coordinates.length === 3;
 
   if (isMiddlePoint) {
+    // find the index where the coordinates equals the second waypoint
     middlePointIndex = coordinates.findIndex(
       coord =>
         coord[0] === waypoints.coordinates[1][0] &&
         coord[1] === waypoints.coordinates[1][1]
     );
 
+    // split the coordinates into line segments
     const leftLine = coordinates.slice(0, middlePointIndex + 1);
     const rightLine = coordinates.slice(middlePointIndex);
 
@@ -198,14 +201,13 @@ const createLineSegments = (coordinates, waypoints): number[][][] => {
 };
 
 const calculateNewDistance = (distance: number, lines: number[][][], lineIndices: number[]): number => {
-  console.log(lineIndices);
   const array = [...lines];
   const deleteCount = lineIndices.length;
+  // remove line segements
   array.splice(lineIndices[0], deleteCount);
-  console.log(array);
+  // create new line
   const lineString = multiLineString(array);
-  // const lineLength = length(lineString, { units: 'meters' });
-
+  // get new distance
   return length(lineString, { units: 'meters' }) + distance;
 }
 

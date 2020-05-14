@@ -65,6 +65,16 @@ const Nav = () => {
   const renderAvatar = () => {
     return (
       <>
+        <li>
+          <DarkButtonLink href="/myroutes" passHref>
+            My Routes
+          </DarkButtonLink>
+        </li>
+        <li>
+          <DarkButtonLink href="/activity/log" passHref>
+            Activity Log
+          </DarkButtonLink>
+        </li>
         <Avatar ref={avatar}>
           <AvatarButton onClick={() => setOpen(!open)}>
             <Username>{user.username}</Username>
@@ -77,14 +87,8 @@ const Nav = () => {
             parentRef={avatar}
             {...{ open, setOpen }}
           >
-            <Link href="/myroutes">
-              <a onClick={() => setOpen(false)}>My Routes</a>
-            </Link>
             <Link href="/activity/create">
-              <a onClick={() => setOpen(false)}>Acitivities Create</a>
-            </Link>
-            <Link href="/activity/log">
-              <a onClick={() => setOpen(false)}>Acitivities Log</a>
+              <a onClick={() => setOpen(false)}>Create activity </a>
             </Link>
             <Link href="/myprofile">
               <a onClick={() => setOpen(false)}>My Profile</a>

@@ -14,7 +14,7 @@ interface Viewport {
   pitch: number;
 }
 
-interface RouteI {
+interface Route {
   id: number;
   user_id: string;
   created_at: string;
@@ -24,12 +24,12 @@ interface RouteI {
   end_point: number[];
   points: number[][];
   lines: number[][][];
-  distance: number[];
+  distance: number;
   sports: string[];
   surface: string[];
 }
 
-const RoutePage: NextPage<{ data: RouteI }> = ({ data }) => {
+const RoutePage: NextPage<{ data: Route }> = ({ data }) => {
   return <Route {...{ data }} />;
 };
 

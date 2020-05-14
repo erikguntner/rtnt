@@ -23,8 +23,6 @@ import {
 } from '../../utils/calculateDistance';
 import { downloadGpxFile } from '../../utils/downloadGpxFile';
 import PopOut from '../../features/Utilities/PopOut';
-import API_URL from '../../utils/url';
-import { ParsedUrlQuery } from 'querystring';
 
 interface Viewport {
   latitude: number;
