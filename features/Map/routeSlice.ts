@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { multiLineString } from '@turf/helpers';
 import length from '@turf/length';
 
-import { AppThunk } from '../../app/store';
+import { AppThunk } from '../../reducers/store';
 import { changeNotificationStatus } from './notificationSlice';
 
 interface RouteState {

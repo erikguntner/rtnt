@@ -4,8 +4,8 @@ import * as turf from '@turf/turf';
 import ReactMapGL, { Marker, NavigationControl } from 'react-map-gl';
 import styled from 'styled-components';
 
-import { RootState } from '../../app/rootReducer';
-import { AppDispatch } from '../../app/store';
+import { RootState } from '../../reducers/rootReducer';
+import { AppDispatch } from '../../reducers/store';
 import {
   addRoute,
   updateRouteAfterDrag,

@@ -14,7 +14,7 @@ import {
 import ControlButton from './ControlButton';
 import SaveRouteModal from './SaveRouteModal';
 
-import { RootState } from '../../app/rootReducer';
+import { RootState } from '../../reducers/rootReducer';
 import { clearRoute } from './routeSlice';
 import { downloadGpxFile } from '../../utils/downloadGpxFile';
 

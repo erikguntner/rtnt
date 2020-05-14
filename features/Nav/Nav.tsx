@@ -9,7 +9,7 @@ import { DarkButtonLink, PrimaryButtonLink } from '../Button';
 import PopOut from '../Utilities/PopOut';
 import Skeleton from '../Utilities/Skeleton';
 
-import { RootState } from '../../app/rootReducer';
+import { RootState } from '../../reducers/rootReducer';
 import { signout } from '../Auth/authSlice';
 
 interface Links {

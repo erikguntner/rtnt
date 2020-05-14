@@ -14,7 +14,7 @@ import { faEllipsisH, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 import ElevationProfile from '../../features/Map/ElevationProfile';
 import DistanceMarkers from '../../features/Map/DistanceMarkers';
-import { RootState } from '../../app/rootReducer';
+import { RootState } from '../../reducers/rootReducer';
 import SvgPath from '../../features/Map/SvgPath';
 import Pin from '../../features/Map/Pin';
 import {

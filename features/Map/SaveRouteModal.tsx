@@ -7,7 +7,7 @@ import { Input, Label } from '../Forms/styles';
 import Portal from '../Utilities/Portal';
 import Tag from '../Utilities/Tag';
 
-import { RootState } from '../../app/rootReducer';
+import { RootState } from '../../reducers/rootReducer';
 import { changeNotificationStatus } from './notificationSlice';
 import API_URL from '../../utils/url';
 import { topoSvgUrl } from '../../utils/topographyStyle';

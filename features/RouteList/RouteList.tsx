@@ -8,7 +8,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import Slider from '@material-ui/core/Slider';
 import Tooltip from '@material-ui/core/Tooltip';
 
-import { RootState } from '../../app/rootReducer';
+import { RootState } from '../../reducers/rootReducer';
 import API_URL from '../../utils/url';
 import { addRoutes } from './routeListSlice';
 import { sportsArr, surfacesArr } from '../Utilities/Tag';

@@ -10,8 +10,8 @@ import {
 
 import { changeNotificationStatus } from './notificationSlice';
 
-import { AppDispatch } from '../../app/store';
-import { RootState } from '../../app/rootReducer';
+import { AppDispatch } from '../../reducers/store';
+import { RootState } from '../../reducers/rootReducer';
 
 const Notifications: React.FC<{}> = () => {
   const dispatch: AppDispatch = useDispatch();
