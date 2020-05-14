@@ -4,11 +4,9 @@ import * as turf from '@turf/turf';
 import ReactMapGL, {
   Marker,
   NavigationControl,
-  PointerEvent,
 } from 'react-map-gl';
 import styled from 'styled-components';
 
-import store from '../../app/store';
 import { RootState } from '../../app/rootReducer';
 import { AppDispatch } from '../../app/store';
 import {
@@ -20,7 +18,6 @@ import {
 import useWindowSize from '../../utils/useWindowSize';
 
 import SvgPath from './SvgPath';
-import GeoJsonPath from './GeoJsonPath';
 import ConnectingLines from './ConnectingLines';
 import ElevationProfile from './ElevationProfile';
 import Controls from './Controls';
@@ -53,7 +50,6 @@ const Map = () => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [index, setIndex] = useState<number>(0);
   const mapRef = useRef(null);
-  const [touchPoint, setTouchPoint] = useState<number[]>([]);
   // state for syncing mouseevents for chart and map
   const [distanceAlongPath, setDistanceAlongPath] = useState<number>(0);
   const [pointAlongPath, setPointAlongPath] = useState<number[]>([]);

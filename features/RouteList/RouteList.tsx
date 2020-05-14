@@ -17,14 +17,12 @@ import {
   updateSortingTerm,
   updateFilter,
   removeFilter,
-  updateMaxDistance,
 } from './routeListSlice';
 import RouteCard from './RouteCard';
 import MobileFilters from './MobileFilters';
 import CustomSelect from './CustomSelect';
 import Skeleton from '../Utilities/Skeleton';
 import Tag from '../Utilities/Tag';
-import CustomSlider from './CustomSlider';
 
 export interface RouteI {
   id: number;
@@ -249,7 +247,7 @@ const RouteList: React.FC<{}> = () => {
 
         return (
           <Badge key={filter} onClick={() => dispatch(removeFilter(filter))}>
-            {title}: {filters[filter].map((item, i) => `${item} `)} X
+            {title}: {filters[filter].map((item) => `${item} `)} X
           </Badge>
         );
       }
@@ -266,11 +264,6 @@ const RouteList: React.FC<{}> = () => {
 
     dispatch(updateFilter({ filter: 'range', value: newValue }));
   };
-
-  const handleCustomSlide = (newValue: number[]) => {
-    dispatch(updateFilter({ filter: 'range', value: newValue }));
-  };
-
   const toggleTags = (filter: string, title: string, tags: string[]) => {
     let value;
 

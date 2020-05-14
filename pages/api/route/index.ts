@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import query from '../../../server/db';
-import { QueryArrayResult } from 'pg';
 import requireAuth from '../../../server/middleware/requireAuth';
-import takeMapImage from '../../../server/middleware/takeMapImage';
 import saveImageToS3 from '../../../server/middleware/saveImageToS3';
 import pusher from '../../../server/services/pusher';
 import staticMapImage from '../../../server/middleware/staticMapImages';
