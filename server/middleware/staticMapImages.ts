@@ -1,5 +1,5 @@
 import staticClient from '@mapbox/mapbox-sdk/services/static';
-import * as turfHelpers from '@turf/helpers';
+import { multiLineString, convertLength } from '@turf/helpers';
 import bbox from '@turf/bbox';
 import WebMercatorViewport from 'viewport-mercator-project';
 import simplify from 'simplify-geojson';
@@ -8,12 +8,14 @@ import simplify from 'simplify-geojson';
 const staticMapImage = handler => async (req, res) => {
 
   const staticMbxClient = staticClient({ accessToken: process.env.MAPBOX_TOKEN });
-  const { lines } = req.body;
-  const multiLine = turfHelpers.multiLineString(lines, {
+  const { lines, distance } = req.body;
+  const multiLine = multiLineString(lines, {
     "stroke-width": 4,
     "stroke": "#0070f3",
   });
-  const geoJson = simplify(multiLine, .001);
+  const distanceInMiles = convertLength(distance, 'meters', 'miles');
+  const tolerance = distanceInMiles < 10 ? .0001 : .001;
+  const geoJson = simplify(multiLine, tolerance);
 
 
   const width = 640;
