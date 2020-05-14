@@ -2,6 +2,7 @@ import { combineReducers } from '@reduxjs/toolkit';
 import undoable, { excludeAction } from 'redux-undo';
 import routeReducer, { loadingReducer } from '../features/Map/routeSlice';
 import notificationReducer from '../features/Map/notificationSlice';
+import viewportReducer from '../features/Map/viewportSlice';
 import authReducer from '../features/Auth/authSlice';
 import routeListReducer from '../features/RouteList/routeListSlice';
 import { updatePointCoords, changeLoadingState } from '../features/Map/routeSlice';
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
     limit: 10,
     filter: excludeAction([updatePointCoords.type, changeLoadingState.type])
   }),
+  viewport: viewportReducer,
   routeList: routeListReducer,
   loading: loadingReducer,
   notifications: notificationReducer,

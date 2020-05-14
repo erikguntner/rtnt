@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
-import ReactMapGL, {
-  Marker,
-  NavigationControl,
-} from 'react-map-gl';
+import ReactMapGL, { Marker, NavigationControl } from 'react-map-gl';
 import styled from 'styled-components';
 
 import { RootState } from '../../app/rootReducer';
@@ -15,6 +12,7 @@ import {
   fetchSinglePoint,
   updatePointCoords,
 } from './routeSlice';
+import { updateViewport } from './viewportSlice';
 import useWindowSize from '../../utils/useWindowSize';
 
 import SvgPath from './SvgPath';
@@ -35,27 +33,6 @@ interface Viewport {
   pitch: number;
 }
 const Map = () => {
-  const [width, height] = useWindowSize();
-  const [mapFocus, setMapFocus] = useState<boolean>(false);
-  const [clipPath, setClipPath] = useState<boolean>(false);
-  const [position, setPosition] = useState<number[]>([]);
-  const [showElevation, setShowElevation] = useState<boolean>(false);
-  const [viewport, setViewport] = useState<Viewport>({
-    latitude: 42.5,
-    longitude: 12.5,
-    zoom: 5,
-    bearing: 0,
-    pitch: 0,
-  });
-  const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [index, setIndex] = useState<number>(0);
-  const mapRef = useRef(null);
-  // state for syncing mouseevents for chart and map
-  const [distanceAlongPath, setDistanceAlongPath] = useState<number>(0);
-  const [pointAlongPath, setPointAlongPath] = useState<number[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const [hoveredPoint, setHoveredPoint] = useState<number[]>();
-
   const dispatch: AppDispatch = useDispatch();
   const {
     isLoading,
@@ -64,6 +41,8 @@ const Map = () => {
     lines,
     authenticated,
     user: { units },
+    viewport,
+    initialLoad,
   } = useSelector((state: RootState) => ({
     isLoading: state.loading.isLoading,
     points: state.route.present.points,
@@ -71,7 +50,21 @@ const Map = () => {
     lines: state.route.present.lines,
     authenticated: state.auth.authenticated,
     user: state.auth.user,
+    viewport: state.viewport.viewport,
+    initialLoad: state.viewport.initialLoad,
   }));
+
+  const [width, height] = useWindowSize();
+  const [mapFocus, setMapFocus] = useState<boolean>(false);
+  const [clipPath, setClipPath] = useState<boolean>(false);
+  const [userLocation, setUserLocation] = useState<number[]>([]);
+  const [showElevation, setShowElevation] = useState<boolean>(false);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [index, setIndex] = useState<number>(0);
+  const mapRef = useRef(null);
+  // state for syncing mouseevents for chart and map
+  const [distanceAlongPath, setDistanceAlongPath] = useState<number>(0);
+  const [pointAlongPath, setPointAlongPath] = useState<number[]>([]);
 
   const handleClick = (event) => {
     const [newLong, newLat] = event.lngLat;
@@ -184,13 +177,19 @@ const Map = () => {
     }
 
     geo.getCurrentPosition((position) => {
-      setViewport({
-        ...viewport,
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-        zoom: 14,
-      });
-      setPosition([position.coords.latitude, position.coords.longitude]);
+      // set viewport to user's location on first load, but not when coming back from another page
+      if (!initialLoad) {
+        dispatch(
+          updateViewport({
+            ...viewport,
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            zoom: 14,
+          })
+        );
+      }
+
+      setUserLocation([position.coords.latitude, position.coords.longitude]);
     });
   }, []);
 
@@ -199,6 +198,7 @@ const Map = () => {
       const map = mapRef.current.getMap();
       const center = map.transform._center;
 
+      // control map with arrow keys while focused
       if (e.keyCode === 9) {
         if (document.activeElement.className === 'mapboxgl-canvas') {
           setMapFocus(true);
@@ -213,16 +213,16 @@ const Map = () => {
         }
       } else if (e.keyCode === 38) {
         const newLat = calculateNewLngLat(center.lat, 40);
-        setViewport({ ...viewport, latitude: newLat });
+        dispatch(updateViewport({ ...viewport, latitude: newLat }));
       } else if (e.keyCode === 40) {
         const newLat = calculateNewLngLat(center.lat, -40);
-        setViewport({ ...viewport, latitude: newLat });
+        dispatch(updateViewport({ ...viewport, latitude: newLat }));
       } else if (e.keyCode === 37) {
         const newLng = calculateNewLngLat(center.lng, -40);
-        setViewport({ ...viewport, longitude: newLng });
+        dispatch(updateViewport({ ...viewport, longitude: newLng }));
       } else if (e.keyCode === 39) {
         const newLng = calculateNewLngLat(center.lng, 40);
-        setViewport({ ...viewport, longitude: newLng });
+        dispatch(updateViewport({ ...viewport, longitude: newLng }));
       }
     };
 
@@ -260,11 +260,15 @@ const Map = () => {
         onClick={handleClick}
         ref={mapRef}
         keyboard={false}
-        onViewportChange={(viewport) => setViewport(viewport)}
+        onViewportChange={({ latitude, longitude, zoom, bearing, pitch }) =>
+          dispatch(
+            updateViewport({ latitude, longitude, zoom, bearing, pitch })
+          )
+        }
         mapStyle="mapbox://styles/mapbox/outdoors-v11"
       >
-        {position.length > 0 && (
-          <Marker longitude={position[1]} latitude={position[0]}>
+        {userLocation.length > 0 && (
+          <Marker longitude={userLocation[1]} latitude={userLocation[0]}>
             <UserMarker />
           </Marker>
         )}

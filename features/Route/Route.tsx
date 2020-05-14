@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Router from 'next/router';
 import ReactMapGL, { Marker } from 'react-map-gl';
 import * as turf from '@turf/turf';
@@ -23,6 +23,8 @@ import {
 } from '../../utils/calculateDistance';
 import { downloadGpxFile } from '../../utils/downloadGpxFile';
 import PopOut from '../../features/Utilities/PopOut';
+import { setRoute } from '../Map/routeSlice';
+import { updateViewport } from '../Map/viewportSlice';
 
 interface Viewport {
   latitude: number;
@@ -72,7 +74,32 @@ const deleteRoute = async (id: number, image: string) => {
   }
 };
 
+const getViewport = (
+  height: number,
+  width: number,
+  lines: number[][][],
+  padding = 20
+) => {
+  const geoJson = turfHelpers.multiLineString(lines);
+  const bBox = bbox(geoJson);
+  const viewport = new WebMercatorViewport({
+    width,
+    height,
+  }).fitBounds(
+    [
+      [bBox[0], bBox[1]],
+      [bBox[2], bBox[3]],
+    ],
+    {
+      padding,
+    }
+  );
+
+  return viewport;
+};
+
 const RoutePage: React.FC<{ data: Route }> = ({ data }) => {
+  const dispatch = useDispatch();
   const [viewport, setViewport] = useState<Viewport>({
     latitude: 34.105999576,
     longitude: -117.718497126,
@@ -93,6 +120,38 @@ const RoutePage: React.FC<{ data: Route }> = ({ data }) => {
     user: state.auth.user,
   }));
 
+  const editRoute = () => {
+    const { lines, points, start_point, end_point, distance } = data;
+    const height = window.innerHeight;
+    const width = window.innerWidth;
+    const { latitude, longitude, zoom, bearing, pitch } = getViewport(
+      width,
+      height,
+      lines
+    );
+    dispatch(updateViewport({ latitude, longitude, zoom, bearing, pitch }));
+    dispatch(
+      setRoute({
+        points,
+        lines,
+        startPoint: start_point,
+        endPoint: end_point,
+        distance,
+      })
+    );
+    Router.push('/');
+  };
+
+  const handleDownload = () => {
+    setOpen(false);
+    downloadGpxFile(data.lines, data.distance, units);
+  };
+
+  const handleDelete = () => {
+    setOpen(false);
+    deleteRoute(data.id, data.image);
+  };
+
   useEffect(() => {
     if (distanceAlongPath !== 0 && data) {
       const line = turf.lineString(data.lines.flat());
@@ -107,19 +166,10 @@ const RoutePage: React.FC<{ data: Route }> = ({ data }) => {
 
   useEffect(() => {
     const { transform } = mapRef.current;
-    const line = turfHelpers.multiLineString(data.lines);
-    const bBox = bbox(line);
-    const newViewport = new WebMercatorViewport({
-      width: transform.width,
-      height: transform.height,
-    }).fitBounds(
-      [
-        [bBox[0], bBox[1]],
-        [bBox[2], bBox[3]],
-      ],
-      {
-        padding: 20,
-      }
+    const newViewport = getViewport(
+      transform.width,
+      transform.height,
+      data.lines
     );
     setViewport({
       ...newViewport,
@@ -149,20 +199,9 @@ const RoutePage: React.FC<{ data: Route }> = ({ data }) => {
               parentRef={options}
               {...{ open, setOpen }}
             >
-              <button
-                onClick={() => {
-                  setOpen(false);
-                  downloadGpxFile(data.lines, data.distance, units);
-                }}
-              >
-                Download as GPX
-              </button>
-              <button
-                onClick={() => {
-                  setOpen(false);
-                  deleteRoute(data.id, data.image);
-                }}
-              >
+              <button onClick={handleDownload}>Download as GPX</button>
+              <button onClick={editRoute}>Edit Route</button>
+              <button onClick={handleDelete}>
                 <FontAwesomeIcon icon={faTrashAlt} />
                 Delete Route
               </button>
@@ -347,7 +386,13 @@ const Checkbox = styled.div`
   left: 2.8rem;
 
   & input[type='checkbox'] {
-    visibility: hidden;
+    opacity: 0;
+
+    &:focus + label {
+      & span {
+        box-shadow: ${(props) => props.theme.boxShadow.outline};
+      }
+    }
 
     &:checked + label {
       & span {

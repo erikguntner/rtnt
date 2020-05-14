@@ -11,7 +11,6 @@ interface RouteState {
   startPoint: number[];
   endPoint: number[];
   distance: number;
-  segmentDistances: number[][];
 }
 
 interface RouteParams {
@@ -45,7 +44,6 @@ export const initialState: RouteState = {
   startPoint: [],
   endPoint: [],
   distance: 0,
-  segmentDistances: [],
 };
 
 const { actions: loadingActions, reducer: loadingReducer } = createSlice({
@@ -72,6 +70,9 @@ const { actions, reducer } = createSlice({
     },
     removeLastPoint: state => {
       return state;
+    },
+    setRoute: (state, action: PayloadAction<RouteState>) => {
+      return action.payload;
     },
     addRoutingInfo: (state, action: PayloadAction<RoutingInfo>) => {
       const { distance, coordinates, newPoint } = action.payload;
@@ -121,6 +122,7 @@ export const {
   addPoint,
   clearRoute,
   removeLastPoint,
+  setRoute,
   addRoutingInfo,
   updatePointCoords,
   updateStartAfterDrag,

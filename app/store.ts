@@ -4,13 +4,9 @@ import { ThunkAction } from 'redux-thunk';
 import rootReducer, { RootState } from './rootReducer';
 
 
-export const initializeStore = (preloadedState = {}) => {
-  const middleware = [...getDefaultMiddleware()];
-
+export const initializeStore = () => {
   const store = configureStore({
     reducer: rootReducer,
-    middleware,
-    preloadedState,
   });
 
 
