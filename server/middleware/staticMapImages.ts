@@ -16,8 +16,6 @@ const staticMapImage = handler => async (req, res) => {
   const distanceInMiles = convertLength(distance, 'meters', 'miles');
   const tolerance = distanceInMiles < 10 ? .0001 : .001;
   const geoJson = simplify(multiLine, tolerance);
-
-
   const width = 640;
   const height = 360;
 
