@@ -1,6 +1,6 @@
 import React from 'react';
 import { NextPage } from 'next';
-import ActivityLog from '../../features/ActivityLog/ActivityLog';
+import ActivityLog from '../../src/features/ActivityLog/ActivityLog';
 
 const MyRoutes: NextPage<{}> = () => {
   return <ActivityLog />;

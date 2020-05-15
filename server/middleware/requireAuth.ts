@@ -1,5 +1,5 @@
 import query from '../db';
-import firebaseAdmin from '../../utils/firebase/admin';
+import firebaseAdmin from '../../src/utils/firebase/admin';
 
 const requireAuth = handler => async (req, res) => {
   if (!('authorization' in req.headers) && !req.cookies.token) {

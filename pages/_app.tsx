@@ -11,11 +11,14 @@ import 'react-datepicker/dist/react-datepicker.css';
 import debounce from 'lodash/debounce';
 import LogRocket from 'logrocket';
 
-import Nav from '../features/Nav/Nav';
-import { authenticateUser, setValidating } from '../features/Auth/authSlice';
-import { theme, GlobalStyle } from '../utils/theme';
-import { configStore } from '../reducers/store';
-import API_URL from '../utils/url';
+import Nav from '../src/features/Nav/Nav';
+import {
+  authenticateUser,
+  setValidating,
+} from '../src/features/Auth/authSlice';
+import { theme, GlobalStyle } from '../src/utils/theme';
+import { configStore } from '../src/reducers/store';
+import API_URL from '../src/utils/url';
 
 config.autoAddCss = false;
 

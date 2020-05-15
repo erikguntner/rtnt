@@ -1,14 +1,14 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../reducers/rootReducer';
+import { RootState } from '../src/reducers/rootReducer';
 import { NextPage } from 'next';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
-import { topoSvgUrl } from '../utils/topographyStyle';
+import { topoSvgUrl } from '../src/utils/topographyStyle';
 import fetch from 'isomorphic-unfetch';
-import API_URL from '../utils/url';
-import { signout } from '../features/Auth/authSlice';
+import API_URL from '../src/utils/url';
+import { signout } from '../src/features/Auth/authSlice';
 
 const MyProfile: NextPage<{}> = () => {
   const dispatch = useDispatch();

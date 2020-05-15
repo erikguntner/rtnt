@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import query from '../../server/db';
-import firebaseAdmin from '../../utils/firebase/admin';
-import firebase from '../../utils/firebase/client';
+import firebaseAdmin from '../../src/utils/firebase/admin';
+import firebase from '../../src/utils/firebase/client';
 
 interface User {
   email: string;

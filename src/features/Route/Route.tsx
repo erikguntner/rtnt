@@ -12,17 +12,17 @@ import fetch from 'isomorphic-unfetch';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisH, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
-import ElevationProfile from '../../features/Map/ElevationProfile';
-import DistanceMarkers from '../../features/Map/DistanceMarkers';
+import ElevationProfile from '../Map/ElevationProfile';
+import DistanceMarkers from '../Map/DistanceMarkers';
 import { RootState } from '../../reducers/rootReducer';
-import SvgPath from '../../features/Map/SvgPath';
-import Pin from '../../features/Map/Pin';
+import SvgPath from '../Map/SvgPath';
+import Pin from '../Map/Pin';
 import {
   calculateDistance,
   abbreviatedDistance,
 } from '../../utils/calculateDistance';
 import { downloadGpxFile } from '../../utils/downloadGpxFile';
-import PopOut from '../../features/Utilities/PopOut';
+import PopOut from '../Utilities/PopOut';
 import { setRoute } from '../Map/routeSlice';
 import { updateViewport } from '../Map/viewportSlice';
 

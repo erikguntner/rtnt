@@ -2,8 +2,8 @@ import React from 'react';
 import { NextPage, GetServerSideProps } from 'next';
 import nextCookie from 'next-cookies';
 
-import Route from '../../features/Route/Route';
-import API_URL from '../../utils/url';
+import Route from '../../src/features/Route/Route';
+import API_URL from '../../src/utils/url';
 import { ParsedUrlQuery } from 'querystring';
 
 interface Viewport {

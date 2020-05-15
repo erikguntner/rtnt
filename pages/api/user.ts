@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import query from '../../server/db';
-import firebaseAdmin from '../../utils/firebase/admin';
+import firebaseAdmin from '../../src/utils/firebase/admin';
 import requireAuth from '../../server/middleware/requireAuth';
 
 import AWS from 'aws-sdk';

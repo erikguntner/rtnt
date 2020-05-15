@@ -1,7 +1,7 @@
 import React from 'react';
 import { NextPage } from 'next';
 import styled from 'styled-components';
-import SigninForm from '../features/Forms/SigninForm';
+import SigninForm from '../src/features/Forms/SigninForm';
 // import { withRedux } from '../utils/redux';
 
 const Signin: NextPage<{}> = () => {

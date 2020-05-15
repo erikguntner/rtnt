@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import firebase from '../../utils/firebase/client';
-import API_URL from '../../utils/url';
+import firebase from '../../src/utils/firebase/client';
+import API_URL from '../../src/utils/url';
 
 const request = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {

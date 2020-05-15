@@ -1,6 +1,6 @@
 import React from 'react';
 import { NextPage } from 'next';
-import SignupForm from '../features/Forms/SignupForm';
+import SignupForm from '../src/features/Forms/SignupForm';
 import styled from 'styled-components';
 
 const Signup: NextPage<{}> = () => {

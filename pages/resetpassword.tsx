@@ -1,6 +1,6 @@
 import React from 'react';
 import { NextPage } from 'next';
-import ResetPasswordForm from '../features/ResetPassword/ResetPasswordForm';
+import ResetPasswordForm from '../src/features/ResetPassword/ResetPasswordForm';
 
 const ResetPassword: NextPage<{}> = () => {
   return <ResetPasswordForm />;
