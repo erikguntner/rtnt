@@ -54,7 +54,6 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
     }
 
   } else if (req.method === 'DELETE') {
-    console.log(id);
     try {
       //retrieve all image urls
       const imageUrls = await query('select image from routes where user_id = $1', [id]);
@@ -75,11 +74,12 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
           Objects: keys
         }
       }, function (err, data) {
+        console.log(data, err);
       })
 
       // delete all rows from tables
-      const deletedRoutes = await query('delete from routes where user_id = $1', [id]);
-      const deletedActivities = await query('delete from activities where user_id = $1', [id]);
+      await query('delete from routes where user_id = $1', [id]);
+      await query('delete from activities where user_id = $1', [id]);
       const deletedUser = await query('delete from users where id = $1', [id]);
 
       // delete user from firebase

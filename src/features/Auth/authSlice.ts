@@ -6,7 +6,7 @@ import { changeNotificationStatus } from '../Map/notificationSlice';
 import { clearState } from '../RouteList/routeListSlice';
 import API_URL from '../../utils/url';
 
-interface UserI {
+interface User {
   email: string;
   username: string;
   units: 'miles' | 'kilometers';
@@ -15,7 +15,7 @@ interface UserI {
 interface AuthState {
   validating: boolean;
   authenticated: string;
-  user: UserI;
+  user: User;
 }
 
 const initialState: AuthState = {
@@ -32,7 +32,7 @@ const { actions, reducer } = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    authenticateUser: (state, action: PayloadAction<{ authenticated: string; user: UserI }>) => {
+    authenticateUser: (state, action: PayloadAction<{ authenticated: string; user: User }>) => {
       const { authenticated, user } = action.payload;
       state.authenticated = authenticated;
       state.user = user;
