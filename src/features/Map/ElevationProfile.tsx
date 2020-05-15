@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import styled from 'styled-components';
 import ResizeObserver from 'resize-observer-polyfill';
-import { createChart } from '../../utils/d3/utils';
+import { createChart } from '../../utils/d3/LineChart';
 import parseElevationData from '../../utils/parseElevationData';
 
 interface ElevationData {
