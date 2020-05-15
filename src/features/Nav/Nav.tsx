@@ -5,7 +5,7 @@ import styled, { keyframes } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
-import { DarkButtonLink, PrimaryButtonLink } from '../Button';
+import { DarkLink, PrimaryLink } from '../Utilities/Button';
 import PopOut from '../Utilities/PopOut';
 import Skeleton from '../Utilities/Skeleton';
 
@@ -53,10 +53,10 @@ const Nav = () => {
     return (
       <>
         <li>
-          <DarkButtonLink href="/signin">Sign In</DarkButtonLink>
+          <DarkLink href="/signin">Sign In</DarkLink>
         </li>
         <li>
-          <PrimaryButtonLink href="/signup">Sign Up</PrimaryButtonLink>
+          <PrimaryLink href="/signup">Sign Up</PrimaryLink>
         </li>
       </>
     );
@@ -66,14 +66,12 @@ const Nav = () => {
     return (
       <>
         <li>
-          <DarkButtonLink href="/myroutes" passHref>
-            My Routes
-          </DarkButtonLink>
+          <DarkLink href="/myroutes">My Routes</DarkLink>
         </li>
         <li>
-          <DarkButtonLink href="/activity/log" passHref>
+          <DarkLink href="/activity/log" passHref>
             Activity Log
-          </DarkButtonLink>
+          </DarkLink>
         </li>
         <Avatar ref={avatar}>
           <AvatarButton onClick={() => setOpen(!open)}>
@@ -87,11 +85,17 @@ const Nav = () => {
             parentRef={avatar}
             {...{ open, setOpen }}
           >
+            <Link href="/myroutes">
+              <a onClick={() => setOpen(false)}>My routes</a>
+            </Link>
             <Link href="/activity/create">
               <a onClick={() => setOpen(false)}>Create activity </a>
             </Link>
+            <Link href="/activity/log">
+              <a onClick={() => setOpen(false)}>Activity log</a>
+            </Link>
             <Link href="/myprofile">
-              <a onClick={() => setOpen(false)}>My Profile</a>
+              <a onClick={() => setOpen(false)}>My profile</a>
             </Link>
             <button
               onClick={() => {
@@ -111,7 +115,7 @@ const Nav = () => {
     <NavContainer>
       <ul>
         <li>
-          <DarkButtonLink href="/">Home</DarkButtonLink>
+          <DarkLink href="/">Home</DarkLink>
         </li>
       </ul>
       <ul>
@@ -141,6 +145,12 @@ const NavContainer = styled.nav`
     display: flex;
     justify-content: flex-start;
     list-style: none;
+
+    & li:nth-of-type(1) {
+    }
+
+    & li:nth-of-type(2) {
+    }
   }
 
   & li {

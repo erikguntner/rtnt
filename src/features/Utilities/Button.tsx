@@ -47,4 +47,48 @@ const StyledButton = styled.button`
   }
 `;
 
-export const DarkButtonLink = (props) => Button(StyledButton, props);
+const StyledLink = styled.a`
+  display: flex;
+  flex: none;
+  align-items: center;
+  padding: 8px 1.2rem;
+  border-radius: 2px;
+  text-decoration: none;
+
+  &:focus {
+    outline: none;
+    box-shadow: ${(props) => props.theme.boxShadow.outline};
+  }
+`;
+
+const StyledDarkLink = styled(StyledLink)`
+  border: none;
+  background-color: transparent;
+  color: #fff;
+  font-size: 1.4rem;
+
+  &:hover {
+    cursor: pointer;
+    background-color: #071735;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: ${(props) => props.theme.boxShadow.outline};
+  }
+`;
+
+const StyledPrimaryLink = styled(StyledLink)`
+  border: none;
+  background-color: ${(props) => props.theme.colors.primary};
+  color: #fff;
+  font-size: 1.4rem;
+
+  &:hover {
+    cursor: pointer;
+    background-color: ${(props) => props.theme.colors.newBlues[500]};
+  }
+`;
+
+export const DarkLink = (props) => Button(StyledDarkLink, props);
+export const PrimaryLink = (props) => Button(StyledPrimaryLink, props);
