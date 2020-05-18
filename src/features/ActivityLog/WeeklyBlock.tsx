@@ -69,6 +69,20 @@ const Details = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
+
+  p {
+    margin-right: 0;
+
+    @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+      margin-right: 1.6rem;
+    }
+  }
 `;
 
 const DateText = styled.p`
@@ -78,11 +92,21 @@ const DateText = styled.p`
 
 const Distance = styled.p`
   font-size: 3.2rem;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    font-size: 2.4rem;
+    line-height: 1;
+  }
 `;
 
 const Block = styled.article`
   display: grid;
   grid-template-columns: 20% 80%;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    grid-template-rows: min-content min-content;
+    grid-template-columns: 1fr;
+  }
 `;
 
 export default WeeklyBlock;

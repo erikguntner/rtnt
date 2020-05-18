@@ -68,9 +68,15 @@ const ActivityForm: React.FC<{}> = () => {
       time: 0,
     },
     validationSchema: ActivitySchema,
-    onSubmit: async (values, { setSubmitting }) => {
-      setSubmitting(true);
+    onSubmit: async (values, { setSubmitting, setErrors }) => {
       const { route, name, date, startTime, time } = values;
+
+      if (route === null) {
+        setErrors({ route: 'please select a route' });
+      }
+
+      setSubmitting(true);
+
       const {
         image,
         lines,
@@ -92,7 +98,7 @@ const ActivityForm: React.FC<{}> = () => {
             date,
             name,
             startTime,
-            distance: distance[distance.length - 1],
+            distance,
             time,
             start_point,
             end_point,
@@ -187,17 +193,22 @@ const ActivityForm: React.FC<{}> = () => {
                   handleClick={() => setOpen(true)}
                 />
               ) : (
-                <AddRouteButton
-                  type="button"
-                  error={formik.errors.route ? true : false}
-                  onClick={() => setOpen(true)}
-                >
-                  <FontAwesomeIcon
-                    style={{ marginRight: '8px' }}
-                    icon={faPlus}
-                  />
-                  add route
-                </AddRouteButton>
+                <>
+                  <AddRouteButton
+                    type="button"
+                    error={formik.errors.route ? true : false}
+                    onClick={() => setOpen(true)}
+                  >
+                    <FontAwesomeIcon
+                      style={{ marginRight: '8px' }}
+                      icon={faPlus}
+                    />
+                    add route
+                  </AddRouteButton>
+                  <Error visible={formik.errors.route ? true : false}>
+                    {formik.errors.route}
+                  </Error>
+                </>
               )}
             </InputWrapper>
             <InputWrapper>
@@ -301,6 +312,10 @@ const FormWrapper = styled.div`
   padding: 2.4rem 0 5.6rem 0;
 
   @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    padding: 0 0 5.6rem 0;
+  }
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
     width: 100%;
   }
 `;
@@ -353,6 +368,10 @@ const Row = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    flex-direction: column;
+  }
 `;
 
 const TimeWrapper = styled.div`
@@ -360,9 +379,11 @@ const TimeWrapper = styled.div`
   border-right: 1px solid ${(props) => props.theme.colors.gray[400]};
   border-top: 1px solid ${(props) => props.theme.colors.gray[400]};
   border-bottom: 1px solid ${(props) => props.theme.colors.gray[400]};
+  border-radius: 2px;
   display: flex;
   padding: 1rem;
   font-size: 1.6rem;
+  width: 100%;
 
   &:before {
     display: flex;
@@ -374,6 +395,20 @@ const TimeWrapper = styled.div`
     margin: 8px 0;
     width: 1px;
     background-color: ${(props) => props.theme.colors.gray[400]};
+  }
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    &:before {
+      display: flex;
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      content: '';
+      height: calc(100%);
+      margin: 0 0;
+      width: 1px;
+      background-color: ${(props) => props.theme.colors.gray[400]};
+    }
   }
 `;
 

@@ -285,6 +285,11 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
       border-radius: 2px 0 0 2px;
       z-index: 2000;
 
+      @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+        margin-bottom: 1.6rem;
+        border-right: 1px solid ${props => props.theme.colors.gray[400]};
+      }
+
       &:focus {
         outline: none;
         box-shadow: ${props => props.theme.boxShadow.outline};
@@ -300,6 +305,21 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
   .react-datepicker{
     border: 1px solid ${props => props.theme.colors.gray[400]};
     color: ${props => props.theme.colors.gray[900]};
+
+    &-wrapper {
+      @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+        width: 100%;
+      }
+    }
+
+    &__input-container {
+      & > input {
+        @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+          width: 100%;
+        }
+      }
+    }
+  
 
     &-popper {
       z-index: 2000;
@@ -343,6 +363,11 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
 
       &:hover {
         background-color: ${props => props.theme.colors.gray[100]};
+      }
+
+      &-names {
+        display: flex;
+        justify-content: space-around;
       }
 
       &--selected {

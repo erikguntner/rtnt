@@ -88,6 +88,10 @@ const BrushChart: React.FC<Props> = ({
     if (previousSelection === selection) {
       brushG.call(brush).call(brush.move, selection.map(xScale));
     }
+
+    if (dimensions !== previousDimensions) {
+      brushG.call(brush).call(brush.move, selection.map(xScale));
+    }
   }, [
     dimensions,
     previousDimensions,

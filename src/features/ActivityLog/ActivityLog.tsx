@@ -54,7 +54,6 @@ const ActivityLog: React.FC<{}> = ({}) => {
 
         if (response.ok) {
           const { activities, units } = await response.json();
-          console.log(activities);
           setActivities(activities);
           setUnits(units);
         }
@@ -165,8 +164,16 @@ const Header = styled.div`
   align-items: center;
   padding: 1.6rem;
 
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    padding: 8px 0;
+  }
+
   h1 {
     font-size: 3.2rem;
+
+    @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+      font-size: 2.4rem;
+    }
   }
 `;
 
@@ -184,9 +191,19 @@ const DateHeader = styled.div<{ isSticky: boolean }>`
     props.isSticky ? props.theme.boxShadow.bottom : 'none'};
   z-index: 20;
 
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    grid-template-rows: min-content min-content;
+    grid-template-columns: 1fr;
+    padding: 8px 0 1.6rem 0;
+  }
+
   & p {
     text-align: center;
     font-size: 2.4rem;
+
+    @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+      text-align: left;
+    }
   }
 `;
 

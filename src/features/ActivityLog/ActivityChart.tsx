@@ -111,6 +111,7 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
 
     const daysEntries = entries(daysData);
 
+    // remove current day elements if the window is being resized
     if (previousDimensions !== dimensions) {
       svg.selectAll('.day').remove();
     }
