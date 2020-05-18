@@ -78,6 +78,19 @@ const StyledDarkLink = styled(StyledLink)`
   }
 `;
 
+const StyledInvertedLink = styled(StyledLink)`
+  font-size: 1.4rem;
+  text-decoration: none;
+  border: 1px solid ${(props) => props.theme.colors.primary};
+  color: ${(props) => props.theme.colors.primary};
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.primary};
+    color: #fff;
+  }
+`;
+
 const StyledPrimaryLink = styled(StyledLink)`
   border: none;
   background-color: ${(props) => props.theme.colors.primary};
@@ -92,3 +105,4 @@ const StyledPrimaryLink = styled(StyledLink)`
 
 export const DarkLink = (props) => Button(StyledDarkLink, props);
 export const PrimaryLink = (props) => Button(StyledPrimaryLink, props);
+export const InvertedLink = (props) => Button(StyledInvertedLink, props);

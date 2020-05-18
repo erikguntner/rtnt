@@ -13,6 +13,7 @@ import { convertLength } from '@turf/helpers';
 import { Activity, ActivityData } from './ActivityLog';
 import ActivityPopUp from './ActivityPopUp';
 import useResizeObserver from '../Activity/useResizeObserver';
+import usePrevious from '../Activity/usePrevious';
 
 interface ActivityChartProps {
   setActivity: React.Dispatch<React.SetStateAction<null | ActivityData>>;
@@ -34,6 +35,7 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
   const ref = useRef(null);
   const svgRef = useRef(null);
   const dimensions = useResizeObserver(ref);
+  const previousDimensions = usePrevious(dimensions);
 
   useEffect(() => {
     if (dimensions === null) return;
@@ -93,8 +95,8 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
 
     // create day of pointer
     if (isThisWeek(startDate, { weekStartsOn: 1 })) {
-      svg
-        .append('polyline')
+      const dayMarker = select('#day-marker');
+      dayMarker
         .attr(
           'transform',
           () =>
@@ -108,6 +110,10 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
     }
 
     const daysEntries = entries(daysData);
+
+    if (previousDimensions !== dimensions) {
+      svg.selectAll('.day').remove();
+    }
 
     const g = svg.selectAll('.day').data(daysEntries);
 
@@ -250,12 +256,13 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
       .attr('text-anchor', 'middle')
       .attr('transform', `translate(0 5)`)
       .style('font-size', '16px');
-  }, [data, dimensions]);
+  }, [data, dimensions, previousDimensions]);
 
   return (
     <ChartContainer ref={ref}>
       <svg ref={svgRef} width="100%" height="100%">
         <g className="x-axis" />
+        <polyline id="day-marker" />
       </svg>
     </ChartContainer>
   );

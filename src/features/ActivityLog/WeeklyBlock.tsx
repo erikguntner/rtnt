@@ -82,7 +82,7 @@ const Distance = styled.p`
 
 const Block = styled.article`
   display: grid;
-  grid-template-columns: 20rem 70rem;
+  grid-template-columns: 20% 80%;
 `;
 
 export default WeeklyBlock;

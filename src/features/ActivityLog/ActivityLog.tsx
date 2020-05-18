@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
-import Link from 'next/link';
 import styled from 'styled-components';
 import format from 'date-fns/format';
 
 import WeeklyBlock from './WeeklyBlock';
 import Month from './Month';
 import ActivityPopUp from './ActivityPopUp';
+import { InvertedLink } from '../Utilities/Button';
 
 import API_URL from '../../utils/url';
 import constructDateObject from '../../utils/constructDateObject';
@@ -97,9 +97,7 @@ const ActivityLog: React.FC<{}> = ({}) => {
       <Container>
         <Header>
           <h1>Activity Log</h1>
-          <Link href="/activity/create" passHref>
-            <a>Add activity</a>
-          </Link>
+          <InvertedLink href="/activity/create">Add activity</InvertedLink>
         </Header>
         <DateHeader ref={headerRef} {...{ isSticky }}>
           <p>{format(new Date(2020, headerMonth, 1), 'MMMM')}, 2020</p>
@@ -157,7 +155,7 @@ const Center = styled.div`
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: 900px;
+  grid-template-columns: 90vw;
   margin: 0 auto;
 `;
 
@@ -170,21 +168,6 @@ const Header = styled.div`
   h1 {
     font-size: 3.2rem;
   }
-
-  a {
-    padding: 8px 1.2rem;
-    font-size: 1.4rem;
-    text-decoration: none;
-    border: 1px solid ${(props) => props.theme.colors.primary};
-    color: ${(props) => props.theme.colors.primary};
-    transition: all 0.2s ease;
-    border-radius: 2px;
-
-    &:hover {
-      background-color: ${(props) => props.theme.colors.primary};
-      color: #fff;
-    }
-  }
 `;
 
 const DateHeader = styled.div<{ isSticky: boolean }>`
@@ -193,7 +176,7 @@ const DateHeader = styled.div<{ isSticky: boolean }>`
   left: 0;
   width: 100%;
   display: grid;
-  grid-template-columns: 20rem 70rem;
+  grid-template-columns: 20% 80%;
   padding: 1.6rem 0;
   transition: box-shadow 0.2s ease;
   background-color: #fff;

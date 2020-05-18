@@ -11,6 +11,8 @@ import usePrevious from './usePrevious';
 import BrushChart from './BrushChart';
 import RouteModal from './RouteModal';
 import HorizontalRouteCard from './HorizontalRouteCard';
+import { InvertedLink } from '../Utilities/Button';
+
 import { formatTime } from '../../utils/formatTime';
 import {
   Error,
@@ -169,9 +171,7 @@ const ActivityForm: React.FC<{}> = () => {
         <FormWrapper>
           <Header>
             <Title>Create Activity</Title>
-            <Link href="/activity/log" passHref>
-              <a>View Log</a>
-            </Link>
+            <InvertedLink href="/activity/log">View Log</InvertedLink>
           </Header>
           <Form onSubmit={formik.handleSubmit}>
             <InputWrapper>
