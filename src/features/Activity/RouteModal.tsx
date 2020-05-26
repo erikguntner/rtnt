@@ -1,6 +1,5 @@
 import React from 'react';
 import Modal from '../Utilities/Modal';
-import { RouteI } from './ActivityForm';
 
 interface RouteModalProps {
   toggle: React.Dispatch<React.SetStateAction<boolean>>;
