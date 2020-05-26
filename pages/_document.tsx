@@ -20,7 +20,7 @@ export default class MyDocument extends Document {
           <>
             {initialProps.styles}
             {sheet.getStyleElement()}
-            <div id="portal" />
+            <div id="portal" data-testid="portal" />
           </>
         ),
       };

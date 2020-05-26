@@ -26,6 +26,8 @@ interface DateObject {
 }
 
 const constructDateObject = (activities: Activity[]): DateObject => {
+
+  // find all weeks from the earliest logged up to the current date
   const weeks = eachWeekOfInterval({
     start: new Date(activities[activities.length - 1].startDate),
     end: new Date(),
@@ -33,6 +35,7 @@ const constructDateObject = (activities: Activity[]): DateObject => {
     weekStartsOn: 1
   });
 
+  // construct object with years, months, and weeks, with each week having an array as a value to hold all the activities
   const dateObject = weeks.reverse().reduce((accum, curr) => {
     const currentYear = getYear(curr);
     const currentMonth = getMonth(curr);

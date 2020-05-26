@@ -24,6 +24,20 @@ interface RouteParams {
   clipPath: boolean;
 }
 
+interface GraphHopperPath {
+  distance: number;
+  points: {
+    coordinates: number[][];
+  };
+  snapped_waypoints: {
+    coordinates: number[][];
+  };
+}
+
+interface GraphHopperResponse {
+  paths: GraphHopperPath[];
+}
+
 interface RoutingInfo {
   distance: number;
   coordinates: number[][];
@@ -38,17 +52,11 @@ interface UpdatedRouteResults {
   distance: number;
 }
 
-export const initialState: RouteState = {
-  points: [],
-  lines: [],
-  startPoint: [],
-  endPoint: [],
-  distance: 0,
-};
+export const initialLoadingState = { isLoading: false };
 
 const { actions: loadingActions, reducer: loadingReducer } = createSlice({
   name: 'loading',
-  initialState: { isLoading: false },
+  initialState: initialLoadingState,
   reducers: {
     changeLoadingState: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
@@ -56,7 +64,16 @@ const { actions: loadingActions, reducer: loadingReducer } = createSlice({
   },
 });
 
+export const { changeLoadingState } = loadingActions;
 export { loadingReducer };
+
+export const initialState: RouteState = {
+  points: [],
+  lines: [],
+  startPoint: [],
+  endPoint: [],
+  distance: 0,
+};
 
 const { actions, reducer } = createSlice({
   name: 'route',
@@ -116,7 +133,6 @@ const { actions, reducer } = createSlice({
   },
 });
 
-export const { changeLoadingState } = loadingActions;
 
 export const {
   addPoint,
@@ -176,18 +192,18 @@ interface Instructions {
   street_name: string;
 }
 
-const createLineSegments = (coordinates, waypoints): number[][][] => {
+const createLineSegments = (coordinates: number[][], waypoints: number[][]): number[][][] => {
   const lines = [];
   let middlePointIndex: number | undefined = undefined;
   // check if we need to split the line segments
-  const isMiddlePoint: boolean = waypoints.coordinates.length === 3;
+  const isMiddlePoint: boolean = waypoints.length === 3;
 
   if (isMiddlePoint) {
     // find the index where the coordinates equals the second waypoint
     middlePointIndex = coordinates.findIndex(
       coord =>
-        coord[0] === waypoints.coordinates[1][0] &&
-        coord[1] === waypoints.coordinates[1][1]
+        coord[0] === waypoints[1][0] &&
+        coord[1] === waypoints[1][1]
     );
 
     // split the coordinates into line segments
@@ -236,7 +252,7 @@ export const updateRouteAfterDrag = ({
     const response = await fetch(
       `https://graphhopper.com/api/1/route?${pointString}vehicle=foot&debug=true&elevation=true&legs=true&details=street_name&key=${process.env.GRAPH_HOPPER_KEY}&type=json&points_encoded=false`
     );
-    const data = await response.json();
+    const data: GraphHopperResponse = await response.json();
 
     const {
       snapped_waypoints,
@@ -246,7 +262,7 @@ export const updateRouteAfterDrag = ({
 
     const lineSegments: number[][][] = createLineSegments(
       coordinates,
-      snapped_waypoints
+      snapped_waypoints.coordinates
     );
 
     const updatedDistance = calculateNewDistance(distance, lines, lineIndices);
@@ -294,7 +310,7 @@ export const addRoute = ({
     const response = await fetch(
       `https://graphhopper.com/api/1/route?${pointString}vehicle=foot&debug=true&elevation=true&legs=true&details=street_name&key=${process.env.GRAPH_HOPPER_KEY}&type=json&points_encoded=false`
     );
-    const data = await response.json();
+    const data: GraphHopperResponse = await response.json();
 
     const { coordinates } = data.paths[0].points;
     const { distance, snapped_waypoints } = data.paths[0];

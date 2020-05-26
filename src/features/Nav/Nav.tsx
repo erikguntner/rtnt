@@ -38,7 +38,7 @@ const SkeletonWrapper = styled.div`
 
 const Nav = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const avatar = useRef<HTMLLIElement>(null);
+  const avatar = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
 
   const { validating, authenticated, user } = useSelector(
@@ -51,28 +51,20 @@ const Nav = () => {
 
   const renderAuthButtons = () => {
     return (
-      <>
-        <li>
-          <DarkLink href="/signin">Sign In</DarkLink>
-        </li>
-        <li>
-          <PrimaryLink href="/signup">Sign Up</PrimaryLink>
-        </li>
-      </>
+      <AuthLinks>
+        <DarkLink href="/signin">Sign In</DarkLink>
+        <PrimaryLink href="/signup">Sign Up</PrimaryLink>
+      </AuthLinks>
     );
   };
 
   const renderAvatar = () => {
     return (
-      <>
-        <li>
-          <DarkLink href="/myroutes">My Routes</DarkLink>
-        </li>
-        <li>
-          <DarkLink href="/activity/log" passHref>
-            Activity Log
-          </DarkLink>
-        </li>
+      <NavLinks>
+        <DarkLink href="/myroutes">My Routes</DarkLink>
+        <DarkLink href="/activity/log" passHref>
+          Activity Log
+        </DarkLink>
         <Avatar ref={avatar}>
           <AvatarButton onClick={() => setOpen(!open)}>
             <Username>{user.username}</Username>
@@ -85,52 +77,84 @@ const Nav = () => {
             parentRef={avatar}
             {...{ open, setOpen }}
           >
-            <Link href="/myroutes">
-              <a onClick={() => setOpen(false)}>My routes</a>
-            </Link>
-            <Link href="/activity/create">
-              <a onClick={() => setOpen(false)}>Create activity </a>
-            </Link>
-            <Link href="/activity/log">
-              <a onClick={() => setOpen(false)}>Activity log</a>
-            </Link>
-            <Link href="/myprofile">
-              <a onClick={() => setOpen(false)}>My profile</a>
-            </Link>
-            <button
-              onClick={() => {
-                setOpen(false);
-                dispatch(signout({ units: user.units }));
-              }}
-            >
-              Sign Out
-            </button>
+            <Menu>
+              <Link href="/myroutes">
+                <a onClick={() => setOpen(false)}>My Routes</a>
+              </Link>
+              <Link href="/activity/log">
+                <a onClick={() => setOpen(false)}>Activity Log</a>
+              </Link>
+              <Link href="/activity/create">
+                <a onClick={() => setOpen(false)}>Create Activity </a>
+              </Link>
+              <Link href="/myprofile">
+                <a onClick={() => setOpen(false)}>My Profile</a>
+              </Link>
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  dispatch(signout({ units: user.units }));
+                }}
+              >
+                Sign Out
+              </button>
+            </Menu>
           </PopOut>
         </Avatar>
-      </>
+      </NavLinks>
     );
   };
 
   return (
     <NavContainer>
-      <ul>
-        <li>
-          <DarkLink href="/">Home</DarkLink>
-        </li>
-      </ul>
-      <ul>
-        {validating ? (
-          <AvatarSkeleton />
-        ) : (
-          <>
-            {!authenticated && renderAuthButtons()}
-            {authenticated && renderAvatar()}
-          </>
-        )}
-      </ul>
+      <DarkLink href="/">Home</DarkLink>
+      {validating ? (
+        <AvatarSkeleton />
+      ) : (
+        <>
+          {!authenticated && renderAuthButtons()}
+          {authenticated && renderAvatar()}
+        </>
+      )}
     </NavContainer>
   );
 };
+
+const NavLinks = styled.div`
+  display: flex;
+
+  & a:nth-of-type(1),
+  a:nth-of-type(2) {
+    display: flex;
+
+    @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+      display: none;
+    }
+  }
+
+  & > a {
+    margin-right: 8px;
+  }
+`;
+
+const AuthLinks = styled.div`
+  display: flex;
+
+  & > a:not(:last-child) {
+    margin-right: 8px;
+  }
+`;
+
+const Menu = styled.div`
+  & a:nth-of-type(1),
+  a:nth-of-type(2) {
+    display: none;
+
+    @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+      display: flex;
+    }
+  }
+`;
 
 const NavContainer = styled.nav`
   display: flex;
@@ -140,27 +164,9 @@ const NavContainer = styled.nav`
   height: ${(props) => props.theme.navHeight};
   background-color: ${(props) => props.theme.colors.gray[800]};
   text-align: center;
-
-  & ul {
-    display: flex;
-    justify-content: flex-start;
-    list-style: none;
-
-    & li:nth-of-type(1) {
-    }
-
-    & li:nth-of-type(2) {
-    }
-  }
-
-  & li {
-    &:not(:last-of-type) {
-      margin-right: 1.2rem;
-    }
-  }
 `;
 
-const Avatar = styled.li`
+const Avatar = styled.div`
   position: relative;
 `;
 
@@ -172,8 +178,20 @@ const AvatarButton = styled.button`
   border: none;
   font-size: 1.4rem;
   color: #fff;
+  padding: 0 1.2rem;
+  border-radius: 2px;
+
+  &:focus {
+    outline: none;
+    box-shadow: ${(props) => props.theme.boxShadow.outline};
+
+    @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+      box-shadow: none;
+    }
+  }
 
   &:hover {
+    background-color: #071735;
     cursor: pointer;
 
     & > div {

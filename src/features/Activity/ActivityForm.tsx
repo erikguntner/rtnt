@@ -31,7 +31,7 @@ import getYear from 'date-fns/getYear';
 import set from 'date-fns/set';
 import format from 'date-fns/format';
 
-export interface RouteI {
+export interface Route {
   id: number;
   name: string;
   image: string;
@@ -54,7 +54,7 @@ const ActivitySchema = Yup.object().shape({
 
 const ActivityForm: React.FC<{}> = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const [routes, setRoutes] = useState<RouteI[]>([]);
+  const [routes, setRoutes] = useState<Route[]>([]);
   const [units, setUnits] = useState<'miles' | 'kilometers'>('miles');
   const [selection, setSelection] = useState<Date[]>([new Date(), new Date()]);
   const previousSelection = usePrevious(selection);
@@ -196,7 +196,9 @@ const ActivityForm: React.FC<{}> = () => {
                 <>
                   <AddRouteButton
                     type="button"
-                    error={formik.errors.route ? true : false}
+                    error={
+                      formik.touched.route && formik.errors.route ? true : false
+                    }
                     onClick={() => setOpen(true)}
                   >
                     <FontAwesomeIcon
@@ -282,7 +284,7 @@ const ActivityForm: React.FC<{}> = () => {
         <ModalWrapper>
           <ModalTitle>Select a route</ModalTitle>
           <List>
-            {routes.map(({ id, image, city, state, lines, name }: RouteI) => (
+            {routes.map(({ id, image, city, state, lines, name }: Route) => (
               <HorizontalRouteCard
                 key={id}
                 {...{ image, city, lines, units, state, name }}
@@ -356,6 +358,8 @@ const ModalTitle = styled.h3`
   font-size: 2.4rem;
   line-height: 1;
   margin-bottom: 1.6rem;
+  padding-bottom: 1.6rem;
+  border-bottom: 1px solid ${(props) => props.theme.colors.gray[400]};
 `;
 
 const List = styled.div`

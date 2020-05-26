@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useCallback, useState, useRef } from 'react';
 import styled from 'styled-components';
 import format from 'date-fns/format';
 
@@ -42,6 +42,7 @@ const ActivityLog: React.FC<{}> = ({}) => {
   });
   const headerRef = useRef(null);
   const yearRef = useRef(null);
+  // let timeline = {};
 
   useEffect(() => {
     const fetchRoutes = async () => {
@@ -57,10 +58,10 @@ const ActivityLog: React.FC<{}> = ({}) => {
           setActivities(activities);
           setUnits(units);
         }
-        setLoading(false);
       } catch (error) {
-        setLoading(false);
+        console.log(error);
       }
+      setLoading(false);
     };
 
     fetchRoutes();
@@ -85,11 +86,7 @@ const ActivityLog: React.FC<{}> = ({}) => {
     };
   }, [isSticky]);
 
-  if (activities.length === 0) {
-    return <h1>There are no activies</h1>;
-  }
-
-  const timeline = constructDateObject(activities);
+  const timeline = activities.length ? constructDateObject(activities) : {};
 
   return (
     <Center>
@@ -110,36 +107,42 @@ const ActivityLog: React.FC<{}> = ({}) => {
             <li>S</li>
           </Days>
         </DateHeader>
-        {Object.keys(timeline).map((year) => (
-          <div ref={yearRef} key={year} id={year}>
-            {Object.keys(timeline[year])
-              .reverse()
-              .map((month) => (
-                <Month
-                  key={`${year}-${month}`}
-                  {...{ year, month, headerMonth, setHeaderMonth }}
-                >
-                  {Object.keys(timeline[year][month])
-                    .reverse()
-                    .map((week) => (
-                      <div
-                        key={`${year}-${month}-${week}`}
-                        id={`${year}-${month}-${week}`}
-                      >
-                        <WeeklyBlock
-                          setActivity={setActivity}
-                          activity={activity}
-                          units={units}
-                          year={parseInt(year)}
-                          week={parseInt(week)}
-                          data={timeline[year][month][week].reverse()}
-                        />
-                      </div>
-                    ))}
-                </Month>
-              ))}
-          </div>
-        ))}
+        {loading ? (
+          <Loading>
+            <h2>Loading ...</h2>
+          </Loading>
+        ) : (
+          Object.keys(timeline).map((year) => (
+            <div ref={yearRef} key={year} id={year}>
+              {Object.keys(timeline[year])
+                .reverse()
+                .map((month) => (
+                  <Month
+                    key={`${year}-${month}`}
+                    {...{ year, month, headerMonth, setHeaderMonth }}
+                  >
+                    {Object.keys(timeline[year][month])
+                      .reverse()
+                      .map((week) => (
+                        <div
+                          key={`${year}-${month}-${week}`}
+                          id={`${year}-${month}-${week}`}
+                        >
+                          <WeeklyBlock
+                            setActivity={setActivity}
+                            activity={activity}
+                            units={units}
+                            year={parseInt(year)}
+                            week={parseInt(week)}
+                            data={timeline[year][month][week].reverse()}
+                          />
+                        </div>
+                      ))}
+                  </Month>
+                ))}
+            </div>
+          ))
+        )}
       </Container>
       <ActivityPopUp {...{ activity }} />
     </Center>
@@ -150,6 +153,14 @@ const Center = styled.div`
   display: flex;
   flex: 1;
   justify-content: center;
+`;
+
+const Loading = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${(props) => props.theme.colors.gray[600]};
 `;
 
 const Container = styled.div`

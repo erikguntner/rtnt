@@ -140,6 +140,7 @@ const PopOutWrapper = styled(motion.div)`
 
     &:hover,
     &:focus {
+      cursor: pointer;
       background-color: ${(props) => props.theme.colors.gray[300]};
     }
   }

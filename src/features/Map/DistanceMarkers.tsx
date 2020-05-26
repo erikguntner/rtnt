@@ -15,6 +15,8 @@ const DistanceMarkers: React.FC<Props> = ({ lines, units }) => {
   useEffect(() => {
     // calculate distance markers
     if (lines.length > 0) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
       const line = turf.lineString(lines.flat());
       let routeDistance = turf.length(line, { units });
       routeDistance = Math.floor(routeDistance);
@@ -55,7 +57,7 @@ const DistanceMarker = styled.div`
   background-color: #fff;
   padding: 1px 2px;
   border-radius: 2px;
-  border: 2px solid ${props => props.theme.colors.indigo[500]};
+  border: 2px solid ${(props) => props.theme.colors.indigo[500]};
   transform: translate3d(-50%, -50%, 0);
 `;
 

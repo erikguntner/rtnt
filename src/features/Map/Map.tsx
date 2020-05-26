@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
-import ReactMapGL, { Marker, NavigationControl } from 'react-map-gl';
+import ReactMapGL, {
+  Marker,
+  NavigationControl,
+  DragEvent,
+  PointerEvent,
+} from 'react-map-gl';
 import styled from 'styled-components';
 
 import { RootState } from '../../reducers/rootReducer';
@@ -66,8 +71,8 @@ const Map = () => {
   const [distanceAlongPath, setDistanceAlongPath] = useState<number>(0);
   const [pointAlongPath, setPointAlongPath] = useState<number[]>([]);
 
-  const handleClick = (event) => {
-    const [newLong, newLat] = event.lngLat;
+  const handleClick = (lngLat: number[]) => {
+    const [newLong, newLat] = lngLat;
     // store.dispatch({ type: 'ADD_POINT' });
 
     if (points.length) {
@@ -92,14 +97,14 @@ const Map = () => {
     }
   };
 
-  const handleDragStart = (event, index: number) => {
+  const handleDragStart = (event: DragEvent, index: number) => {
     if (points.length > 1) {
       setIsDragging(true);
     }
     setIndex(index);
   };
 
-  const handleDrag = (event, index: number) => {
+  const handleDrag = (event: DragEvent, index: number) => {
     dispatch(updatePointCoords({ index, coords: event.lngLat }));
   };
 
@@ -160,6 +165,8 @@ const Map = () => {
 
   useEffect(() => {
     if (distanceAlongPath !== 0) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      //@ts-ignore
       const line = turf.lineString(lines.flat());
 
       const segment = turf.along(line, distanceAlongPath, { units });
@@ -196,7 +203,7 @@ const Map = () => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const map = mapRef.current.getMap();
-      const center = map.transform._center;
+      const center: { lng: number; lat: number } = map.transform._center;
 
       // control map with arrow keys while focused
       if (e.keyCode === 9) {
@@ -209,7 +216,8 @@ const Map = () => {
         }
       } else if (e.keyCode === 32) {
         if (document.activeElement.className === 'mapboxgl-canvas') {
-          handleClick({ lngLat: [center.lng, center.lat] });
+          const lngLat: number[] = [center.lng, center.lat];
+          handleClick(lngLat);
         }
       } else if (e.keyCode === 38) {
         const newLat = calculateNewLngLat(center.lat, 40);
@@ -257,9 +265,10 @@ const Map = () => {
         width={'100%'}
         height={'100%'}
         style={{ display: 'flex', flex: '1' }}
-        onClick={handleClick}
+        onClick={({ lngLat }: PointerEvent) => handleClick(lngLat)}
         ref={mapRef}
         keyboard={false}
+        className="map"
         onViewportChange={({ latitude, longitude, zoom, bearing, pitch }) =>
           dispatch(
             updateViewport({ latitude, longitude, zoom, bearing, pitch })
@@ -280,9 +289,11 @@ const Map = () => {
             longitude={point[0]}
             latitude={point[1]}
             draggable
-            onDragStart={(event) => handleDragStart(event, i)}
-            onDrag={(event) => handleDrag(event, i)}
-            onDragEnd={(event) => handleDragEnd(event.lngLat, point, i)}
+            onDragStart={(event: DragEvent) => handleDragStart(event, i)}
+            onDrag={(event: DragEvent) => handleDrag(event, i)}
+            onDragEnd={(event: DragEvent) =>
+              handleDragEnd(event.lngLat, point, i)
+            }
           >
             <Pin index={i} points={points} />
           </Marker>

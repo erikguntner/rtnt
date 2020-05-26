@@ -23,7 +23,7 @@ describe('<ControlButton />', () => {
     const handleClick = jest.fn();
     const { getByTestId } = renderControlButton({ handleClick });
 
-    fireEvent.click(getByTestId('control-btn'));
+    fireEvent.click(getByTestId('control-btn-undo'));
     expect(handleClick).not.toHaveBeenCalled();
   });
 
@@ -33,8 +33,8 @@ describe('<ControlButton />', () => {
       handleClick,
       disabled: false,
     });
-    
-    fireEvent.click(getByTestId('control-btn'));
+
+    fireEvent.click(getByTestId('control-btn-undo'));
     expect(handleClick).toHaveBeenCalled();
   });
 });

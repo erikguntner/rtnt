@@ -44,6 +44,10 @@ const StyledButton = styled.button`
   &:focus {
     outline: none;
     box-shadow: ${(props) => props.theme.boxShadow.outline};
+
+    @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+      box-shadow: none;
+    }
   }
 `;
 
@@ -58,6 +62,10 @@ const StyledLink = styled.a`
   &:focus {
     outline: none;
     box-shadow: ${(props) => props.theme.boxShadow.outline};
+
+    @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+      box-shadow: none;
+    }
   }
 `;
 

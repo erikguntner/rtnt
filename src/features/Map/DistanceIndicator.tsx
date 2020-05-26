@@ -68,12 +68,15 @@ const DistanceIndicator: React.FC<Props> = ({
       <Display
         {...{ focused }}
         id="distance-indicator"
+        datatest-id="distance-indicator"
         tabIndex={0}
         onClick={handleClick}
       >
         <div>
           <span>{distance || 0}</span>
-          <span>{abbreviatedDistance(units)}</span>
+          <span datatest-id="distance-indicator-units">
+            {abbreviatedDistance(units)}
+          </span>
         </div>
         <p>click to change units</p>
       </Display>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { axisBottom, select, scalePoint, event, entries, easeBounce } from 'd3';
+import React, { useEffect, useRef } from 'react';
+import { axisBottom, select, scalePoint, entries } from 'd3';
 import styled from 'styled-components';
 import startOfYear from 'date-fns/startOfYear';
 import addWeeks from 'date-fns/addWeeks';
@@ -11,7 +11,6 @@ import isThisWeek from 'date-fns/isThisWeek';
 import { convertLength } from '@turf/helpers';
 
 import { Activity, ActivityData } from './ActivityLog';
-import ActivityPopUp from './ActivityPopUp';
 import useResizeObserver from '../Activity/useResizeObserver';
 import usePrevious from '../Activity/usePrevious';
 

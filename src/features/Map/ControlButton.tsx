@@ -63,7 +63,7 @@ const ControlButton: React.FC<Props> = ({
       disabled={disabled}
     >
       <InnerButton
-        data-testid={'control-btn'}
+        data-testid={`control-btn-${id}`}
         {...{ activeState, disabled, focused }}
         onClick={click}
       >

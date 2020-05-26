@@ -85,7 +85,7 @@ const ElevationProfile: React.FC<Props> = ({
       {lines.length > 0 ? (
         <svg ref={svgRef} className="line-chart" width="100%" height="100%" />
       ) : (
-        <Text>Create a line to see the elvation chart</Text>
+        <Text>Create a line to see the elevation chart</Text>
       )}
     </ChartContainer>
   );

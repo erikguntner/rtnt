@@ -8,6 +8,8 @@ interface ElevationData {
 
 const parseElevationData = (lines: number[][][]): ElevationData[] => {
   let totalDistance = 0;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // @ts-ignore
   const coords: number[][] = lines.flat();
   const result: ElevationData[] = [];
 
