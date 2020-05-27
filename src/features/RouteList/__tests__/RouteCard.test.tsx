@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent } from '../../../utils/test-utils';
+import { render } from '../../../utils/test-utils';
 import RouteCard, { Props } from '../RouteCard';
 
 const lines = [

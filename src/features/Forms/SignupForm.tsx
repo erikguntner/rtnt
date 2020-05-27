@@ -170,7 +170,11 @@ const SignupForm: React.FC<{}> = () => {
           </Row>
         </InputWrapper>
         <InputWrapper>
-          <SubmitButton type="submit" disabled={formik.isSubmitting}>
+          <SubmitButton
+            type="submit"
+            data-testid="submit-btn"
+            disabled={formik.isSubmitting}
+          >
             {formik.isSubmitting ? (
               <WithSpinner>
                 <div>Processing...</div>

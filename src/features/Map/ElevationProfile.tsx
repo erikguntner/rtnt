@@ -15,7 +15,7 @@ interface ElevationData {
   distance: number;
   elevation: number;
 }
-interface Props {
+export interface Props {
   showElevation?: boolean | null;
   lines: number[][][];
   units: string;
@@ -83,7 +83,13 @@ const ElevationProfile: React.FC<Props> = ({
       ref={containerRef}
     >
       {lines.length > 0 ? (
-        <svg ref={svgRef} className="line-chart" width="100%" height="100%" />
+        <svg
+          data-testid="elevation-profile"
+          ref={svgRef}
+          className="line-chart"
+          width="100%"
+          height="100%"
+        />
       ) : (
         <Text>Create a line to see the elevation chart</Text>
       )}

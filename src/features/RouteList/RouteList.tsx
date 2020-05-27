@@ -21,7 +21,7 @@ import {
 import RouteCard from './RouteCard';
 import MobileFilters from './MobileFilters';
 import CustomSelect from './CustomSelect';
-import Skeleton from '../Utilities/Skeleton';
+import CardSkeleton from './CardSkeleton';
 import Tag from '../Utilities/Tag';
 
 export interface RouteI {
@@ -52,25 +52,6 @@ export interface SelectOption {
   value: string;
   label: string;
 }
-
-const CardSkeleton = () => {
-  return (
-    <SkeletonWrapper>
-      <Skeleton height={'200px'} width={'100%'} />
-      <Skeleton height={'24px'} width={'150px'} />
-      <Skeleton width={'50px'} />
-    </SkeletonWrapper>
-  );
-};
-
-const SkeletonWrapper = styled.article`
-  height: 100%;
-  width: 100%;
-
-  div {
-    margin-bottom: 8px;
-  }
-`;
 
 export interface LabelProps {
   children: React.ReactElement;

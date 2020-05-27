@@ -150,7 +150,7 @@ const SignupForm: React.FC<{}> = () => {
           </Row>
         </InputWrapper>
         <InputWrapper>
-          <SubmitButton type="submit">
+          <SubmitButton data-testid="submit-btn" type="submit">
             {formik.isSubmitting ? (
               <WithSpinner>
                 <div>Processing...</div>
