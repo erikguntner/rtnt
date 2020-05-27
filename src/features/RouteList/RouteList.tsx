@@ -22,9 +22,10 @@ import RouteCard from './RouteCard';
 import MobileFilters from './MobileFilters';
 import CustomSelect from './CustomSelect';
 import CardSkeleton from './CardSkeleton';
+import Badges from './Badges';
 import Tag from '../Utilities/Tag';
 
-export interface RouteI {
+export interface Route {
   id: number;
   name: string;
   image: string;
@@ -69,32 +70,13 @@ const ValueLabelComponent = (props: LabelProps) => {
   );
 };
 
-const renderDistance = (
-  min: number,
-  max: number,
-  maxDistance: number,
-  units: string
-): string => {
-  const abbrevUnits = units === 'miles' ? 'mi' : 'km';
-
-  if (min === max) {
-    return `${min}${abbrevUnits}`;
-  } else if (min > 0 && max < maxDistance) {
-    return `${min}${abbrevUnits} - ${max}${abbrevUnits}`;
-  } else if (min > 0 && max === maxDistance) {
-    return `${min}${abbrevUnits} & greater`;
-  } else if (min === 0 && max < maxDistance) {
-    return `${max}${abbrevUnits} & less`;
-  }
-};
-
 const sortRoutes = (
   sortTerm: string,
-  routes: RouteI[],
+  routes: Route[],
   filters: FiltersTypes,
   maxDistance: number,
   units
-): RouteI[] => {
+): Route[] => {
   let result = routes;
   const { keyword, range } = filters;
 
@@ -200,41 +182,6 @@ const RouteList: React.FC<{}> = () => {
     dispatch(updateFilter({ filter, value }));
   };
 
-  const renderBadges = (filters: FiltersTypes, maxDistance: number) => {
-    return Object.keys(filters).map((filter) => {
-      if (filter === 'keyword' && filters.keyword) {
-        return (
-          <Badge key={filter} onClick={() => dispatch(removeFilter(filter))}>
-            Keyword: {filters.keyword} X
-          </Badge>
-        );
-      } else if (filter === 'range') {
-        const range = filters.range;
-        const min = Math.min(range[0], range[1]);
-        const max = Math.max(range[0], range[1]);
-
-        if (min > 0 || max < maxDistance) {
-          return (
-            <Badge key={filter} onClick={() => dispatch(removeFilter(filter))}>
-              Distance: {renderDistance(min, max, maxDistance, units)} X
-            </Badge>
-          );
-        }
-      } else if (
-        (filter === 'sports' && filters.sports.length > 0) ||
-        (filter === 'surfaces' && filters.surfaces.length > 0)
-      ) {
-        const title = filter === 'sports' ? 'Sports' : 'Surfaces';
-
-        return (
-          <Badge key={filter} onClick={() => dispatch(removeFilter(filter))}>
-            {title}: {filters[filter].map((item) => `${item} `)} X
-          </Badge>
-        );
-      }
-    });
-  };
-
   const handleSlide = (
     event: React.ChangeEvent<{}>,
     newValue: number[],
@@ -245,6 +192,9 @@ const RouteList: React.FC<{}> = () => {
 
     dispatch(updateFilter({ filter: 'range', value: newValue }));
   };
+
+  const handleClick = (filter: string) => dispatch(removeFilter(filter));
+
   const toggleTags = (filter: string, title: string, tags: string[]) => {
     let value;
 
@@ -268,14 +218,13 @@ const RouteList: React.FC<{}> = () => {
 
         if (response.ok) {
           const { routes, units } = await response.json();
-          console.log(routes);
           const maxDistance = calculateMaxDistance(routes, units);
           dispatch(addRoutes({ routes, maxDistance }));
         }
-        setLoading(false);
       } catch (error) {
-        setLoading(false);
+        console.log(error);
       }
+      setLoading(false);
     };
 
     fetchRoutes();
@@ -285,10 +234,13 @@ const RouteList: React.FC<{}> = () => {
     <>
       <Layout>
         <Header>
-          <Badges>
-            <p>{sortedRoutes.length} routes</p>
-            {renderBadges(filters, maxDistance)}
-          </Badges>
+          <Badges
+            filters={filters}
+            removeFilter={handleClick}
+            length={sortedRoutes.length}
+            units={units}
+            maxDistance={maxDistance}
+          />
           <SelectContainer>
             <CustomSelect {...{ sortingTerm, handleSelect }} />
           </SelectContainer>
@@ -324,12 +276,6 @@ const RouteList: React.FC<{}> = () => {
                 />
               </InputGroup>
             </FilterGroup>
-            {/* <FilterGroup>
-              <Label>Distance</Label>
-              <InputGroup>
-                <CustomSlider {...{ max: maxDistance, handleCustomSlide }} />
-              </InputGroup>
-            </FilterGroup> */}
             <FilterGroup>
               <Label>Sports</Label>
               <TagsWrapper>
@@ -371,7 +317,7 @@ const RouteList: React.FC<{}> = () => {
             ) : (
               <>
                 {sortedRoutes.map(
-                  ({ id, name, image, lines, sports, surfaces }) => (
+                  ({ id, name, image, lines, sports, distance, surfaces }) => (
                     <RouteCard
                       key={id}
                       {...{
@@ -454,46 +400,6 @@ const FilterButton = styled.button`
     cursor: pointer;
     border: 1px solid ${(props) => props.theme.colors.gray[900]};
     box-shadow: ${(props) => props.theme.boxShadow.md};
-  }
-`;
-
-const Badges = styled.div`
-  display: flex;
-  flex: 1;
-  overflow: scroll;
-  height: min-content;
-  align-items: center;
-
-  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
-    display: none;
-  }
-
-  & > p {
-    margin-right: 1rem;
-    font-size: 1.4rem;
-    font-style: italic;
-    white-space: nowrap;
-  }
-
-  & > div:not(:last-child) {
-    margin-right: 6px;
-  }
-`;
-
-const Badge = styled.div`
-  padding: 6px 8px;
-  font-size: 1.2rem;
-  border-radius: 2px;
-  color: ${(props) => props.theme.colors.teal[800]};
-  background-color: ${(props) => props.theme.colors.teal[100]};
-  white-space: nowrap;
-
-  @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
-    font-size: 1rem;
-  }
-
-  &:hover {
-    cursor: pointer;
   }
 `;
 
