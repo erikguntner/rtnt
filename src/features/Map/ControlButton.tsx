@@ -9,6 +9,7 @@ export interface Props {
   icon: IconDefinition;
   tooltip: string;
   activeState?: boolean;
+  rotate?: number;
   id: string;
 }
 
@@ -18,6 +19,7 @@ const ControlButton: React.FC<Props> = ({
   icon,
   tooltip,
   activeState = false,
+  rotate = 0,
   id,
 }) => {
   const [focused, setFocused] = useState<boolean>(false);
@@ -59,12 +61,12 @@ const ControlButton: React.FC<Props> = ({
     <Button
       ref={btnRef}
       id={id}
-      {...{ activeState, disabled, focused }}
+      {...{ activeState, disabled, focused, rotate }}
       disabled={disabled}
     >
       <InnerButton
         data-testid={`control-btn-${id}`}
-        {...{ activeState, disabled, focused }}
+        {...{ activeState, disabled, focused, rotate }}
         onClick={click}
       >
         <FontAwesomeIcon icon={icon} />
@@ -78,6 +80,7 @@ interface ButtonProps {
   focused: boolean;
   activeState: boolean;
   disabled: boolean;
+  rotate: number;
 }
 
 const Button = styled.button<ButtonProps>`
@@ -167,6 +170,10 @@ const InnerButton = styled.div<ButtonProps>`
       opacity: 1;
       transform: translate3d(10%, 133%, 0);
     }
+  }
+
+  & svg {
+    transform: ${({ rotate }) => `rotate(${rotate}deg)`};
   }
 
   &Active {

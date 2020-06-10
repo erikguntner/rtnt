@@ -9,13 +9,14 @@ import {
   faMountain,
   faSave,
   faFileDownload,
+  faLevelUpAlt,
 } from '@fortawesome/free-solid-svg-icons';
 
 import ControlButton from './ControlButton';
 import SaveRouteModal from './SaveRouteModal';
 
 import { RootState } from '../../reducers/rootReducer';
-import { clearRoute } from './routeSlice';
+import { clearRoute, outAndBack } from './routeSlice';
 import { downloadGpxFile } from '../../utils/downloadGpxFile';
 
 interface Props {
@@ -55,6 +56,27 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
       ? true
       : false;
 
+  const handleOutAndBack = (points, lines) => {
+    const reversedPoints = points.slice(0, -1).reduce((accum, curr) => {
+      accum.unshift(curr);
+      return accum;
+    }, []);
+
+    const reversedLines = lines
+      .reduce((accum, curr) => {
+        accum.unshift(curr);
+        return accum;
+      }, [])
+      .map((line) =>
+        line.reduce((accum, curr) => {
+          accum.unshift(curr);
+          return accum;
+        }, [])
+      );
+
+    dispatch(outAndBack({ reversedPoints, reversedLines }));
+  };
+
   return (
     <ControlsContainer>
       <ControlButton
@@ -77,6 +99,14 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
         icon={faTimes}
         tooltip={'clear route'}
         id={'clear'}
+      />
+      <ControlButton
+        disabled={!lines.length}
+        handleClick={() => handleOutAndBack(points, lines)}
+        icon={faLevelUpAlt}
+        rotate={-90}
+        tooltip={'out and back'}
+        id={'out-and-back'}
       />
       <ControlButton
         handleClick={() => setShowElevation(!showElevation)}

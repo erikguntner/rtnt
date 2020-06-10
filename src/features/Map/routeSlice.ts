@@ -97,6 +97,11 @@ const { actions, reducer } = createSlice({
       state.lines.push(coordinates);
       state.distance += distance;
     },
+    outAndBack: (state, action: PayloadAction<{ reversedPoints: number[][]; reversedLines: number[][][] }>) => {
+      state.points = state.points.concat(action.payload.reversedPoints);
+      state.lines = state.lines.concat(action.payload.reversedLines);
+      state.distance = state.distance * 2;
+    },
     updatePointCoords: (state, action: PayloadAction<{ index: number; coords: number[] }>) => {
       const { index, coords } = action.payload;
       state.points[index] = coords;
@@ -140,6 +145,7 @@ export const {
   removeLastPoint,
   setRoute,
   addRoutingInfo,
+  outAndBack,
   updatePointCoords,
   updateStartAfterDrag,
   updateRouteAfterDragSuccess,
