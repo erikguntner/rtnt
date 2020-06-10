@@ -10,6 +10,7 @@ import {
   faSave,
   faFileDownload,
   faLevelUpAlt,
+  faExpandArrowsAlt,
 } from '@fortawesome/free-solid-svg-icons';
 
 import ControlButton from './ControlButton';
@@ -17,7 +18,9 @@ import SaveRouteModal from './SaveRouteModal';
 
 import { RootState } from '../../reducers/rootReducer';
 import { clearRoute, outAndBack } from './routeSlice';
+import { updateViewport } from './viewportSlice';
 import { downloadGpxFile } from '../../utils/downloadGpxFile';
+import { getViewport } from '../../utils/getViewport';
 
 interface Props {
   clipPath: boolean;
@@ -77,6 +80,17 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
     dispatch(outAndBack({ reversedPoints, reversedLines }));
   };
 
+  const fitToViewport = (lines) => {
+    const height = window.innerHeight;
+    const width = window.innerWidth;
+    const { latitude, longitude, zoom, bearing, pitch } = getViewport(
+      width,
+      height,
+      lines
+    );
+    dispatch(updateViewport({ latitude, longitude, zoom, bearing, pitch }));
+  };
+
   return (
     <ControlsContainer>
       <ControlButton
@@ -109,6 +123,13 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
         id={'out-and-back'}
       />
       <ControlButton
+        disabled={points.length < 2}
+        handleClick={() => fitToViewport(lines)}
+        icon={faExpandArrowsAlt}
+        tooltip={'fit to screen'}
+        id={'fit'}
+      />
+      <ControlButton
         handleClick={() => setShowElevation(!showElevation)}
         icon={faMountain}
         activeState={showElevation}
@@ -129,25 +150,6 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
         tooltip={'export as gpx'}
         id={'gpx'}
       />
-      {/* <ControlButton
-        handleClick={() =>
-          dispatch(
-            changeNotificationStatus({
-              isVisible: true,
-              type: 'success',
-              message: 'this is a message',
-            })
-          )
-        }
-        icon={faRoute}
-        tooltip={'clip path'}
-      /> */}
-      {/* <ControlButton
-        click={() => changeToClipPath(false)}
-        icon={faDrawPolygon}
-        activeState={!clipPath}
-        tooltip={'linear'}
-      /> */}
       <SaveRouteModal {...{ open, setOpen, saving, setSaving }} />
     </ControlsContainer>
   );

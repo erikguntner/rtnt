@@ -3,10 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Router from 'next/router';
 import ReactMapGL, { Marker } from 'react-map-gl';
 import * as turf from '@turf/turf';
-import * as turfHelpers from '@turf/helpers';
-import WebMercatorViewport from 'viewport-mercator-project';
 
-import bbox from '@turf/bbox';
 import styled from 'styled-components';
 import fetch from 'isomorphic-unfetch';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -22,6 +19,7 @@ import {
   abbreviatedDistance,
 } from '../../utils/calculateDistance';
 import { downloadGpxFile } from '../../utils/downloadGpxFile';
+import { getViewport } from '../../utils/getViewport';
 import PopOut from '../Utilities/PopOut';
 import { setRoute } from '../Map/routeSlice';
 import { updateViewport } from '../Map/viewportSlice';
@@ -72,30 +70,6 @@ const deleteRoute = async (id: number, image: string) => {
   } catch (err) {
     console.log('send notification of error', err);
   }
-};
-
-const getViewport = (
-  height: number,
-  width: number,
-  lines: number[][][],
-  padding = 20
-) => {
-  const geoJson = turfHelpers.multiLineString(lines);
-  const bBox = bbox(geoJson);
-  const viewport = new WebMercatorViewport({
-    width,
-    height,
-  }).fitBounds(
-    [
-      [bBox[0], bBox[1]],
-      [bBox[2], bBox[3]],
-    ],
-    {
-      padding,
-    }
-  );
-
-  return viewport;
 };
 
 const RoutePage: React.FC<{ data: Route }> = ({ data }) => {
