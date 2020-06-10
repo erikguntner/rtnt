@@ -22,6 +22,7 @@ import API_URL from '../src/utils/url';
 
 config.autoAddCss = false;
 
+// NProgress events
 let NProgress;
 let start;
 
@@ -40,6 +41,7 @@ Router.events.on('routeChangeError', () => {
   NProgress.done();
 });
 
+// LogRocket
 if (process.env.NODE_ENV === 'development') {
   LogRocket.init('hhtrbz/run-tracker');
 } else {

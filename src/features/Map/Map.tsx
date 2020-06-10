@@ -283,6 +283,7 @@ const Map = () => {
         )}
         {isDragging && <ConnectingLines points={points} index={index} />}
         <SvgPath points={lines} />
+        <DistanceMarkers {...{ lines, units }} />
         {points.map((point, i) => (
           <Marker
             key={i}
@@ -298,7 +299,6 @@ const Map = () => {
             <Pin index={i} points={points} />
           </Marker>
         ))}
-        <DistanceMarkers {...{ lines, units }} />
         {pointAlongPath.length ? (
           <Marker longitude={pointAlongPath[0]} latitude={pointAlongPath[1]}>
             <Label>{distanceAlongPath.toFixed(2)}</Label>

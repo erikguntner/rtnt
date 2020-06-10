@@ -218,6 +218,7 @@ const RouteList: React.FC<{}> = () => {
 
         if (response.ok) {
           const { routes, units } = await response.json();
+          console.log(routes);
           const maxDistance = calculateMaxDistance(routes, units);
           dispatch(addRoutes({ routes, maxDistance }));
         }
