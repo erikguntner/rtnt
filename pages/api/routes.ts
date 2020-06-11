@@ -20,7 +20,7 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   if (req.method === 'GET') {
     try {
       const { id, units } = req.user;
-      const results = await query('select * from routes where user_id = $1', [
+      const results = await query('select id, name, image, lines, distance, created_at, sports, surfaces from routes where user_id = $1', [
         id,
       ]);
 

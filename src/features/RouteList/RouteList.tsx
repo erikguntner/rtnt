@@ -34,7 +34,7 @@ export interface Route {
   start_point: number[];
   end_point: number[];
   points: number[][];
-  distance: number;
+  distance: string;
   created_at: string;
   sports: string[];
   surfaces: string[];
@@ -90,7 +90,7 @@ const sortRoutes = (
     const min = Math.min(range[0], range[1]);
     const max = Math.max(range[0], range[1]);
     const convertedDistance = turfHelpers
-      .convertLength(distance, 'meters', units)
+      .convertLength(parseFloat(distance), 'meters', units)
       .toFixed(1);
 
     return (
@@ -133,9 +133,13 @@ const sortRoutes = (
         compareAsc(new Date(a.created_at), new Date(b.created_at))
       );
     case 'shortest':
-      return result.sort((a, b) => a.distance - b.distance);
+      return result.sort(
+        (a, b) => parseFloat(a.distance) - parseFloat(b.distance)
+      );
     case 'longest':
-      return result.sort((a, b) => b.distance - a.distance);
+      return result.sort(
+        (a, b) => parseFloat(b.distance) - parseFloat(a.distance)
+      );
     default:
       return result;
   }
@@ -218,7 +222,7 @@ const RouteList: React.FC<{}> = () => {
 
         if (response.ok) {
           const { routes, units } = await response.json();
-          console.log(routes);
+
           const maxDistance = calculateMaxDistance(routes, units);
           dispatch(addRoutes({ routes, maxDistance }));
         }
@@ -318,14 +322,14 @@ const RouteList: React.FC<{}> = () => {
             ) : (
               <>
                 {sortedRoutes.map(
-                  ({ id, name, image, lines, sports, distance, surfaces }) => (
+                  ({ id, name, image, distance, sports, surfaces }) => (
                     <RouteCard
                       key={id}
                       {...{
                         id,
                         name,
                         image,
-                        lines,
+                        distance,
                         units,
                         sports,
                         surfaces,

@@ -375,6 +375,10 @@ const ElevationWrapper = styled.div`
   right: 0;
   height: 35vh;
   width: 100%;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    height: 25vh;
+  }
 `;
 
 export default connect((state) => state)(Map);

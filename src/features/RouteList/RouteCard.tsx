@@ -1,18 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
+import { convertLength } from '@turf/helpers';
 
-import {
-  calculateDistance,
-  abbreviatedDistance,
-} from '../../utils/calculateDistance';
+import { abbreviatedDistance } from '../../utils/calculateDistance';
 import { icons } from '../Utilities/Tag';
 
 export interface Props {
   id: number;
   name: string;
   image: string;
-  lines: number[][][];
+  distance: string;
   units: 'miles' | 'kilometers';
   sports: string[];
   surfaces: string[];
@@ -23,11 +21,17 @@ const RouteCard: React.FC<Props> = ({
   id,
   name,
   image,
-  lines,
+  distance,
   units,
   sports,
   surfaces,
 }) => {
+  const convertedDistance = convertLength(
+    parseFloat(distance),
+    'meters',
+    units
+  ).toFixed(1);
+
   return (
     <Card>
       <ImageFigure>
@@ -37,7 +41,7 @@ const RouteCard: React.FC<Props> = ({
         <Row>
           <Name>{name}</Name>
           <Distance>
-            <span>{calculateDistance(lines, units)}</span>
+            <span>{convertedDistance}</span>
             <span>{abbreviatedDistance(units)}</span>
           </Distance>
         </Row>

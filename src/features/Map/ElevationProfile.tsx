@@ -105,6 +105,10 @@ const Text = styled.p`
   align-items: center;
   font-size: 2.4rem;
   color: ${(props) => props.theme.colors.gray[600]};
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    font-size: 1.8rem;
+  }
 `;
 
 const ChartContainer = styled.div`

@@ -59,7 +59,7 @@ const TagButton = styled.button<{ selected: boolean }>`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: 'transparent';
+  background: transparent;
   border: ${({ selected }) => (selected ? '1px solid #0070f3' : 'none')};
   color: ${({ selected }) => (selected ? '#0070f3' : 'black')};
   height: 5.2rem;

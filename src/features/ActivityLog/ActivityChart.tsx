@@ -39,7 +39,14 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
   useEffect(() => {
     if (dimensions === null) return;
     // constants
-    const margin = { top: 20, right: 1, bottom: 20, left: 0 };
+    const rightMargin = window.innerWidth < 768 ? 24 : 1;
+    const leftMargin = window.innerWidth < 768 ? 24 : 0;
+    const margin = {
+      top: 20,
+      right: rightMargin,
+      bottom: 20,
+      left: leftMargin,
+    };
     const height = dimensions.height;
     const width = dimensions.width;
     const innerWidth = width - margin.left - margin.right;
@@ -90,7 +97,10 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
 
     const xAxis = axisBottom(xScale).ticks(daysOfWeek.length);
 
-    svg.select('.x-axis').style('transform', 'translateY(150px)').call(xAxis);
+    svg
+      .select('.x-axis')
+      .style('transform', `translate(${leftMargin}px, 150px)`)
+      .call(xAxis);
 
     // create day of pointer
     if (isThisWeek(startDate, { weekStartsOn: 1 })) {
@@ -124,7 +134,8 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
       .attr('class', 'day')
       .attr(
         'transform',
-        ({ key }) => `translate(${xScale(key)} ${innerHeight - 10})`
+        ({ key }) =>
+          `translate(${xScale(key) + leftMargin} ${innerHeight - 10})`
       )
       .attr('width', xScale.bandwidth());
 

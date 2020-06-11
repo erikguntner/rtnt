@@ -204,6 +204,7 @@ const Tooltip = styled.span`
   left: 0;
   opacity: 0;
   width: 80%;
+  padding: 0 8px;
   height: 2.5rem;
   margin-top: 1rem;
   background-color: #333;
@@ -211,19 +212,21 @@ const Tooltip = styled.span`
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05), 0 1px 2rem rgba(0, 0, 0, 0.04);
   color: #fff;
   font-size: 1.2rem;
-  transform: translate3d(10%, 100%, 0);
+  transform: translate3d(50%, 100%, 0);
   transition: all 0.2s ease;
 
-  /* &::before {
+  &::before {
     content: '';
-    width: 0;
-    height: 0;
-    margin-right: -1rem;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-bottom: 5px solid #333;
-    transform: translate(2rem, -350%);
-  } */
+    position: absolute;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 6px solid #333;
+    top: -6px;
+    left: 87px;
+    z-index: 1090;
+    left: 50%;
+    transform: translate3d(-50%, 10%, 0);
+  }
 `;
 
 export default ControlButton;
