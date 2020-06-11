@@ -129,9 +129,8 @@ const Distance = styled.p`
 const Icons = styled.div`
   display: flex;
   font-size: 1.4rem;
-  color: ${(props) => props.theme.colors.primary};
 
-  & > svg {
+  & > div {
     &:not(:last-of-type) {
       margin-right: 1rem;
     }
