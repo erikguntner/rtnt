@@ -83,9 +83,10 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
   const fitToViewport = (lines) => {
     const height = window.innerHeight;
     const width = window.innerWidth;
+    console.log(height, width);
     const { latitude, longitude, zoom, bearing, pitch } = getViewport(
-      width,
       height,
+      width,
       lines
     );
     dispatch(updateViewport({ latitude, longitude, zoom, bearing, pitch }));
