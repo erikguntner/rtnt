@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '../../../utils/test-utils';
+import { render } from '../../../utils/test/test-utils';
 import RouteCard, { Props } from '../RouteCard';
 
 const lines = [
@@ -33,8 +33,8 @@ function renderRouteCard(props: Partial<Props> = {}) {
     id: 1,
     name: 'asdf',
     image: 'asdfasdf',
-    lines,
     units: 'miles',
+    distance: '4000.45',
     sports: ['run'],
     surfaces: ['paved'],
   };

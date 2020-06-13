@@ -4,7 +4,7 @@ import {
   exampleRoute,
   render,
   waitForDomChange,
-} from '../../../utils/test-utils';
+} from '../../../utils/test/test-utils';
 
 function renderElevationProfile(props: Partial<Props> = {}) {
   const defaultProps: Props = {

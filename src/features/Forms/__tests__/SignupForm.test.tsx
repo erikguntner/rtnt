@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, cleanup, waitFor } from '../../../utils/test-utils';
+import { render, fireEvent, cleanup, waitFor } from '../../../utils/test/test-utils';
 import SignupForm from '../SignupForm';
 
 import { configStore } from '../../../reducers/store';

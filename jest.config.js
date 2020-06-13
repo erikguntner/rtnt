@@ -9,6 +9,7 @@ module.exports = {
   setupFilesAfterEnv: [
     '@testing-library/jest-dom/extend-expect',
     'jest-styled-components',
+    './src/utils/test/setupTests.ts',
   ],
   testPathIgnorePatterns: ['./.next/', './node_modules/'],
   globals: {

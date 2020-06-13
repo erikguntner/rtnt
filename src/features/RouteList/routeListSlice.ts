@@ -1,5 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Route } from './RouteList';
+import { AppThunk } from '../../reducers/store';
+import API_URL from '../../utils/url';
+import { convertLength } from '@turf/helpers';
+
 
 interface Filters {
   keyword: string;
@@ -13,6 +17,7 @@ interface State {
   maxDistance: number;
   sortingTerm: string;
   filters: Filters;
+  loading: boolean;
 }
 
 export const initialState: State = {
@@ -24,7 +29,8 @@ export const initialState: State = {
     range: [0, 0],
     sports: [],
     surfaces: [],
-  }
+  },
+  loading: false
 };
 
 const { actions, reducer } = createSlice({
@@ -60,10 +66,39 @@ const { actions, reducer } = createSlice({
     },
     clearState: (state) => {
       state = initialState;
+    },
+    changeLoadingState: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
     }
   },
 });
 
-export const { addRoutes, updateSortingTerm, updateFilter, removeFilter, clearState, updateMaxDistance } = actions;
+export const { addRoutes, updateSortingTerm, updateFilter, removeFilter, clearState, updateMaxDistance, changeLoadingState } = actions;
+
+const calculateMaxDistance = (routes, units) => {
+  const distance = routes.reduce((accum, curr) => {
+    return Math.max(accum, curr.distance);
+  }, 0);
+  return Math.ceil(convertLength(distance, 'meters', units));
+};
+
+export const getRoutes = (): AppThunk => async dispatch => {
+  dispatch(changeLoadingState(true));
+  try {
+    const response = await fetch(`${API_URL}/api/routes`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+
+    const { routes, units } = await response.json();
+
+    const maxDistance = calculateMaxDistance(routes, units);
+    dispatch(addRoutes({ routes, maxDistance }));
+
+    dispatch(changeLoadingState(false));
+  } catch (e) {
+    dispatch(changeLoadingState(false));
+  }
+};
 
 export default reducer;

@@ -94,6 +94,7 @@
     "babel-plugin-styled-components": "^1.10.6",
     "jest": "^25.5.2",
     "jest-styled-components": "^7.0.2",
+    "msw": "^0.19.1",
     "puppeteer": "^2.1.1",
     "react-test-renderer": "^16.13.1",
     "resize-observer-polyfill": "^1.5.1",

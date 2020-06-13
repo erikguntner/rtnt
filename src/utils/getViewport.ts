@@ -8,8 +8,6 @@ export const getViewport = (
   lines: number[][][],
   padding = 20
 ) => {
-  console.log(height, width);
-
   const geoJson = turfHelpers.multiLineString(lines);
   const bBox = bbox(geoJson);
   const viewport = new WebMercatorViewport({

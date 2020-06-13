@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
-import { theme } from './theme';
+import { theme } from '../theme';
 
 const WithAllProviders = ({ children }: { children: React.ReactElement }) => {
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;

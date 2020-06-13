@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent } from '../../../utils/test-utils';
+import { render, fireEvent } from '../../../utils/test/test-utils';
 import ControlButton, { Props } from '../ControlButton';
 import { faUndoAlt } from '@fortawesome/free-solid-svg-icons';
 

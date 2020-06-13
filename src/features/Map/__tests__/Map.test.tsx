@@ -1,6 +1,6 @@
 import React from 'react';
 import Map from '../Map';
-import { render, fireEvent, waitFor } from '../../../utils/test-utils';
+import { render, fireEvent, waitFor } from '../../../utils/test/test-utils';
 import { configStore } from '../../../reducers/store';
 import { Provider } from 'react-redux';
 

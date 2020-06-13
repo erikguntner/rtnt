@@ -9,14 +9,13 @@ import Slider from '@material-ui/core/Slider';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import { RootState } from '../../reducers/rootReducer';
-import API_URL from '../../utils/url';
-import { addRoutes } from './routeListSlice';
 import { sportsArr, surfacesArr } from '../Utilities/Tag';
 
 import {
   updateSortingTerm,
   updateFilter,
   removeFilter,
+  getRoutes,
 } from './routeListSlice';
 import RouteCard from './RouteCard';
 import MobileFilters from './MobileFilters';
@@ -145,38 +144,37 @@ const sortRoutes = (
   }
 };
 
-const calculateMaxDistance = (routes, units) => {
-  const distance = routes.reduce((accum, curr) => {
-    return Math.max(accum, curr.distance);
-  }, 0);
-  return Math.ceil(turfHelpers.convertLength(distance, 'meters', units));
-};
-
 const RouteList: React.FC<{}> = () => {
   const {
     sortedRoutes,
     maxDistance,
     sortingTerm,
     filters,
+    loading,
     user: { units },
-  } = useSelector((state: RootState) => ({
-    sortedRoutes: sortRoutes(
-      state.routeList.sortingTerm,
-      [...state.routeList.routes],
-      state.routeList.filters,
-      state.routeList.maxDistance,
-      state.auth.user.units
-    ),
-    routes: state.routeList.routes,
-    maxDistance: state.routeList.maxDistance,
-    sortingTerm: state.routeList.sortingTerm,
-    filters: state.routeList.filters,
-    user: state.auth.user,
-  }));
+  } = useSelector(
+    ({
+      routeList: { routes, sortingTerm, filters, maxDistance, loading },
+      auth,
+    }: RootState) => ({
+      sortedRoutes: sortRoutes(
+        sortingTerm,
+        [...routes],
+        filters,
+        maxDistance,
+        auth.user.units
+      ),
+      routes,
+      maxDistance,
+      sortingTerm,
+      filters,
+      loading,
+      user: auth.user,
+    })
+  );
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSelect = (selectedOption: SelectOption) => {
     dispatch(updateSortingTerm(selectedOption.value));
@@ -212,27 +210,7 @@ const RouteList: React.FC<{}> = () => {
   };
 
   useEffect(() => {
-    const fetchRoutes = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`${API_URL}/api/routes`, {
-          method: 'GET',
-          credentials: 'include',
-        });
-
-        if (response.ok) {
-          const { routes, units } = await response.json();
-
-          const maxDistance = calculateMaxDistance(routes, units);
-          dispatch(addRoutes({ routes, maxDistance }));
-        }
-      } catch (error) {
-        console.log(error);
-      }
-      setLoading(false);
-    };
-
-    fetchRoutes();
+    dispatch(getRoutes());
   }, []);
 
   return (
@@ -321,7 +299,9 @@ const RouteList: React.FC<{}> = () => {
               </>
             ) : (
               <>
-                {sortedRoutes.map(
+              {
+                sortedRoutes.length ? (
+                sortedRoutes.map(
                   ({ id, name, image, distance, sports, surfaces }) => (
                     <RouteCard
                       key={id}
@@ -336,7 +316,12 @@ const RouteList: React.FC<{}> = () => {
                       }}
                     />
                   )
-                )}
+                )
+              ) : (
+                <h2>
+                  No Routes
+                </h2>
+              )}
               </>
             )}
           </RouteGrid>

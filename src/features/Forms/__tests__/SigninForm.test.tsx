@@ -5,7 +5,7 @@ import {
   cleanup,
   waitFor,
   act,
-} from '../../../utils/test-utils';
+} from '../../../utils/test/test-utils';
 import SigninForm from '../SigninForm';
 
 import { configStore } from '../../../reducers/store';
