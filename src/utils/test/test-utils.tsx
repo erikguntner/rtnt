@@ -1,16 +1,31 @@
 import React from 'react';
+import { configureStore } from '@reduxjs/toolkit';
 import { render, RenderOptions } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 import { theme } from '../theme';
-
-const WithAllProviders = ({ children }: { children: React.ReactElement }) => {
-  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
-};
+import rootReducer from '../../reducers/rootReducer';
+import { Provider } from 'react-redux';
 
 const customRender = (
   ui: React.ReactElement,
+  preloadedState = {},
   options?: Omit<RenderOptions, 'queries'>
-) => render(ui, { wrapper: WithAllProviders, ...options });
+) => {
+  const WithAllProviders = ({ children }: { children: React.ReactElement }) => {
+    const configStore = configureStore({
+      reducer: rootReducer,
+      preloadedState,
+    });
+
+    return (
+      <ThemeProvider theme={theme}>
+        <Provider store={configStore}>{children}</Provider>
+      </ThemeProvider>
+    );
+  };
+
+  return render(ui, { wrapper: WithAllProviders, ...options });
+};
 
 // re-export everything
 export * from '@testing-library/react';

@@ -1,16 +1,31 @@
 import React from 'react';
 import Map from '../Map';
 import { render, fireEvent, waitFor } from '../../../utils/test/test-utils';
-import { configStore } from '../../../reducers/store';
-import { Provider } from 'react-redux';
+import WebMercatorViewport from 'viewport-mercator-project';
+import { _MapContext as MapContext } from 'react-map-gl';
+import userEvent from '@testing-library/user-event';
+
+const mockStaticContext = {
+  viewport: new WebMercatorViewport({
+    width: 800,
+    height: 600,
+    latitude: -37.81482,
+    longitude: 144.96679,
+    zoom: 14,
+  }),
+};
 
 function renderMap(props: Partial<{}> = {}) {
   const defaultProps = {};
 
   return render(
-    <Provider store={configStore}>
+    <MapContext.Provider
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      //@ts-ignore
+      value={mockStaticContext}
+    >
       <Map {...defaultProps} {...props} />
-    </Provider>
+    </MapContext.Provider>
   );
 }
 
@@ -36,23 +51,23 @@ describe('<Map />', () => {
     const { getByText } = renderMap();
     const distanceIndicator = getByText('click to change units');
 
-    fireEvent.click(distanceIndicator);
+    userEvent.click(distanceIndicator);
     await waitFor(() => getByText('km'));
 
-    fireEvent.click(distanceIndicator);
+    userEvent.click(distanceIndicator);
     await waitFor(() => getByText('mi'));
   });
 
   test('clicking on elevation button toggles elevation chart', async () => {
-    const { getByTestId, getByText, queryByText, debug } = renderMap();
+    const { getByTestId, getByText, queryByText } = renderMap();
     const elevationToggle = getByTestId('control-btn-elevation');
 
-    fireEvent.click(elevationToggle);
+    userEvent.click(elevationToggle);
     expect(
       getByText('Create a line to see the elevation chart')
     ).toBeInTheDocument();
 
-    fireEvent.click(elevationToggle);
+    userEvent.click(elevationToggle);
     expect(
       queryByText('Create a line to see the elevation chart')
     ).not.toBeInTheDocument();

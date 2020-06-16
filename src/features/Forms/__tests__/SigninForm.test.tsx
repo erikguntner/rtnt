@@ -4,19 +4,11 @@ import {
   fireEvent,
   cleanup,
   waitFor,
-  act,
 } from '../../../utils/test/test-utils';
 import SigninForm from '../SigninForm';
 
-import { configStore } from '../../../reducers/store';
-import { Provider } from 'react-redux';
-
 function renderSinginForm(props: Partial<{}> = {}) {
-  return render(
-    <Provider store={configStore}>
-      <SigninForm {...props} />
-    </Provider>
-  );
+  return render(<SigninForm {...props} />);
 }
 
 afterEach(cleanup);

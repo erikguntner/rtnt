@@ -33,13 +33,13 @@ const RouteCard: React.FC<Props> = ({
   ).toFixed(1);
 
   return (
-    <Card>
+    <Card data-testid={`route-card-${id}`}>
       <ImageFigure>
         <img src={image} alt="map" />
       </ImageFigure>
       <Content>
         <Row>
-          <Name>{name}</Name>
+          <Name data-testid="route-card-title">{name}</Name>
           <Distance>
             <span>{convertedDistance}</span>
             <span>{abbreviatedDistance(units)}</span>

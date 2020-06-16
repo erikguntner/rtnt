@@ -238,6 +238,7 @@ const RouteList: React.FC<{}> = () => {
                 <InputWithIcon
                   onChange={(e) => handleChange('keyword', e.target.value)}
                   value={filters.keyword}
+                  name="keyword"
                   type="text"
                   placeholder="Filter by keyword"
                 />
@@ -299,29 +300,26 @@ const RouteList: React.FC<{}> = () => {
               </>
             ) : (
               <>
-              {
-                sortedRoutes.length ? (
-                sortedRoutes.map(
-                  ({ id, name, image, distance, sports, surfaces }) => (
-                    <RouteCard
-                      key={id}
-                      {...{
-                        id,
-                        name,
-                        image,
-                        distance,
-                        units,
-                        sports,
-                        surfaces,
-                      }}
-                    />
+                {sortedRoutes.length ? (
+                  sortedRoutes.map(
+                    ({ id, name, image, distance, sports, surfaces }) => (
+                      <RouteCard
+                        key={id}
+                        {...{
+                          id,
+                          name,
+                          image,
+                          distance,
+                          units,
+                          sports,
+                          surfaces,
+                        }}
+                      />
+                    )
                   )
-                )
-              ) : (
-                <h2>
-                  No Routes
-                </h2>
-              )}
+                ) : (
+                  <h2>No Routes</h2>
+                )}
               </>
             )}
           </RouteGrid>

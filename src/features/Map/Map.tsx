@@ -269,6 +269,7 @@ const Map = () => {
         ref={mapRef}
         keyboard={false}
         className="map"
+        data-testid="map-id"
         onViewportChange={({ latitude, longitude, zoom, bearing, pitch }) =>
           dispatch(
             updateViewport({ latitude, longitude, zoom, bearing, pitch })

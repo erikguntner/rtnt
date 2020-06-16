@@ -1,16 +1,14 @@
 import React from 'react';
-import { render, fireEvent, cleanup, waitFor } from '../../../utils/test/test-utils';
+import {
+  render,
+  fireEvent,
+  cleanup,
+  waitFor,
+} from '../../../utils/test/test-utils';
 import SignupForm from '../SignupForm';
 
-import { configStore } from '../../../reducers/store';
-import { Provider } from 'react-redux';
-
 function renderSignupForm(props: Partial<{}> = {}) {
-  return render(
-    <Provider store={configStore}>
-      <SignupForm {...props} />
-    </Provider>
-  );
+  return render(<SignupForm {...props} />);
 }
 
 afterEach(cleanup);
