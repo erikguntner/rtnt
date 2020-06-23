@@ -9,6 +9,15 @@ interface Props {
 }
 
 const Modal: React.FC<Props> = ({ children, toggle, open }) => {
+
+  React.useEffect(() => {
+    window.addEventListener('scroll', () => {
+      if(open) {
+        return;
+      }
+    })
+  }, [open])
+
   return (
     <Portal selector={'#portal'}>
       {open && (

@@ -97,6 +97,7 @@ export const getRoutes = (): AppThunk => async dispatch => {
 
     dispatch(changeLoadingState(false));
   } catch (e) {
+    console.log(e);
     dispatch(changeLoadingState(false));
   }
 };

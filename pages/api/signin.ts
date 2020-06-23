@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import query from '../../server/db';
 import firebaseAdmin from '../../src/utils/firebase/admin';
 import firebase from '../../src/utils/firebase/client';
+import { serialize } from 'cookie';
 
 interface User {
   email: string;
@@ -48,6 +49,8 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // sigin in order to generate id token
     try {
+      await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
+
       const { user } = await firebase
         .auth()
         .signInWithEmailAndPassword(email, password);
@@ -67,7 +70,7 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // Set session expiration to 30 days or 1.
-    const expiresIn = rememberMe ? 60 * 60 * 24 * 14 * 1000 : 60 * 60 * 24 * 1 * 1000;
+    const expiresIn = rememberMe ? 60 * 60 * 24 * 5 * 1000 : 60 * 60 * 24 * 1 * 1000;
 
     const token = await firebaseAdmin
       .auth()

@@ -1,13 +1,7 @@
 import React from 'react';
 import { server, rest } from '../../../utils/test/server';
-import {
-  render,
-  fireEvent,
-  waitFor,
-  getByPlaceholderText,
-} from '../../../utils/test/test-utils';
+import { render } from '../../../utils/test/test-utils';
 import userEvent from '@testing-library/user-event';
-import { within } from '@testing-library/dom';
 import { routes } from '../../../utils/test/data';
 import RouteList from '../RouteList';
 

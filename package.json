@@ -23,6 +23,7 @@
     "babel-plugin-import": "^1.13.0",
     "bcrypt": "^3.0.8",
     "chrome-aws-lambda": "^2.1.1",
+    "cookie": "^0.4.1",
     "d3": "^5.15.0",
     "d3-simple-slider": "^1.6.5",
     "date-fns": "^2.10.0",
