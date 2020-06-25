@@ -80,7 +80,7 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // singout to manage the session ourselves.
     await firebase.auth().signOut();
-
+    
     return res.status(200).json({
       token,
       user: {
