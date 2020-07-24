@@ -8,7 +8,6 @@ const requireAuth = handler => async (req, res) => {
   }
 
   const token = req.cookies.token ? req.cookies.token : JSON.parse(req.headers.authorization);
-  console.log(token)
 
   if (!token) {
     return res.status(401).json({ message: 'No token provided' });

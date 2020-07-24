@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
 import Link from 'next/link';
-import fetch from 'isomorphic-unfetch';
 import * as Yup from 'yup';
 import {
   Error,
@@ -53,6 +52,7 @@ const SignupForm: React.FC<{}> = () => {
             Accept: 'application/json, text/plain, */*',
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify({ username, password }),
         });
 

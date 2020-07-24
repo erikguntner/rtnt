@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import query from '../../server/db';
 import firebaseAdmin from '../../src/utils/firebase/admin';
 import firebase from '../../src/utils/firebase/client';
-import { serialize } from 'cookie';
+import cookies from '../../server/middleware/cookies';
 
 interface User {
   email: string;
@@ -80,7 +80,9 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // singout to manage the session ourselves.
     await firebase.auth().signOut();
-    
+
+    res.cookie('test', 'cookie1', { httpOnly: true, maxAge: 60 * 5 });
+
     return res.status(200).json({
       token,
       user: {
@@ -93,4 +95,4 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default request;
+export default cookies(request);

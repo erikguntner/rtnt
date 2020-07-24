@@ -1,6 +1,7 @@
 import React from 'react';
 import { NextPage, GetServerSideProps } from 'next';
 import nextCookie from 'next-cookies';
+import { parse } from 'cookie';
 
 import Route from '../../src/features/Route/Route';
 import API_URL from '../../src/utils/url';
@@ -42,6 +43,8 @@ export const getServerSideProps: GetServerSideProps<
   const { token } = nextCookie(context);
   const { id } = context.query;
 
+  const { req, res } = context;
+  const cookies = parse(req.headers.cookie ?? '');
   const response = await fetch(`${API_URL}/api/route/${id}`, {
     method: 'GET',
     credentials: 'include',
