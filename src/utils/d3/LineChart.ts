@@ -93,15 +93,33 @@ export const renderLineChart = (
     .y0(innerHeight)
     .y1(d => yScale(yValue(d)))
 
+  //Container for the gradients
+  const defs = svg.append("defs");
+
+  //Filter for the outside glow
+  const filter = defs.append("filter")
+    .attr("id", "glow");
+  filter.append("feDropShadow")
+    .attr("stdDeviation", ".8")
+    .attr('dx', 0)
+    .attr('dy', 0)
+    .attr("flood-color", '#0070f3')
+    .attr("result", "coloredBlur");
+  // const feMerge = filter.append("feMerge");
+  // feMerge.append("feMergeNode")
+  //   .attr("in", "coloredBlur");
+  // feMerge.append("feMergeNode")
+  //   .attr("in", "SourceGraphic");
 
   const linePath = g
     .append('path')
     .attr('class', 'line-path')
     .attr('fill', 'none')
-    .attr('stroke', '#4a5568')
+    .attr('stroke', '#0070f3')
     .attr('stroke-width', '3')
     //@ts-ignore
-    .attr('d', lineGenerator(data));
+    .attr('d', lineGenerator(data))
+    .style("filter", "url(#glow)");
 
   //@ts-ignore
   const colorScale = scaleLinear().range(['#0070f3', '#238ffb', '#54acfe', '#85c7fe', '#b6e1fd', '#ebf4ff'])
@@ -121,10 +139,10 @@ export const renderLineChart = (
 
 
 
-  g.append("path")
-    .attr("fill", "#e2e8f0")
-    //@ts-ignore
-    .attr("d", areaGenerator(data));
+  // g.append("path")
+  //   .attr("fill", "#e2e8f0")
+  //   //@ts-ignore
+  //   .attr("d", areaGenerator(data));
 
   // black vertical line to follow mouse
   const mouseG = svg.append('g');

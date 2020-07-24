@@ -19,7 +19,7 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  validating: false,
+  validating: true,
   authenticated: '',
   user: {
     email: '',
@@ -36,6 +36,7 @@ const { actions, reducer } = createSlice({
       const { authenticated, user } = action.payload;
       state.authenticated = authenticated;
       state.user = user;
+      state.validating = false;
     },
     setValidating: (state, action: PayloadAction<boolean>) => {
       state.validating = action.payload

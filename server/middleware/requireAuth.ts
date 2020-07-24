@@ -8,6 +8,7 @@ const requireAuth = handler => async (req, res) => {
   }
 
   const token = req.cookies.token ? req.cookies.token : JSON.parse(req.headers.authorization);
+  console.log(token)
 
   if (!token) {
     return res.status(401).json({ message: 'No token provided' });
@@ -19,6 +20,7 @@ const requireAuth = handler => async (req, res) => {
     const results = await query('select * from users where id = $1', [uid]);
     req.user = results.rows[0];
   } catch (e) {
+    console.log(e);
     return res.status(400).json({ message: 'user is not authneticated' });
   }
 

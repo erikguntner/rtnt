@@ -41,7 +41,7 @@ const StyledButton = styled.button`
     margin-right: 8px;
   }
 
-  &:focus {
+  &:focus-visible {
     outline: none;
     box-shadow: ${(props) => props.theme.boxShadow.outline};
 
@@ -67,6 +67,20 @@ const StyledLink = styled.a`
       box-shadow: none;
     }
   }
+
+  &:focus:not(:focus-visible) {
+    outline: none;
+    box-shadow: 'none';
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: ${(props) => props.theme.boxShadow.outline};
+
+    @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+      box-shadow: none;
+    }
+  }
 `;
 
 const StyledDarkLink = styled(StyledLink)`
@@ -80,10 +94,28 @@ const StyledDarkLink = styled(StyledLink)`
     background-color: #071735;
   }
 
-  &:focus {
+  /* &:focus {
     outline: none;
     box-shadow: ${(props) => props.theme.boxShadow.outline};
+
+    @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+      box-shadow: none;
+    }
   }
+
+  &:focus:not(:focus-visible) {
+    outline: none;
+    box-shadow: 'none';
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: ${(props) => props.theme.boxShadow.outline};
+
+    @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+      box-shadow: none;
+    }
+  } */
 `;
 
 const StyledInvertedLink = styled(StyledLink)`

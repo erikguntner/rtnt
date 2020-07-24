@@ -57,8 +57,6 @@ const Layout = ({ children }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setValidating(true));
-
     const getUser = async () => {
       try {
         const response = await fetch(`${API_URL}/api/user`, {

@@ -261,7 +261,7 @@ const Header = styled.div<{ svg: string }>`
   align-items: center;
   width: 100%;
   padding: 0 1.6rem;
-  background-color: ${(props) => props.theme.colors.gray[800]};
+  background-color: ${(props) => props.theme.colors.darkBlue};
   background-image: url("${topoSvgUrl}");
   color: #fff;
 
@@ -350,7 +350,7 @@ const StatusContainer = styled.div`
 
   & > h4 {
     font-size: 2.4rem;
-    color: ${(props) => props.theme.colors.gray[800]};
+    color: ${(props) => props.theme.colors.darkBlue};
     margin-bottom: 2.4rem;
 
     @media screen and (max-width: ${(props) => props.theme.screens.sm}) {

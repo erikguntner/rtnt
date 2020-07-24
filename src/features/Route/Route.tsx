@@ -325,7 +325,7 @@ const Block = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  background-color: ${(props) => props.theme.colors.gray[800]};
+  background-color: ${(props) => props.theme.colors.darkBlue};
 
   &::before {
     content: '';

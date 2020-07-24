@@ -85,7 +85,7 @@ const Block = styled.div`
   position: relative;
   height: 150px;
   width: 100%;
-  background-color: ${(props) => props.theme.colors.gray[800]};
+  background-color: ${(props) => props.theme.colors.darkBlue};
   z-index: 10;
   background-image: url("${topoSvgUrl}");
 

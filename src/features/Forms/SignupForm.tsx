@@ -66,11 +66,9 @@ const SignupForm: React.FC<{}> = () => {
           resetForm();
         } else {
           const { message } = await response.json();
-          console.log('message from response', message);
           setError(message);
         }
       } catch (error) {
-        console.log('message from error', error);
         setError(error.message);
       }
       setSubmitting(false);

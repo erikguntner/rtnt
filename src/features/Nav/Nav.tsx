@@ -162,7 +162,7 @@ const NavContainer = styled.nav`
   justify-content: space-between;
   padding: 0 2.4rem;
   height: ${(props) => props.theme.navHeight};
-  background-color: ${(props) => props.theme.colors.gray[800]};
+  background-color: ${(props) => props.theme.colors.darkBlue};
   text-align: center;
 `;
 
