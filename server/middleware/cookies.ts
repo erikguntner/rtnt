@@ -1,17 +1,17 @@
 import { serialize, CookieSerializeOptions } from 'cookie'
 import { NextApiRequest, NextApiResponse, NextApiHandler } from 'next';
 
+// how to delete a cookie
+// res.setHeader(
+//   "Set-Cookie",
+//   "token=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
+// );
+
 
 /**
  * This sets `cookie` on `res` object
  */
 const cookie = (res: NextApiResponse, name: string, value: string, options: CookieSerializeOptions = {}): void => {
-
-  // if ('maxAge' in options) {
-  //   options.expires = new Date(Date.now() + options.maxAge)
-  //   options.maxAge /= 1000
-  // }
-
   res.setHeader('Set-Cookie', serialize(name, String(value), options))
 }
 

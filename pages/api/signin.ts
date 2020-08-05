@@ -63,6 +63,7 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // generate id token
     const idToken = await signedInUser.getIdToken();
+    console.log(idToken);
 
     // make sure we have a token
     if (!idToken) {
