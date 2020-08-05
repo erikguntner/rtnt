@@ -82,8 +82,6 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
     // singout to manage the session ourselves.
     await firebase.auth().signOut();
 
-    res.cookie('test', 'cookie1', { httpOnly: true, maxAge: 60 * 5 });
-
     return res.status(200).json({
       token,
       user: {
