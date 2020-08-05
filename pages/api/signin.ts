@@ -2,7 +2,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import query from '../../server/db';
 import firebaseAdmin from '../../src/utils/firebase/admin';
 import firebase from '../../src/utils/firebase/client';
-import cookies from '../../server/middleware/cookies';
 
 interface User {
   email: string;
@@ -94,4 +93,4 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default cookies(request);
+export default request;

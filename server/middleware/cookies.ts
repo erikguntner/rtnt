@@ -19,7 +19,7 @@ const cookie = (res: NextApiResponse, name: string, value: string, options: Cook
  * Adds `cookie` function on `res.cookie` to set cookies for response
  */
 const cookies = (handler: NextApiHandler) => (req: NextApiRequest, res: NextApiResponse) => {
-  res.cookie = (name, value, options) => cookie(res, name, value, options)
+  // res.cookie = (name, value, options) => cookie(res, name, value, options)
 
   return handler(req, res)
 }
