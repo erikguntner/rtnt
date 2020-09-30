@@ -88,7 +88,7 @@ const SaveRouteModal: React.FC<Props> = ({
       );
 
       const { hits } = await res.json();
-      const { city, state } = hits[0];
+      const { city } = hits[0];
       // Make fetch request
       const body = {
         name: value,
@@ -100,7 +100,7 @@ const SaveRouteModal: React.FC<Props> = ({
         sports,
         surfaces,
         city,
-        state,
+        state: hits[0].state === undefined ? '' : hits[0].state,
       };
 
       const response = await fetch(`${API_URL}/api/route`, {
@@ -262,7 +262,7 @@ const Header = styled.div<{ svg: string }>`
   width: 100%;
   padding: 0 1.6rem;
   background-color: ${(props) => props.theme.colors.darkBlue};
-  background-image: url("${topoSvgUrl}");
+  background-image: url('${topoSvgUrl}');
   color: #fff;
 
   p {
