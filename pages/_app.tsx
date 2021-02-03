@@ -113,5 +113,6 @@ const MyApp = ({ Component, pageProps }) => {
   );
 };
 
+export { Layout };
 // export default withReduxStore(MyApp);
 export default MyApp;

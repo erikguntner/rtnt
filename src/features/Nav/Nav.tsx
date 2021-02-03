@@ -20,7 +20,7 @@ interface Links {
 
 const AvatarSkeleton = () => {
   return (
-    <SkeletonWrapper>
+    <SkeletonWrapper aria-label="loading user">
       <Skeleton width={'100px'} />
       <Skeleton height={'24px'} width={'24px'} borderRadius={'50%'} />
     </SkeletonWrapper>
