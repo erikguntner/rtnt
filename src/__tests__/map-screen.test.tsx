@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  render,
-  screen,
-  waitForElementToBeRemoved,
-  fireEvent,
-} from '../utils/test/test-utils';
+import { render, screen } from '../utils/test/test-utils';
 import Home from '../../pages/index';
 import { Layout } from '../../pages/_app';
 
