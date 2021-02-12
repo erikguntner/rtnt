@@ -15,6 +15,8 @@ import {
 } from './routeSlice';
 import { updateViewport } from './viewportSlice';
 import useWindowSize from '../../utils/useWindowSize';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLocationArrow } from '@fortawesome/free-solid-svg-icons';
 
 import SvgPath from './SvgPath';
 import ConnectingLines from './ConnectingLines';
@@ -25,6 +27,7 @@ import DistanceMarkers from './DistanceMarkers';
 import DistanceIndicator from './DistanceIndicator';
 import LoadingIndicator from './LoadingIndicator';
 import CrossHairs from './CrossHairs';
+import { Spinner } from '../Forms/styles';
 
 interface Viewport {
   latitude: number;
@@ -59,6 +62,9 @@ const Map = () => {
   const [mapFocus, setMapFocus] = useState<boolean>(false);
   const [clipPath, setClipPath] = useState<boolean>(false);
   const [userLocation, setUserLocation] = useState<number[]>([]);
+  const [userLocationLoading, setUserLocationLoading] = useState<boolean>(
+    false
+  );
   const [showElevation, setShowElevation] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [index, setIndex] = useState<number>(0);
@@ -174,15 +180,17 @@ const Map = () => {
     }
   }, [distanceAlongPath]);
 
-  useEffect(() => {
+  const getLocation = (updatePosition = false) => {
+    setUserLocationLoading(true);
     const geo = navigator.geolocation;
     if (!geo) {
+      setUserLocationLoading(false);
       return;
     }
 
     geo.getCurrentPosition((position) => {
       // set viewport to user's location on first load, but not when coming back from another page
-      if (!initialLoad) {
+      if (!initialLoad || updatePosition) {
         dispatch(
           updateViewport({
             ...viewport,
@@ -194,7 +202,12 @@ const Map = () => {
       }
 
       setUserLocation([position.coords.latitude, position.coords.longitude]);
+      setUserLocationLoading(false);
     });
+  };
+
+  useEffect(() => {
+    getLocation();
   }, []);
 
   useEffect(() => {
@@ -203,6 +216,7 @@ const Map = () => {
       const center: { lng: number; lat: number } = map.transform._center;
 
       // control map with arrow keys while focused
+      console.log(e.code);
       if (e.keyCode === 9) {
         if (document.activeElement.className === 'mapboxgl-canvas') {
           setMapFocus(true);
@@ -301,10 +315,20 @@ const Map = () => {
             <DistanceMarker />
           </Marker>
         ) : null}
-        <div style={{ position: 'absolute', left: 16, top: 56 }}>
+        <MapControls>
           <NavigationControl showCompass={false} />
-        </div>
+        </MapControls>
       </ReactMapGL>
+      <GeolocationButton
+        disabled={userLocationLoading}
+        onClick={() => getLocation(true)}
+      >
+        {userLocationLoading ? (
+          <Spinner />
+        ) : (
+          <FontAwesomeIcon icon={faLocationArrow} />
+        )}
+      </GeolocationButton>
       {mapFocus && <CrossHairs />}
       {isLoading && <LoadingIndicator />}
       <DistanceIndicator {...{ units, authenticated, lines }} />
@@ -342,6 +366,33 @@ const Label = styled.div`
   font-size: 1rem;
   border-radius: 5px;
   transform: translate3d(-50%, -150%, 0);
+`;
+
+const MapControls = styled.div`
+  position: absolute;
+  left: 16px;
+  top: 96px;
+  display: flex;
+  align-items: center;
+`;
+
+const GeolocationButton = styled.button`
+  position: absolute;
+  left: 16px;
+  top: 96px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 6px;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const UserMarker = styled.div`

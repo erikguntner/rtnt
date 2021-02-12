@@ -1,12 +1,12 @@
 import React from 'react';
-import { SVGOverlay, HTMLRedrawOptions } from 'react-map-gl';
+import { SVGOverlay } from 'react-map-gl';
 
 interface Props {
   points: number[][][];
 }
 
-const SvgPath: React.FC<Props> = ({ points }) => {
-  const redraw = ({ project }: HTMLRedrawOptions) => {
+const SvgPath = ({ points }: Props) => {
+  const redraw = ({ project }) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     //@ts-ignore
     const path = points.flat().reduce((accum, point, i) => {
