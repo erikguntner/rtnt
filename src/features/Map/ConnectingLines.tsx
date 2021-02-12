@@ -1,5 +1,5 @@
 import React from 'react';
-import { CanvasOverlay, CanvasRedrawOptions } from 'react-map-gl';
+import { CanvasOverlay } from 'react-map-gl';
 
 interface ConnectingLinesProps {
   points: number[][];
@@ -12,21 +12,13 @@ interface AdditionalTypes {
   isDragging: boolean;
 }
 
-type ExtendedCanvasRedrawOptions = CanvasRedrawOptions & AdditionalTypes;
-
 const ConnectingLines = ({
   points,
   index,
   lineWidth = 2,
   renderWhileDragging = true,
 }: ConnectingLinesProps) => {
-  const redraw = ({
-    width,
-    height,
-    ctx,
-    isDragging,
-    project,
-  }: ExtendedCanvasRedrawOptions) => {
+  const redraw = ({ width, height, ctx, isDragging, project }) => {
     ctx.clearRect(0, 0, width, height);
     ctx.globalCompositeOperation = 'lighter';
 
