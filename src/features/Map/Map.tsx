@@ -28,6 +28,7 @@ import DistanceIndicator from './DistanceIndicator';
 import LoadingIndicator from './LoadingIndicator';
 import CrossHairs from './CrossHairs';
 import { Spinner } from '../Forms/styles';
+import ElevationProfile from './ElevationProfile';
 
 interface Viewport {
   latitude: number;
@@ -264,6 +265,14 @@ const Map = () => {
         {...{ setClipPath, clipPath, showElevation, setShowElevation }}
       />
       <ElevationWrapper>
+        {/* <ElevationProfile
+          {...{
+            showElevation,
+            lines,
+            units,
+            setDistanceAlongPath,
+          }}
+        /> */}
         <UpdatedElevationProfile
           {...{
             showElevation,
