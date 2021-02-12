@@ -14,6 +14,7 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
     const { username, password, rememberMe } = req.body;
     let result;
     let signedInUser;
+    console.log(username);
 
     // make sure username and password were passed
     if (!username || !password) {
@@ -22,14 +23,21 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
         .json({ error: 'You must provide an email and password' });
     }
 
+    console.log('we have username and password');
+
     try {
+      console.log('looking in db')
       //check for user in db
       result = await query('select * from users where username = $1', [
         username,
       ]);
+      console.log('result?')
     } catch (error) {
+      console.log(error);
       return res.status(400).json({ message: 'username or password is incorrect' });
     }
+
+    console.log('we have a user', result.rows[0]);
 
     if (!result.rows[0]) {
       return res.status(400).json({ message: 'username or password is incorrect' });
@@ -44,10 +52,14 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(400).json({ message: 'username or password is incorrect' });
     }
 
+    console.log('we have a user in firebase', foundUser);
+
     const { email } = foundUser;
 
     // sigin in order to generate id token
     try {
+      console.log('trying to auth user');
+
       await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
 
       const { user } = await firebase
@@ -62,6 +74,8 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // generate id token
     const idToken = await signedInUser.getIdToken();
+    console.log('foundToken', idToken);
+
 
     // make sure we have a token
     if (!idToken) {

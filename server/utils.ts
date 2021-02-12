@@ -1,7 +1,5 @@
 import { NextApiResponse } from 'next';
 import { serialize, CookieSerializeOptions } from 'cookie';
-
-
 interface Options {
   expires?: Date;
   maxAge?: number;

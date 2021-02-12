@@ -1,12 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
-import ReactMapGL, {
-  Marker,
-  NavigationControl,
-  DragEvent,
-  PointerEvent,
-} from 'react-map-gl';
+import ReactMapGL, { Marker, NavigationControl, MapEvent } from 'react-map-gl';
+import { CallbackEvent } from 'react-map-gl/src/components/draggable-control';
 import styled from 'styled-components';
 
 import { RootState } from '../../reducers/rootReducer';
@@ -19,6 +15,8 @@ import {
 } from './routeSlice';
 import { updateViewport } from './viewportSlice';
 import useWindowSize from '../../utils/useWindowSize';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLocationArrow } from '@fortawesome/free-solid-svg-icons';
 
 import SvgPath from './SvgPath';
 import ConnectingLines from './ConnectingLines';
@@ -29,6 +27,7 @@ import DistanceMarkers from './DistanceMarkers';
 import DistanceIndicator from './DistanceIndicator';
 import LoadingIndicator from './LoadingIndicator';
 import CrossHairs from './CrossHairs';
+import { Spinner } from '../Forms/styles';
 
 interface Viewport {
   latitude: number;
@@ -63,6 +62,9 @@ const Map = () => {
   const [mapFocus, setMapFocus] = useState<boolean>(false);
   const [clipPath, setClipPath] = useState<boolean>(false);
   const [userLocation, setUserLocation] = useState<number[]>([]);
+  const [userLocationLoading, setUserLocationLoading] = useState<boolean>(
+    false
+  );
   const [showElevation, setShowElevation] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [index, setIndex] = useState<number>(0);
@@ -97,22 +99,23 @@ const Map = () => {
     }
   };
 
-  const handleDragStart = (event: DragEvent, index: number) => {
+  const handleDragStart = (event: CallbackEvent, index: number) => {
     if (points.length > 1) {
       setIsDragging(true);
     }
     setIndex(index);
   };
 
-  const handleDrag = (event: DragEvent, index: number) => {
+  const handleDrag = (event: CallbackEvent, index: number) => {
     dispatch(updatePointCoords({ index, coords: event.lngLat }));
   };
 
   const handleDragEnd = (
-    newLngLat: number[],
+    event: CallbackEvent,
     point: number[],
     pointIndex: number
   ) => {
+    const newLngLat = event.lngLat;
     // array of start point, stops, and endpoints from which to calculate the new line
     const waypoints: number[][] = [];
     // index of lines to replace
@@ -177,15 +180,17 @@ const Map = () => {
     }
   }, [distanceAlongPath]);
 
-  useEffect(() => {
+  const getLocation = (updatePosition = false) => {
+    setUserLocationLoading(true);
     const geo = navigator.geolocation;
     if (!geo) {
+      setUserLocationLoading(false);
       return;
     }
 
     geo.getCurrentPosition((position) => {
       // set viewport to user's location on first load, but not when coming back from another page
-      if (!initialLoad) {
+      if (!initialLoad || updatePosition) {
         dispatch(
           updateViewport({
             ...viewport,
@@ -197,7 +202,12 @@ const Map = () => {
       }
 
       setUserLocation([position.coords.latitude, position.coords.longitude]);
+      setUserLocationLoading(false);
     });
+  };
+
+  useEffect(() => {
+    getLocation();
   }, []);
 
   useEffect(() => {
@@ -206,6 +216,7 @@ const Map = () => {
       const center: { lng: number; lat: number } = map.transform._center;
 
       // control map with arrow keys while focused
+      console.log(e.code);
       if (e.keyCode === 9) {
         if (document.activeElement.className === 'mapboxgl-canvas') {
           setMapFocus(true);
@@ -261,11 +272,11 @@ const Map = () => {
         longitude={viewport.longitude}
         zoom={viewport.zoom}
         mapboxApiAccessToken={process.env.MAPBOX_TOKEN}
-        reuseMap={true}
+        reuseMaps={true}
         width={'100%'}
         height={'100%'}
         style={{ display: 'flex', flex: '1' }}
-        onClick={({ lngLat }: PointerEvent) => handleClick(lngLat)}
+        onClick={({ lngLat }: MapEvent) => handleClick(lngLat)}
         ref={mapRef}
         keyboard={false}
         className="map"
@@ -291,11 +302,9 @@ const Map = () => {
             longitude={point[0]}
             latitude={point[1]}
             draggable
-            onDragStart={(event: DragEvent) => handleDragStart(event, i)}
-            onDrag={(event: DragEvent) => handleDrag(event, i)}
-            onDragEnd={(event: DragEvent) =>
-              handleDragEnd(event.lngLat, point, i)
-            }
+            onDragStart={(event: CallbackEvent) => handleDragStart(event, i)}
+            onDrag={(event: CallbackEvent) => handleDrag(event, i)}
+            onDragEnd={(event: CallbackEvent) => handleDragEnd(event, point, i)}
           >
             <Pin index={i} points={points} />
           </Marker>
@@ -306,10 +315,20 @@ const Map = () => {
             <DistanceMarker />
           </Marker>
         ) : null}
-        <div style={{ position: 'absolute', left: 16, top: 56 }}>
+        <MapControls>
           <NavigationControl showCompass={false} />
-        </div>
+        </MapControls>
       </ReactMapGL>
+      <GeolocationButton
+        disabled={userLocationLoading}
+        onClick={() => getLocation(true)}
+      >
+        {userLocationLoading ? (
+          <Spinner />
+        ) : (
+          <FontAwesomeIcon icon={faLocationArrow} />
+        )}
+      </GeolocationButton>
       {mapFocus && <CrossHairs />}
       {isLoading && <LoadingIndicator />}
       <DistanceIndicator {...{ units, authenticated, lines }} />
@@ -347,6 +366,33 @@ const Label = styled.div`
   font-size: 1rem;
   border-radius: 5px;
   transform: translate3d(-50%, -150%, 0);
+`;
+
+const MapControls = styled.div`
+  position: absolute;
+  left: 16px;
+  top: 96px;
+  display: flex;
+  align-items: center;
+`;
+
+const GeolocationButton = styled.button`
+  position: absolute;
+  left: 16px;
+  top: 96px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 6px;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const UserMarker = styled.div`

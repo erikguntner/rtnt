@@ -1,5 +1,5 @@
 import React from 'react';
-import { Source, Layer } from 'react-map-gl';
+import { Source, Layer, LayerProps } from 'react-map-gl';
 import * as turf from '@turf/helpers';
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 
 const GeoJsonPath: React.FC<Props> = ({ line, width = 4, i }) => {
   const multiLine = turf.lineString(line);
-  const dataLayer = {
+  const dataLayer: LayerProps = {
     id: `path_layer-${i}`,
     type: 'line',
     paint: {

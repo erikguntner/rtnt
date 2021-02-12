@@ -188,7 +188,7 @@ const RoutePage: React.FC<{ data: Route }> = ({ data }) => {
           {...viewport}
           ref={(ref) => (mapRef.current = ref && ref.getMap())}
           mapboxApiAccessToken={process.env.MAPBOX_TOKEN}
-          reuseMap={true}
+          reuseMaps={true}
           width={'100%'}
           height={'100%'}
           style={{ display: 'flex', flex: '1' }}
