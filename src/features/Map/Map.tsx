@@ -1,12 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
-import ReactMapGL, {
-  Marker,
-  NavigationControl,
-  DragEvent,
-  PointerEvent,
-} from 'react-map-gl';
+import ReactMapGL, { Marker, NavigationControl, MapEvent } from 'react-map-gl';
+import { CallbackEvent } from 'react-map-gl/src/components/draggable-control';
 import styled from 'styled-components';
 
 import { RootState } from '../../reducers/rootReducer';
@@ -97,22 +93,23 @@ const Map = () => {
     }
   };
 
-  const handleDragStart = (event: DragEvent, index: number) => {
+  const handleDragStart = (event: CallbackEvent, index: number) => {
     if (points.length > 1) {
       setIsDragging(true);
     }
     setIndex(index);
   };
 
-  const handleDrag = (event: DragEvent, index: number) => {
+  const handleDrag = (event: CallbackEvent, index: number) => {
     dispatch(updatePointCoords({ index, coords: event.lngLat }));
   };
 
   const handleDragEnd = (
-    newLngLat: number[],
+    event: CallbackEvent,
     point: number[],
     pointIndex: number
   ) => {
+    const newLngLat = event.lngLat;
     // array of start point, stops, and endpoints from which to calculate the new line
     const waypoints: number[][] = [];
     // index of lines to replace
@@ -261,11 +258,11 @@ const Map = () => {
         longitude={viewport.longitude}
         zoom={viewport.zoom}
         mapboxApiAccessToken={process.env.MAPBOX_TOKEN}
-        reuseMap={true}
+        reuseMaps={true}
         width={'100%'}
         height={'100%'}
         style={{ display: 'flex', flex: '1' }}
-        onClick={({ lngLat }: PointerEvent) => handleClick(lngLat)}
+        onClick={({ lngLat }: MapEvent) => handleClick(lngLat)}
         ref={mapRef}
         keyboard={false}
         className="map"
@@ -291,11 +288,9 @@ const Map = () => {
             longitude={point[0]}
             latitude={point[1]}
             draggable
-            onDragStart={(event: DragEvent) => handleDragStart(event, i)}
-            onDrag={(event: DragEvent) => handleDrag(event, i)}
-            onDragEnd={(event: DragEvent) =>
-              handleDragEnd(event.lngLat, point, i)
-            }
+            onDragStart={(event: CallbackEvent) => handleDragStart(event, i)}
+            onDrag={(event: CallbackEvent) => handleDrag(event, i)}
+            onDragEnd={(event: CallbackEvent) => handleDragEnd(event, point, i)}
           >
             <Pin index={i} points={points} />
           </Marker>
