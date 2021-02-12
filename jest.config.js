@@ -1,6 +1,9 @@
 module.exports = {
   preset: 'ts-jest/presets/js-with-ts',
   testEnvironment: 'jsdom',
+  moduleNameMapper: {
+    '\\.(css|less)$': '<rootDir>/__mocks__/styleMock.js',
+  },
   moduleFileExtensions: ['ts', 'tsx', 'js'],
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest',

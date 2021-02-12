@@ -22,7 +22,7 @@ import useWindowSize from '../../utils/useWindowSize';
 
 import SvgPath from './SvgPath';
 import ConnectingLines from './ConnectingLines';
-import ElevationProfile from './ElevationProfile';
+import UpdatedElevationProfile from './UpdatedElevationProfile';
 import Controls from './Controls';
 import Pin from './Pin';
 import DistanceMarkers from './DistanceMarkers';
@@ -247,7 +247,7 @@ const Map = () => {
         {...{ setClipPath, clipPath, showElevation, setShowElevation }}
       />
       <ElevationWrapper>
-        <ElevationProfile
+        <UpdatedElevationProfile
           {...{
             showElevation,
             lines,
