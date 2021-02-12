@@ -188,7 +188,7 @@ const Map = () => {
       return;
     }
 
-    geo.getCurrentPosition((position) => {
+    const onSuccess = (position) => {
       // set viewport to user's location on first load, but not when coming back from another page
       if (!initialLoad || updatePosition) {
         dispatch(
@@ -203,7 +203,13 @@ const Map = () => {
 
       setUserLocation([position.coords.latitude, position.coords.longitude]);
       setUserLocationLoading(false);
-    });
+    };
+
+    const onError = () => {
+      setUserLocationLoading(false);
+    };
+
+    geo.getCurrentPosition(onSuccess, onError);
   };
 
   useEffect(() => {
