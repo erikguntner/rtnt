@@ -130,21 +130,9 @@ export const UpdatedElevationProfile: React.FC<Props> = ({
     return null;
   }
 
-  // const removePreviousChart = () => {
-  //   if (containerRef.current.firstElementChild.tagName !== 'P') {
-  //     containerRef.current.firstElementChild.innerHTML = '';
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (dimensions === null) return;
-  //   removePreviousChart();
-
-  //   const newElevationData = parseElevationData(lines);
-
-  //   createChart(newElevationData, setDistanceAlongPath, units, dimensions);
-  // }, [lines, dimensions]);
-  const { ref, newSettings: dimensions } = useChartDimensions();
+  const { ref, newSettings: dimensions } = useChartDimensions({
+    marginLeft: 50,
+  });
   const {
     width,
     height,
@@ -257,83 +245,78 @@ export const UpdatedElevationProfile: React.FC<Props> = ({
       id="elevation-container"
       ref={ref}
     >
-      <svg
-        data-testid="elevation-profile"
-        className="line-chart"
-        width={width}
-        height={height}
-      >
-        <g transform={`translate(${[marginLeft, marginTop].join(',')})`}>
-          <rect width={boundedWidth} height={boundedHeight} fill="#f5f5f5" />
-          <g
-            transform={`rotate(90) translate(${[0, boundedHeight].join(',')})`}
-          >
-            <Axis domain={yScale.domain()} range={yScale.range()} />
-          </g>
-          <g transform={`translate(${[0, boundedHeight].join(',')})`}>
-            <Axis domain={xScale.domain()} range={xScale.range()} />
-          </g>
-        </g>
-        <path
-          id="profile"
-          transform={`translate(${[marginLeft, marginTop].join(',')})`}
-          d={generatedLine}
-          stroke="#0070f3"
-          strokeWidth={4}
-          fill="none"
-        />
-        <path
-          transform={`translate(${[marginLeft, marginTop].join(',')})`}
-          d={generatedArea}
-          fill="rgba(0, 112, 243, 0.1)"
-        />
-        <g
-          id="mouse-group"
-          transform={`translate(${[marginLeft, marginTop].join(',')})`}
-        >
-          <path
-            id="mouse-line"
-            style={{ opacity: 0 }}
-            strokeWidth={2}
-            stroke="black"
-          />
-          <g id="mouse">
-            <circle r={7} stroke="#fff" strokeWidth={2} fill="#444" />
-            <rect
-              transform={`translate(${[-20, -27].join(' ')})`}
-              height={20}
-              width={40}
-              fill={'rgba(0, 0, 0, 0.4)'}
-            />
-            <text id="elevation-text" height={11} fill="white"></text>
-            <text id="distance-text" height={11} fill="white"></text>
-          </g>
-        </g>
-        <rect
-          id="overlay"
-          transform={`translate(${[marginLeft, marginTop].join(',')})`}
-          width={boundedWidth}
-          height={boundedHeight}
-          fill="none"
-          pointerEvents="all"
-          onMouseOver={handleMouseEnter}
-          onTouchStart={handleMouseEnter}
-          onMouseMove={handleMouseMove}
-          onTouchMove={handleMouseMove}
-          onMouseOut={handleMouseLeave}
-          onTouchEnd={handleMouseLeave}
-        />
-      </svg>
-      {/* {lines.length > 0 ? (
+      {lines.length > 0 ? (
         <svg
           data-testid="elevation-profile"
           className="line-chart"
-          width={dms.width}
-          height={dms.height}
-        />
+          width={width}
+          height={height}
+        >
+          <g transform={`translate(${[marginLeft, marginTop].join(',')})`}>
+            {/* <rect width={boundedWidth} height={boundedHeight} fill="#f8f8f8" /> */}
+            <g
+              style={{ transform: 'rotate(90deg)' }}
+              transform={`translate(${[0, boundedHeight].join(',')})`}
+            >
+              <Axis domain={yScale.domain()} range={yScale.range()} axis="y" />
+            </g>
+            <g transform={`translate(${[0, boundedHeight].join(',')})`}>
+              <Axis domain={xScale.domain()} range={xScale.range()} />
+            </g>
+          </g>
+          <path
+            id="profile"
+            transform={`translate(${[marginLeft, marginTop].join(',')})`}
+            d={generatedLine}
+            stroke="#0070f3"
+            strokeWidth={4}
+            fill="none"
+          />
+          <path
+            transform={`translate(${[marginLeft, marginTop].join(',')})`}
+            d={generatedArea}
+            fill="rgba(0, 112, 243, 0.1)"
+          />
+          <g
+            id="mouse-group"
+            transform={`translate(${[marginLeft, marginTop].join(',')})`}
+          >
+            <path
+              id="mouse-line"
+              style={{ opacity: 0 }}
+              strokeWidth={1}
+              stroke="#718096"
+            />
+            <g id="mouse">
+              <circle r={7} stroke="#fff" strokeWidth={2} fill="#444" />
+              <rect
+                transform={`translate(${[-20, -27].join(' ')})`}
+                height={20}
+                width={40}
+                fill={'rgba(0, 0, 0, 0.4)'}
+              />
+              <text id="elevation-text" height={11} fill="white"></text>
+              <text id="distance-text" height={11} fill="white"></text>
+            </g>
+          </g>
+          <rect
+            id="overlay"
+            transform={`translate(${[marginLeft, marginTop].join(',')})`}
+            width={boundedWidth}
+            height={boundedHeight}
+            fill="none"
+            pointerEvents="all"
+            onMouseOver={handleMouseEnter}
+            onTouchStart={handleMouseEnter}
+            onMouseMove={handleMouseMove}
+            onTouchMove={handleMouseMove}
+            onMouseOut={handleMouseLeave}
+            onTouchEnd={handleMouseLeave}
+          />
+        </svg>
       ) : (
         <Text>Create a line to see the elevation chart</Text>
-      )} */}
+      )}
     </ChartContainer>
   );
 };
@@ -356,12 +339,8 @@ const ChartContainer = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: #ffff;
+  background-color: #f8f8f8;
   display: block;
   z-index: 25;
   transition: all 0.3s ease;
-
-  .line-chart {
-    border: 1px solid gold;
-  }
 `;
