@@ -1,15 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
-import React, {
-  useEffect,
-  useState,
-  useMemo,
-  useRef,
-  Dispatch,
-  SetStateAction,
-  MutableRefObject,
-} from 'react';
+import React, { useMemo, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
-import ResizeObserver from 'resize-observer-polyfill';
 import {
   extent,
   max,
@@ -22,103 +13,16 @@ import {
 } from 'd3';
 import * as turfHelpers from '@turf/helpers';
 
-import { createChart } from '../../../utils/d3/LineChart';
+import { useChartDimensions } from './useChartDimensions';
 import parseElevationData from '../../../utils/parseElevationData';
 import Axis from './Axis';
 
-interface ElevationData {
-  distance: number;
-  elevation: number;
-}
 export interface Props {
   showElevation?: boolean | null;
   lines: number[][][];
   units: string;
   setDistanceAlongPath: Dispatch<SetStateAction<number | null>>;
 }
-
-interface Dimensions {
-  boundedHeight: number;
-  boundedWidth: number;
-  height?: number;
-  marginBottom: number;
-  marginLeft: number;
-  marginRight: number;
-  marginTop: number;
-  width?: number;
-}
-
-const combineChartDimensions = (
-  dimensions: Partial<Dimensions>
-): Dimensions => {
-  const parsedDimensions = {
-    ...dimensions,
-    marginTop: dimensions.marginTop || 30,
-    marginRight: dimensions.marginRight || 30,
-    marginBottom: dimensions.marginBottom || 30,
-    marginLeft: dimensions.marginLeft || 35,
-  };
-  return {
-    ...parsedDimensions,
-    boundedHeight: Math.max(
-      parsedDimensions.height -
-        parsedDimensions.marginTop -
-        parsedDimensions.marginBottom,
-      0
-    ),
-    boundedWidth: Math.max(
-      parsedDimensions.width -
-        parsedDimensions.marginLeft -
-        parsedDimensions.marginRight,
-      0
-    ),
-  };
-};
-
-const useChartDimensions = (
-  passedSettings = {}
-): { ref: MutableRefObject<HTMLDivElement>; newSettings: Dimensions } => {
-  const ref = useRef<HTMLDivElement>();
-  const dimensions = combineChartDimensions(passedSettings);
-
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
-
-  useEffect(() => {
-    if (dimensions.width && dimensions.height) {
-      return [ref, dimensions];
-    }
-
-    const element = ref.current;
-
-    const resizeObserver = new ResizeObserver((entries) => {
-      if (!Array.isArray(entries)) return;
-      if (!entries.length) return;
-
-      const entry = entries[0];
-
-      if (width != entry.contentRect.width) {
-        setWidth(entry.contentRect.width);
-      }
-
-      if (height != entry.contentRect.height) {
-        setHeight(entry.contentRect.height);
-      }
-    });
-
-    resizeObserver.observe(element);
-
-    return () => resizeObserver.unobserve(element);
-  }, []);
-
-  const newSettings = combineChartDimensions({
-    ...dimensions,
-    width: dimensions.width || width,
-    height: dimensions.height || height,
-  });
-
-  return { ref, newSettings };
-};
 
 export const UpdatedElevationProfile: React.FC<Props> = ({
   showElevation = true,
@@ -253,7 +157,7 @@ export const UpdatedElevationProfile: React.FC<Props> = ({
           height={height}
         >
           <g transform={`translate(${[marginLeft, marginTop].join(',')})`}>
-            {/* <rect width={boundedWidth} height={boundedHeight} fill="#f8f8f8" /> */}
+            <rect width={boundedWidth} height={boundedHeight} fill="#f8f8f8" />
             <g
               style={{ transform: 'rotate(90deg)' }}
               transform={`translate(${[0, boundedHeight].join(',')})`}
@@ -283,11 +187,14 @@ export const UpdatedElevationProfile: React.FC<Props> = ({
           >
             <path
               id="mouse-line"
-              style={{ opacity: 0 }}
+              style={{ opacity: 0, transition: 'opacity 0.1s ease' }}
               strokeWidth={1}
               stroke="#718096"
             />
-            <g id="mouse">
+            <g
+              id="mouse"
+              style={{ opacity: 0, transition: 'opacity 0.1s ease' }}
+            >
               <circle r={7} stroke="#fff" strokeWidth={2} fill="#444" />
               <rect
                 transform={`translate(${[-20, -27].join(' ')})`}
