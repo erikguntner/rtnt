@@ -24,6 +24,30 @@ export interface Props {
   setDistanceAlongPath: Dispatch<SetStateAction<number | null>>;
 }
 
+const getPositionOnLine = (
+  mouse: [number, number],
+  selector: string
+): { x: number; y: number } => {
+  const line = select<SVGPathElement, unknown>(selector);
+
+  let beginning = 0;
+  let end = line.node().getTotalLength();
+  let position = null;
+
+  while (true) {
+    const target = Math.floor((beginning + end) / 2);
+    position = line.node().getPointAtLength(target);
+    if ((target === end || target === beginning) && position.x !== mouse[0]) {
+      break;
+    }
+    if (position.x > mouse[0]) end = target;
+    else if (position.x < mouse[0]) beginning = target;
+    else break; //positionition found
+  }
+
+  return { x: position.x, y: position.y };
+};
+
 export const UpdatedElevationProfile: React.FC<Props> = ({
   showElevation = true,
   lines,
@@ -91,49 +115,28 @@ export const UpdatedElevationProfile: React.FC<Props> = ({
   };
 
   const handleMouseMove = (e) => {
-    const mouseCoords = clientPoint(e.target, e);
+    const mouse = clientPoint(e.target, e);
+    const { x, y } = getPositionOnLine(mouse, '#profile');
 
     select('#mouse-line').attr('d', function () {
-      let d = 'M' + mouseCoords[0] + ',' + boundedHeight;
-      d += ' ' + mouseCoords[0] + ',' + 0;
+      let d = 'M' + mouse[0] + ',' + boundedHeight;
+      d += ' ' + mouse[0] + ',' + 0;
       return d;
     });
 
-    select('#mouse').attr('transform', () => {
-      const linePath = select<SVGPathElement, unknown>('#profile');
-      let beginning = 0;
-      let end = linePath.node().getTotalLength();
-      let pos = null;
+    select('#mouse').attr('transform', `translate(${mouse[0]}, ${y})`);
 
-      while (true) {
-        const target = Math.floor((beginning + end) / 2);
-        pos = linePath.node().getPointAtLength(target);
-        console.log(pos);
-        if (
-          (target === end || target === beginning) &&
-          pos.x !== mouseCoords[0]
-        ) {
-          break;
-        }
-        if (pos.x > mouseCoords[0]) end = target;
-        else if (pos.x < mouseCoords[0]) beginning = target;
-        else break; //position found
-      }
+    const elevationAbbrev: string = units === 'miles' ? 'ft' : 'm';
+    const distanceAbbrev: string = units === 'miles' ? 'mi' : 'km';
 
-      setDistanceAlongPath(+xScale.invert(pos.x));
-      const elevationAbbrev: string = units === 'miles' ? 'ft' : 'm';
-      const distanceAbbrev: string = units === 'miles' ? 'mi' : 'km';
+    select('#elevation-text').text(
+      `${yScale.invert(y).toFixed(2)} ${elevationAbbrev}`
+    );
 
-      select('#elevation-text').text(
-        `${yScale.invert(pos.y).toFixed(2)} ${elevationAbbrev}`
-      );
-
-      select('#distance-text').text(
-        `${xScale.invert(pos.x).toFixed(2)} ${distanceAbbrev}`
-      );
-
-      return `translate(${mouseCoords[0]}, ${pos.y})`;
-    });
+    select('#distance-text').text(
+      `${xScale.invert(x).toFixed(2)} ${distanceAbbrev}`
+    );
+    setDistanceAlongPath(+xScale.invert(x));
   };
 
   const handleMouseLeave = () => {
@@ -197,13 +200,22 @@ export const UpdatedElevationProfile: React.FC<Props> = ({
             >
               <circle r={7} stroke="#fff" strokeWidth={2} fill="#444" />
               <rect
-                transform={`translate(${[-20, -27].join(' ')})`}
-                height={20}
-                width={40}
-                fill={'rgba(0, 0, 0, 0.4)'}
+                height={40}
+                width={80}
+                transform={`translate(7 -20)`}
+                stroke="black"
+                fill="#fff"
               />
-              <text id="elevation-text" height={11} fill="white"></text>
-              <text id="distance-text" height={11} fill="white"></text>
+              <text
+                transform={`translate(15 -5)`}
+                id="elevation-text"
+                height={11}
+              ></text>
+              <text
+                transform={`translate(15 5)`}
+                id="distance-text"
+                height={11}
+              ></text>
             </g>
           </g>
           <rect
