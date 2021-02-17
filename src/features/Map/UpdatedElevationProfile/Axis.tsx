@@ -12,7 +12,6 @@ const Axis = ({
   range = [10, 290],
   axis = 'x',
 }: AxisProps) => {
-  console.log(range);
   const ticks = useMemo(() => {
     const scale = scaleLinear().domain(domain).range(range).nice();
     const rangeDifference =

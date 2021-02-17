@@ -223,7 +223,6 @@ const Map = () => {
       const center: { lng: number; lat: number } = map.transform._center;
 
       // control map with arrow keys while focused
-      console.log(e.code);
       if (e.keyCode === 9) {
         if (document.activeElement.className === 'mapboxgl-canvas') {
           setMapFocus(true);

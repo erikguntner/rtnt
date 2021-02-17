@@ -111,12 +111,8 @@ const ActivityForm: React.FC<{}> = () => {
         if (response.ok) {
           const data = await response.json();
         } else {
-          console.log('error');
         }
-      } catch (error) {
-        console.log('error');
-        console.log(error);
-      }
+      } catch (error) {}
 
       setSubmitting(false);
     },

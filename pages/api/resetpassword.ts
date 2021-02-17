@@ -13,7 +13,6 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       const result = await firebase.auth().sendPasswordResetEmail(email, actionCodeSettings);
-      console.log(result);
 
       return res.status(200).json({ message: 'fun' });
     } catch (error) {

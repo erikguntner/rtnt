@@ -202,17 +202,17 @@ export const UpdatedElevationProfile: React.FC<Props> = ({
               <rect
                 height={40}
                 width={80}
-                transform={`translate(7 -20)`}
+                transform={`translate(15 -20)`}
                 stroke="black"
                 fill="#fff"
               />
               <text
-                transform={`translate(15 -5)`}
+                transform={`translate(23 -5)`}
                 id="elevation-text"
                 height={11}
               ></text>
               <text
-                transform={`translate(15 5)`}
+                transform={`translate(23 10)`}
                 id="distance-text"
                 height={11}
               ></text>

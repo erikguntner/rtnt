@@ -10,7 +10,6 @@ const s3 = new AWS.S3({
 
 const saveImageToS3 = handler => async (req, res) => {
   try {
-    // console.log('saving image to s3');
     const { id } = req.user;
     const { buffer } = req;
 
@@ -34,7 +33,6 @@ const saveImageToS3 = handler => async (req, res) => {
 
     // req.image = image;
   } catch (e) {
-    console.log(e);
     return res.status(422).json({ message: 'user error saving image to s3' });
   }
 

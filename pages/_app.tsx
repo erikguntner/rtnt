@@ -73,12 +73,10 @@ const Layout = ({ children }) => {
           dispatch(authenticateUser({ authenticated: token, user }));
         } else {
           const res = await response.json();
-          console.log(res);
         }
 
         dispatch(setValidating(false));
       } catch (error) {
-        console.log(error);
         dispatch(setValidating(false));
       }
     };

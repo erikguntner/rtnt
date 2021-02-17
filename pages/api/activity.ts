@@ -31,7 +31,6 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       const activities = results.rows;
       return res.status(200).json({ activities, units });
     } catch (error) {
-      console.log(error);
       return res.status(400).json({ message: 'there was an error' });
     }
   } else if (req.method === 'POST') {
@@ -71,7 +70,6 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
 
       return res.status(200).json({ activity });
     } catch (err) {
-      console.log(err);
       return res
         .status(400)
         .json({ message: 'there was an error saving activities' });

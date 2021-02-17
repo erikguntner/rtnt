@@ -28,7 +28,6 @@ const takeMapImage = handler => async (req, res) => {
       progress: 65,
     });
 
-    // console.log('awaiting page');
     // open new browser
     const page = await browser.newPage();
     // reduce to 2D array of [lat, lon] coords
@@ -37,7 +36,6 @@ const takeMapImage = handler => async (req, res) => {
     // Stringify coords before using them as query string
     const coordsStr = JSON.stringify(flattenedCoords);
 
-    // console.log('navigating to url');
     // goto page with map sending coordintaes along
     pusher.trigger('save-route', 'status-update', {
       progress: 55,
@@ -80,13 +78,11 @@ const takeMapImage = handler => async (req, res) => {
     // writeFileToDesktop(image, res);
     // res.send({ data: base64Image });
   } catch (err) {
-    console.log(err);
     return res
       .status(422)
       .send({ message: 'there was an error taking picture' });
   }
 
-  console.log('returning image handler');
   return handler(req, res);
 };
 
@@ -100,19 +96,15 @@ const writeFileToDesktop = (image, res) => {
     const file = fs.createWriteStream(outPath);
 
     file.on('finish', () => {
-      console.log('finished');
       res.send({ message: 'completed writing image' });
     });
 
     file.on('error', err => {
-      console.log('error writing file');
-      console.log(err);
     });
 
     file.write(image);
     file.end();
   } catch (err) {
-    console.log(err);
     res.send({ message: 'failed writing image' });
   }
 };

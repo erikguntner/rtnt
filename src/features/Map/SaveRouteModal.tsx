@@ -119,7 +119,6 @@ const SaveRouteModal: React.FC<Props> = ({
         onSaveAlert('error', 'Our server may have timed out. Please try again');
       }
     } catch (error) {
-      console.log(error);
       onSaveAlert('error', 'Our server may have timed out. Please try again');
     }
   };

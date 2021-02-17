@@ -57,7 +57,6 @@ const staticMapImage = handler => async (req, res) => {
     req.buffer = buffer;
 
   } catch (error) {
-    console.log(error);
     return res.status(200).json({ message: 'unsuccessful map' });
   }
 

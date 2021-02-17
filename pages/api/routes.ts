@@ -28,7 +28,6 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
 
       return res.status(200).json({ routes, units });
     } catch (err) {
-      console.log(err);
       return res
         .status(422)
         .json({ message: 'there was an error returning all routes' });

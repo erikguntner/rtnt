@@ -10,7 +10,6 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // check if all necessary fields are provided
     if (!email || !username || !password) {
-      console.log('not enough info');
       return res
         .status(400)
         .json({ message: 'You must provide and username and password' });
@@ -21,7 +20,6 @@ const request = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // check if username exists
     if (usernameInDb.rows[0]) {
-      console.log('username exists');
       return res
         .status(400)
         .json({ message: 'username in use' });

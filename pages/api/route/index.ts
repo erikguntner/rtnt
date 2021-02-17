@@ -40,7 +40,6 @@ type NextApiRequestWithUser = NextApiRequest & AdditionalTypes;
 const saveRoute = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   if (req.method === 'POST') {
     try {
-      console.log(req.body);
       const { id } = req.user;
       const { name, startPoint, endPoint, lines, points, distance, sports, surfaces, city, state } = req.body;
       const { image } = req;
@@ -80,8 +79,6 @@ const saveRoute = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
         route,
       });
     } catch (err) {
-      console.log(err);
-
       return res.status(400).json({
         message: 'error saving route',
       });
