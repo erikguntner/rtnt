@@ -30,7 +30,7 @@ const Axis = ({
   }, [domain.join('-'), range.join('-')]);
 
   return (
-    <svg>
+    <svg style={{ overflow: 'visible' }}>
       <path
         d={['M', range[0], 6, 'v', -6, 'H', range[1], 'v', 6].join(' ')}
         fill="none"

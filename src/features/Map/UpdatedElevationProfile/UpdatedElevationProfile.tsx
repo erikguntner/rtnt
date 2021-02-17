@@ -182,7 +182,10 @@ export const UpdatedElevationProfile: React.FC<Props> = ({
             >
               <Axis domain={yScale.domain()} range={yScale.range()} axis="y" />
             </g>
-            <g transform={`translate(${[0, boundedHeight].join(',')})`}>
+            <g
+              style={{ padding: '20px' }}
+              transform={`translate(${[0, boundedHeight].join(',')})`}
+            >
               <Axis domain={xScale.domain()} range={xScale.range()} />
             </g>
           </g>
