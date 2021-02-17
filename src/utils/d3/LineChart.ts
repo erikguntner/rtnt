@@ -217,12 +217,6 @@ export const renderLineChart = (
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     select('.mouse').attr('transform', function (d: ElevationData[]) {
-      // const distances = lineData.map(obj => obj.distance);
-
-      // const xDistance = xScale.invert(mouseCoords[0]);
-      // const bisect = bisector(xValue).right;
-      // const idx = bisect(distances, xDistance);
-
       let beginning = 0;
       let end = linePath.node().getTotalLength();
       let pos = null;

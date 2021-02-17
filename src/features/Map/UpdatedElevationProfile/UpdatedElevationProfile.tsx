@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
-import React, { useMemo, Dispatch, SetStateAction } from 'react';
+import React, { useState, useMemo, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import {
   extent,
@@ -57,6 +57,10 @@ export const UpdatedElevationProfile: React.FC<Props> = ({
   if (!showElevation && showElevation !== null) {
     return null;
   }
+
+  const [contentOrientation, setContentOrientation] = useState<
+    'left' | 'right'
+  >('left');
 
   const { ref, newSettings: dimensions } = useChartDimensions({
     marginLeft: 50,
@@ -117,6 +121,8 @@ export const UpdatedElevationProfile: React.FC<Props> = ({
   const handleMouseMove = (e) => {
     const mouse = clientPoint(e.target, e);
     const { x, y } = getPositionOnLine(mouse, '#profile');
+    const orientation: 'left' | 'right' =
+      mouse[0] > boundedWidth - boundedWidth * 0.25 ? 'left' : 'right';
 
     select('#mouse-line').attr('d', function () {
       let d = 'M' + mouse[0] + ',' + boundedHeight;
@@ -125,6 +131,7 @@ export const UpdatedElevationProfile: React.FC<Props> = ({
     });
 
     select('#mouse').attr('transform', `translate(${mouse[0]}, ${y})`);
+    select('#content').attr('transform', `translate(${mouse[0]}, ${40})`);
 
     const elevationAbbrev: string = units === 'miles' ? 'ft' : 'm';
     const distanceAbbrev: string = units === 'miles' ? 'mi' : 'km';
@@ -136,6 +143,12 @@ export const UpdatedElevationProfile: React.FC<Props> = ({
     select('#distance-text').text(
       `${xScale.invert(x).toFixed(2)} ${distanceAbbrev}`
     );
+
+    // set the orientation for the content if they don't currently match
+    if (orientation !== contentOrientation) {
+      setContentOrientation(orientation);
+    }
+
     setDistanceAlongPath(+xScale.invert(x));
   };
 
@@ -144,6 +157,8 @@ export const UpdatedElevationProfile: React.FC<Props> = ({
     select('#mouse-line').style('opacity', '0');
     setDistanceAlongPath(0);
   };
+
+  // const orientation = defineOrientation();
 
   return (
     <ChartContainer
@@ -202,17 +217,31 @@ export const UpdatedElevationProfile: React.FC<Props> = ({
               <rect
                 height={40}
                 width={80}
-                transform={`translate(15 -20)`}
+                transform={
+                  contentOrientation === 'right'
+                    ? 'translate(15 -20)'
+                    : 'translate(-94 -20)'
+                }
                 stroke="black"
                 fill="#fff"
               />
+              {/* `translate(-86 -5)` */}
               <text
-                transform={`translate(23 -5)`}
+                transform={
+                  contentOrientation === 'right'
+                    ? 'translate(23 -5)'
+                    : 'translate(-86 -5)'
+                }
                 id="elevation-text"
                 height={11}
               ></text>
+              {/* `translate(-86 10)` */}
               <text
-                transform={`translate(23 10)`}
+                transform={
+                  contentOrientation === 'right'
+                    ? 'translate(23 10)'
+                    : 'translate(-86 10)'
+                }
                 id="distance-text"
                 height={11}
               ></text>
