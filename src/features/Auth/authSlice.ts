@@ -99,7 +99,6 @@ export const updateUnits = (
       });
     }
   } catch (err) {
-    console.log(err);
     changeNotificationStatus({
       isVisible: true,
       type: 'error',

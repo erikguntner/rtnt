@@ -31,7 +31,6 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
 
       return res.status(200).json({ data });
     } catch (err) {
-      console.log(err);
       return res.status(422).json({ error: 'error updating users units' });
     }
   } else {

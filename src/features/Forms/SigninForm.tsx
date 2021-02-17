@@ -58,7 +58,6 @@ const SignupForm: React.FC<{}> = () => {
 
         if (response.ok) {
           const { token, user } = await response.json();
-          console.log(token, user);
 
           await setCookieOnSignin({ token, rememberMe });
           dispatch(authenticateUser({ authenticated: token, user }));
@@ -68,7 +67,6 @@ const SignupForm: React.FC<{}> = () => {
           setError(message);
         }
       } catch (error) {
-        console.log('error logging in', error);
         setError(error.message);
       }
 

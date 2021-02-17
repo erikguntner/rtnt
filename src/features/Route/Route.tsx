@@ -65,7 +65,6 @@ const deleteRoute = async (id: number, image: string) => {
       Router.push('/myroutes');
     } else {
       const error = new Error(response.statusText);
-      console.log(error);
     }
   } catch (err) {
     console.log('send notification of error', err);

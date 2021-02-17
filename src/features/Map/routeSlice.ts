@@ -330,7 +330,6 @@ export const addRoute = ({
     );
     dispatch(changeLoadingState(false));
   } catch (e) {
-    console.log(e);
     dispatch(
       changeNotificationStatus({
         isVisible: true,

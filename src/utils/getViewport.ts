@@ -23,7 +23,5 @@ export const getViewport = (
     }
   );
 
-  console.log(viewport);
-
   return viewport;
 };

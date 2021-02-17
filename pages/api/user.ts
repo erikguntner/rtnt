@@ -47,7 +47,6 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
         },
       });
     } catch (error) {
-      console.log(error);
       return res.status(401).json({
         message: 'could not retrieve token',
       });
@@ -74,7 +73,6 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
           Objects: keys
         }
       }, function (err, data) {
-        console.log(data, err);
       })
 
       // delete all rows from tables
@@ -90,7 +88,6 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
         user: deletedUser.rows[0],
       });
     } catch (err) {
-      console.log(err);
 
       return res.status(400).json({
         message: 'error deleting user',

@@ -44,7 +44,6 @@ const ResetPasswordForm: React.FC<{}> = ({}) => {
           setError(message);
         }
       } catch (error) {
-        console.log('error resetting password in', error);
         setError(error.message);
       }
 

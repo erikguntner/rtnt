@@ -23,24 +23,25 @@ const ConnectingLines = ({
     ctx.globalCompositeOperation = 'lighter';
 
     if (renderWhileDragging || !isDragging) {
-      let startPixel = null;
-      let endPixel = null;
-
       ctx.lineWidth = lineWidth;
       ctx.strokeStyle = '#667eea';
+      ctx.setLineDash([10, 10]);
       ctx.globalAlpha = 0.5;
       ctx.beginPath();
       const pixel = project([points[index][0], points[index][1]]);
-      if (index === 0) {
-        startPixel = project([points[index + 1][0], points[index + 1][1]]);
-        endPixel = project([points[index + 1][0], points[index + 1][1]]);
-      } else if (index === points.length - 1) {
-        startPixel = project([points[index - 1][0], points[index - 1][1]]);
-        endPixel = project([points[index - 1][0], points[index - 1][1]]);
-      } else {
-        startPixel = project([points[index - 1][0], points[index - 1][1]]);
-        endPixel = project([points[index + 1][0], points[index + 1][1]]);
-      }
+      
+      const startPixel =
+        index === 0
+          ? project([points[index + 1][0], points[index + 1][1]])
+          : index === points.length - 1
+          ? project([points[index - 1][0], points[index - 1][1]])
+          : project([points[index - 1][0], points[index - 1][1]]);
+      const endPixel =
+        index === 0
+          ? project([points[index + 1][0], points[index + 1][1]])
+          : index === points.length - 1
+          ? project([points[index - 1][0], points[index - 1][1]])
+          : project([points[index + 1][0], points[index + 1][1]]);
 
       ctx.lineTo(startPixel[0], startPixel[1]);
       ctx.lineTo(pixel[0], pixel[1]);

@@ -35,8 +35,6 @@ const CustomSlider: React.FC<Props> = ({ max, handleCustomSlide }) => {
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
-    console.log(max);
-
     const sliderRange = sliderTop()
       .min(0)
       .max(max)
@@ -50,14 +48,11 @@ const CustomSlider: React.FC<Props> = ({ max, handleCustomSlide }) => {
         handleCustomSlide(val);
       });
 
-    console.log(sliderRange);
-
     const sliderGroup = select('.slider-group');
 
     sliderGroup.attr('transform', 'translate(15, 40)').call(sliderRange);
 
     if (previousMax !== max) {
-      console.log('different maxes');
       sliderGroup.attr('transform', 'translate(15, 40)').call(sliderRange);
     }
   }, [max, previousMax, dimensions, previousDimensions]);

@@ -58,9 +58,7 @@ const ActivityLog: React.FC<{}> = ({}) => {
           setActivities(activities);
           setUnits(units);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
       setLoading(false);
     };
 

@@ -41,7 +41,6 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       const route = results.rows[0];
       return res.status(200).json({ route });
     } catch (err) {
-      console.log(err);
       return res
         .status(422)
         .json({ message: 'there was an error fetching the route' });
@@ -64,7 +63,6 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
 
       return res.status(200).json({ route });
     } catch (err) {
-      console.log(err);
       return res
         .status(400)
         .json({ message: 'there was an error fetching the route' });
