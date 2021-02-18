@@ -9,7 +9,6 @@ import {
   area,
   select,
   curveMonotoneX,
-  clientPoint,
   pointer,
 } from 'd3';
 import * as turfHelpers from '@turf/helpers';
