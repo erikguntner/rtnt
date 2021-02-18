@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { axisBottom, select, scalePoint, entries } from 'd3';
+import { axisBottom, select, scalePoint } from 'd3';
+import { entries } from 'd3-collection';
 import styled from 'styled-components';
 import startOfYear from 'date-fns/startOfYear';
 import addWeeks from 'date-fns/addWeeks';
@@ -222,7 +223,7 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
       .attr('transform', `translate(0 0)`)
       .attr('class', 'leaf-group')
       .style('position', 'relative')
-      .on('mouseover', function (d) {
+      .on('mouseover', function (event, d) {
         select(this).style('cursor', 'pointer');
         select(this.children[0]).style('stroke-width', '1.5');
         const windowHeight = window.innerHeight;
@@ -233,11 +234,13 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
         const xPos = x + left;
         const topPositioning = top >= windowHeight / 2 ? true : false;
         const yPos = topPositioning ? y + top - circleRadius : y + bottom;
-
         setActivity({
           top: topPositioning,
           position: [xPos, yPos],
+          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+          // @ts-ignore
           data: d,
+          units,
         });
       })
       .on('mouseleave', function (d) {
@@ -246,6 +249,7 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
           top: false,
           position: [],
           data: null,
+          units,
         });
       });
 

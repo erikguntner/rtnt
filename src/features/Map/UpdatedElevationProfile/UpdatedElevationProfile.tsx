@@ -9,6 +9,7 @@ import {
   area,
   select,
   curveMonotoneX,
+  // @ts-ignore
   pointer,
 } from 'd3';
 import * as turfHelpers from '@turf/helpers';
