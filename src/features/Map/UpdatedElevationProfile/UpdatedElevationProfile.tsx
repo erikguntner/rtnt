@@ -10,6 +10,7 @@ import {
   select,
   curveMonotoneX,
   clientPoint,
+  pointer,
 } from 'd3';
 import * as turfHelpers from '@turf/helpers';
 
@@ -119,7 +120,7 @@ export const UpdatedElevationProfile: React.FC<Props> = ({
   };
 
   const handleMouseMove = (e) => {
-    const mouse = clientPoint(e.target, e);
+    const mouse = pointer(e, e.target);
     const { x, y } = getPositionOnLine(mouse, '#profile');
     const orientation: 'left' | 'right' =
       mouse[0] > boundedWidth - boundedWidth * 0.25 ? 'left' : 'right';
@@ -258,11 +259,11 @@ export const UpdatedElevationProfile: React.FC<Props> = ({
             fill="none"
             pointerEvents="all"
             onMouseOver={handleMouseEnter}
-            onTouchStart={handleMouseEnter}
+            onPointerDown={handleMouseEnter}
             onMouseMove={handleMouseMove}
-            onTouchMove={handleMouseMove}
+            onPointerMove={handleMouseMove}
             onMouseOut={handleMouseLeave}
-            onTouchEnd={handleMouseLeave}
+            onPointerUp={handleMouseLeave}
           />
         </svg>
       ) : (
