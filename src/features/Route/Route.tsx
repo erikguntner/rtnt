@@ -9,7 +9,6 @@ import fetch from 'isomorphic-unfetch';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisH, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
-import ElevationProfile from '../Map/ElevationProfile';
 import DistanceMarkers from '../Map/DistanceMarkers';
 import { RootState } from '../../reducers/rootReducer';
 import SvgPath from '../Map/SvgPath';
@@ -23,6 +22,7 @@ import { getViewport } from '../../utils/getViewport';
 import PopOut from '../Utilities/PopOut';
 import { setRoute } from '../Map/routeSlice';
 import { updateViewport } from '../Map/viewportSlice';
+import UpdatedElevationProfile from '../Map//UpdatedElevationProfile';
 
 interface Viewport {
   latitude: number;
@@ -209,7 +209,7 @@ const RoutePage: React.FC<{ data: Route }> = ({ data }) => {
           ))}
         </ReactMapGL>
         <ElevationWrapper>
-          <ElevationProfile
+          <UpdatedElevationProfile
             {...{
               units,
               setDistanceAlongPath,

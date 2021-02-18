@@ -28,7 +28,6 @@ import DistanceIndicator from './DistanceIndicator';
 import LoadingIndicator from './LoadingIndicator';
 import CrossHairs from './CrossHairs';
 import { Spinner } from '../Forms/styles';
-import ElevationProfile from './ElevationProfile';
 
 interface Viewport {
   latitude: number;
@@ -385,7 +384,7 @@ const Label = styled.div`
 const MapControls = styled.div`
   position: absolute;
   left: 16px;
-  top: 96px;
+  top: 136px;
   display: flex;
   align-items: center;
 `;
@@ -393,7 +392,7 @@ const MapControls = styled.div`
 const GeolocationButton = styled.button`
   position: absolute;
   left: 16px;
-  top: 96px;
+  top: 136px;
   width: 30px;
   height: 30px;
   border: none;

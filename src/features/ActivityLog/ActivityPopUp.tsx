@@ -12,7 +12,7 @@ interface ActivityPopUpProps {
 }
 
 const ActivityPopUp: React.FC<ActivityPopUpProps> = ({
-  activity: { top, position, data },
+  activity: { top, position, data, units },
 }) => {
   return (
     <Portal selector={'#portal'}>
@@ -28,11 +28,9 @@ const ActivityPopUp: React.FC<ActivityPopUpProps> = ({
           <div>
             <p>
               Distance:{' '}
-              {convertLength(
-                parseInt(data.distance),
-                'meters',
-                'miles'
-              ).toFixed(1)}
+              {convertLength(parseInt(data.distance), 'meters', units).toFixed(
+                1
+              )}
             </p>
             <p>Time: {data.elapsedTime}</p>
           </div>

@@ -5,13 +5,13 @@ import {
   axisLeft,
   axisBottom,
   scaleLinear,
-  scaleBand,
   extent,
   select,
   selectAll,
   curveMonotoneX,
   line,
-  mouse,
+  // @ts-ignore
+  pointer,
   max,
 } from 'd3';
 import * as turfHelpers from '@turf/helpers';
@@ -205,10 +205,10 @@ export const renderLineChart = (
     selectAll('.mouse rect').style('opacity', '1');
   }
 
-  function mouseMove() {
+  function mouseMove(event) {
     // mouse moving over canvas
     //@ts-ignore
-    const mouseCoords = mouse(this);
+    const mouseCoords = pointer(event);
     select('.mouse-line').attr('d', function () {
       let d = 'M' + mouseCoords[0] + ',' + innerHeight;
       d += ' ' + mouseCoords[0] + ',' + 0;

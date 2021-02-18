@@ -27,6 +27,7 @@ export interface ActivityData {
   top: boolean;
   position: number[];
   data: null | Activity;
+  units: 'miles' | 'kilometers';
 }
 
 const ActivityLog: React.FC<{}> = ({}) => {
@@ -39,6 +40,7 @@ const ActivityLog: React.FC<{}> = ({}) => {
     top: false,
     position: [],
     data: null,
+    units,
   });
   const headerRef = useRef(null);
   const yearRef = useRef(null);
