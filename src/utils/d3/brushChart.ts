@@ -1,18 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 import { Dispatch, SetStateAction } from 'react';
 import {
-  area,
-  axisLeft,
   brushX,
   axisBottom,
   scaleLinear,
-  scaleBand,
-  extent,
   select,
-  selectAll,
-  curveMonotoneX,
-  line,
-  mouse,
   max,
 } from 'd3';
 import * as turfHelpers from '@turf/helpers';

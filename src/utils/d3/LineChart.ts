@@ -5,7 +5,6 @@ import {
   axisLeft,
   axisBottom,
   scaleLinear,
-  scaleBand,
   extent,
   select,
   selectAll,

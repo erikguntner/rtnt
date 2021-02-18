@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { brushX, axisBottom, select, scaleTime, timeHour, event } from 'd3';
+import { brushX, axisBottom, select, scaleTime, timeHour } from 'd3';
 import styled from 'styled-components';
 import useResizeObserver from './useResizeObserver';
 import usePrevious from './usePrevious';
@@ -71,9 +71,9 @@ const BrushChart: React.FC<Props> = ({
         [0, 0],
         [innerWidth, innerHeight],
       ])
-      .on('start brush end', () => {
-        if (event.selection) {
-          const [startTime, endTime] = event.selection.map(xScale.invert);
+      .on('start brush end', ({ selection }) => {
+        if (selection) {
+          const [startTime, endTime] = selection.map(xScale.invert);
           const seconds = differenceInSeconds(endTime, startTime);
           setSelection([startTime, endTime]);
           setElapsedAndStartTime(seconds, startTime);
