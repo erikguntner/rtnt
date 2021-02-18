@@ -28,7 +28,6 @@ import DistanceIndicator from './DistanceIndicator';
 import LoadingIndicator from './LoadingIndicator';
 import CrossHairs from './CrossHairs';
 import { Spinner } from '../Forms/styles';
-import ElevationProfile from './ElevationProfile';
 
 interface Viewport {
   latitude: number;
