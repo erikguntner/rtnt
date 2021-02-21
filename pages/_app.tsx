@@ -10,7 +10,6 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import debounce from 'lodash/debounce';
 import LogRocket from 'logrocket';
-import cookie from 'js-cookie';
 
 import Nav from '../src/features/Nav/Nav';
 import {
