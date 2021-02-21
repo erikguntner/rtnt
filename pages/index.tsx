@@ -8,7 +8,6 @@ const Home: NextPage<{}> = () => {
   return (
     <>
       <Map />
-      <Notifications />
     </>
   );
 };

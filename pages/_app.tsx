@@ -20,6 +20,7 @@ import {
 import { theme, GlobalStyle } from '../src/utils/theme';
 import { configStore } from '../src/reducers/store';
 import API_URL from '../src/utils/url';
+import Notifications from '../src/features/Map/Notifications';
 
 config.autoAddCss = false;
 
@@ -105,6 +106,7 @@ const MyApp = ({ Component, pageProps }) => {
       <Provider store={configStore}>
         <Layout>
           <Component {...pageProps} />
+          <Notifications />
         </Layout>
       </Provider>
     </ThemeProvider>

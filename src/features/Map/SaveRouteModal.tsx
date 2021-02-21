@@ -8,11 +8,13 @@ import Portal from '../Utilities/Portal';
 import Tag from '../Utilities/Tag';
 
 import { RootState } from '../../reducers/rootReducer';
-import { changeNotificationStatus } from './notificationSlice';
+import {
+  changeNotificationStatus,
+  NotificationState,
+} from './notificationSlice';
 import API_URL from '../../utils/url';
 import { topoSvgUrl } from '../../utils/topographyStyle';
 import { sportsArr, surfacesArr } from '../Utilities/Tag';
-
 interface Props {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -34,7 +36,6 @@ const SaveRouteModal: React.FC<Props> = ({
   const [value, setValue] = useState<string>('');
   const [sports, setSports] = useState<string[]>([]);
   const [surfaces, setSurfaces] = useState<string[]>([]);
-  const [types, setTypes] = useState<string[]>([]);
   const [status, setStatus] = useState<string>('beginning save process');
   const [progress, setProgress] = useState<number>(-90);
 
@@ -62,7 +63,7 @@ const SaveRouteModal: React.FC<Props> = ({
     });
   }, []);
 
-  const onSaveAlert = (type: string, message: string) => {
+  const onSaveAlert = ({ type, message }: Partial<NotificationState>) => {
     setOpen(false);
     setSaving(false);
     setProgress(-90);
@@ -114,12 +115,21 @@ const SaveRouteModal: React.FC<Props> = ({
       });
 
       if (response.ok) {
-        onSaveAlert('success', 'We successfully saved your route');
+        onSaveAlert({
+          type: 'success',
+          message: 'We successfully saved your route',
+        });
       } else {
-        onSaveAlert('error', 'Our server may have timed out. Please try again');
+        onSaveAlert({
+          type: 'error',
+          message: 'Our server may have timed out. Please try again',
+        });
       }
     } catch (error) {
-      onSaveAlert('error', 'Our server may have timed out. Please try again');
+      onSaveAlert({
+        type: 'error',
+        message: 'Our server may have timed out. Please try again',
+      });
     }
   };
 

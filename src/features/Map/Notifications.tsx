@@ -50,7 +50,7 @@ const Notifications: React.FC<{}> = () => {
             message: '',
           })
         );
-      }, 3000);
+      }, 5000);
     }
   }, [isVisible]);
 
