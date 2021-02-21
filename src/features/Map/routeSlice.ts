@@ -3,7 +3,7 @@ import { multiLineString } from '@turf/helpers';
 import length from '@turf/length';
 
 import { AppThunk } from '../../reducers/store';
-import { changeNotificationStatus } from './notificationSlice';
+import { changeNotificationStatus } from '../Notifications/notificationSlice';
 
 interface RouteState {
   points: number[][];

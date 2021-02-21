@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import fetch from 'isomorphic-unfetch';
 import { AppThunk } from '../../reducers/store';
 import { removeCookieOnSignout } from '../../utils/auth';
-import { changeNotificationStatus } from '../Map/notificationSlice';
+import { changeNotificationStatus } from '../Notifications/notificationSlice';
 import { clearState } from '../RouteList/routeListSlice';
 import API_URL from '../../utils/url';
 

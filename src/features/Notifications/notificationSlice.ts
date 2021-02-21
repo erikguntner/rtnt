@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface NotificationState {
+export interface NotificationState {
   isVisible: boolean;
-  type: string;
+  type: 'error' | 'warning' | 'success' | '';
   message: string;
 }
 

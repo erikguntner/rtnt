@@ -28,6 +28,7 @@ import DistanceIndicator from './DistanceIndicator';
 import LoadingIndicator from './LoadingIndicator';
 import CrossHairs from './CrossHairs';
 import { Spinner } from '../Forms/styles';
+import { changeNotificationStatus } from '../Notifications/notificationSlice';
 
 interface Viewport {
   latitude: number;
@@ -46,7 +47,6 @@ const Map = () => {
     authenticated,
     user: { units },
     viewport,
-    initialLoad,
   } = useSelector((state: RootState) => ({
     isLoading: state.loading.isLoading,
     points: state.route.present.points,
@@ -55,7 +55,6 @@ const Map = () => {
     authenticated: state.auth.authenticated,
     user: state.auth.user,
     viewport: state.viewport.viewport,
-    initialLoad: state.viewport.initialLoad,
   }));
 
   const [width, height] = useWindowSize();
@@ -68,10 +67,11 @@ const Map = () => {
   const [showElevation, setShowElevation] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [index, setIndex] = useState<number>(0);
-  const mapRef = useRef(null);
   // state for syncing mouseevents for chart and map
   const [distanceAlongPath, setDistanceAlongPath] = useState<number>(0);
   const [pointAlongPath, setPointAlongPath] = useState<number[]>([]);
+
+  const mapRef = useRef(null);
 
   const handleClick = (lngLat: number[]) => {
     const [newLong, newLat] = lngLat;
@@ -180,41 +180,49 @@ const Map = () => {
     }
   }, [distanceAlongPath]);
 
-  const getLocation = (updatePosition = false) => {
-    setUserLocationLoading(true);
+  const getLocation = () => {
     const geo = navigator.geolocation;
     if (!geo) {
-      setUserLocationLoading(false);
+      dispatch(
+        changeNotificationStatus({
+          isVisible: true,
+          type: 'error',
+          message: 'Your web browser does not support geolocation',
+        })
+      );
       return;
     }
 
+    setUserLocationLoading(true);
+
     const onSuccess = (position) => {
-      // set viewport to user's location on first load, but not when coming back from another page
-      if (!initialLoad || updatePosition) {
-        dispatch(
-          updateViewport({
-            ...viewport,
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            zoom: 14,
-          })
-        );
-      }
+      dispatch(
+        updateViewport({
+          ...viewport,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          zoom: 14,
+        })
+      );
 
       setUserLocation([position.coords.latitude, position.coords.longitude]);
       setUserLocationLoading(false);
     };
 
     const onError = () => {
+      dispatch(
+        changeNotificationStatus({
+          isVisible: true,
+          type: 'error',
+          message:
+            'Looks like geolocation is disabled in your browser. Please enable in order to use location features',
+        })
+      );
       setUserLocationLoading(false);
     };
 
     geo.getCurrentPosition(onSuccess, onError);
   };
-
-  useEffect(() => {
-    getLocation();
-  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -263,14 +271,6 @@ const Map = () => {
         {...{ setClipPath, clipPath, showElevation, setShowElevation }}
       />
       <ElevationWrapper>
-        {/* <ElevationProfile
-          {...{
-            showElevation,
-            lines,
-            units,
-            setDistanceAlongPath,
-          }}
-        /> */}
         <UpdatedElevationProfile
           {...{
             showElevation,
@@ -332,10 +332,7 @@ const Map = () => {
           <NavigationControl showCompass={false} />
         </MapControls>
       </ReactMapGL>
-      <GeolocationButton
-        disabled={userLocationLoading}
-        onClick={() => getLocation(true)}
-      >
+      <GeolocationButton disabled={userLocationLoading} onClick={getLocation}>
         {userLocationLoading ? (
           <Spinner />
         ) : (

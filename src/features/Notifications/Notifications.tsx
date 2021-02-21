@@ -50,7 +50,7 @@ const Notifications: React.FC<{}> = () => {
             message: '',
           })
         );
-      }, 3000);
+      }, 5000);
     }
   }, [isVisible]);
 
@@ -97,7 +97,7 @@ const Notification = styled.div<NotificationProps>`
     border-bottom-left-radius: 5px;
     border-top-left-radius: 5px;
     width: 4px;
-    background-color: ${props => props.theme.colors[props.color][600]};
+    background-color: ${(props) => props.theme.colors[props.color][600]};
   }
 `;
 
@@ -109,9 +109,9 @@ const Icon = styled.div<NotificationProps>`
   width: 4rem;
   margin-right: 2rem;
   border-radius: 50%;
-  background-color: ${props => props.theme.colors[props.color][200]};
+  background-color: ${(props) => props.theme.colors[props.color][200]};
   font-size: 1.8rem;
-  color: ${props => props.theme.colors[props.color][600]};
+  color: ${(props) => props.theme.colors[props.color][600]};
 `;
 
 const Text = styled.div`
@@ -127,13 +127,13 @@ const CloseButton = styled.button`
   width: 1.8rem;
   font-size: 1.2rem;
   border-radius: 50%;
-  color: ${props => props.theme.colors.gray[800]};
+  color: ${(props) => props.theme.colors.gray[800]};
   border: none;
   background-color: transparent;
 
   &:hover {
     cursor: pointer;
-    background-color: ${props => props.theme.colors.gray[200]};
+    background-color: ${(props) => props.theme.colors.gray[200]};
   }
 `;
 
