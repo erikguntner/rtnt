@@ -20,7 +20,7 @@ import {
 import { theme, GlobalStyle } from '../src/utils/theme';
 import { configStore } from '../src/reducers/store';
 import API_URL from '../src/utils/url';
-import Notifications from '../src/features/Map/Notifications';
+import Notifications from '../src/features/Notifications/Notifications';
 
 config.autoAddCss = false;
 

@@ -11,7 +11,7 @@ import { RootState } from '../../reducers/rootReducer';
 import {
   changeNotificationStatus,
   NotificationState,
-} from './notificationSlice';
+} from '../Notifications/notificationSlice';
 import API_URL from '../../utils/url';
 import { topoSvgUrl } from '../../utils/topographyStyle';
 import { sportsArr, surfacesArr } from '../Utilities/Tag';

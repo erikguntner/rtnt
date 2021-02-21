@@ -28,7 +28,7 @@ import DistanceIndicator from './DistanceIndicator';
 import LoadingIndicator from './LoadingIndicator';
 import CrossHairs from './CrossHairs';
 import { Spinner } from '../Forms/styles';
-import { changeNotificationStatus } from './notificationSlice';
+import { changeNotificationStatus } from '../Notifications/notificationSlice';
 
 interface Viewport {
   latitude: number;

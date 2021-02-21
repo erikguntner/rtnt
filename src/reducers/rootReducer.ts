@@ -1,7 +1,7 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import undoable, { excludeAction } from 'redux-undo';
 import routeReducer, { loadingReducer } from '../features/Map/routeSlice';
-import notificationReducer from '../features/Map/notificationSlice';
+import notificationReducer from '../features/Notifications/notificationSlice';
 import viewportReducer from '../features/Map/viewportSlice';
 import authReducer from '../features/Auth/authSlice';
 import routeListReducer from '../features/RouteList/routeListSlice';
