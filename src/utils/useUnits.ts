@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 type Units = 'miles' | 'kilometers'
 
@@ -26,7 +26,3 @@ export const useUnits = () => {
     units, setUnits
   ]
 }
-
-// sets units in localStorage if none exist
-// retrieves units from localStorage
-// uodates units in localStorage
