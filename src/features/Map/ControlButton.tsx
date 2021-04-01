@@ -62,15 +62,11 @@ const ControlButton: React.FC<Props> = ({
       ref={btnRef}
       id={id}
       {...{ activeState, disabled, focused, rotate }}
+      onClick={click}
+      data-testid={`control-btn-${id}`}
       disabled={disabled}
     >
-      <InnerButton
-        data-testid={`control-btn-${id}`}
-        {...{ activeState, disabled, focused, rotate }}
-        onClick={click}
-      >
-        <FontAwesomeIcon icon={icon} />
-      </InnerButton>
+      <FontAwesomeIcon icon={icon} />
       <Tooltip>{tooltip}</Tooltip>
     </Button>
   );
@@ -85,11 +81,20 @@ interface ButtonProps {
 
 const Button = styled.button<ButtonProps>`
   position: relative;
-  height: 4rem;
-  width: 12rem;
   border: none;
-  padding: 0;
-  background-color: ${(props) => props.theme.colors.gray[200]};
+  font-size: 2rem;
+  padding: 1.2rem 3.2rem;
+  background-color: ${(props) =>
+    props.activeState ? props.theme.colors.indigo[100] : '#fff'};
+  color: ${(props) => {
+    if (props.activeState) {
+      return props.theme.colors.primary;
+    } else if (props.disabled) {
+      return props.theme.colors.gray[600];
+    } else {
+      return 'black';
+    }
+  }};
 
   &:not(:last-child) {
     border-right: 1px solid ${(props) => props.theme.colors.gray[200]};
@@ -99,6 +104,10 @@ const Button = styled.button<ButtonProps>`
     cursor: pointer;
   }
 
+  &:disabled {
+    cursor: not-allowed;
+  }
+
   & > span {
     visibility: ${({ focused }) => (focused ? 'visible' : 'hidden')};
     opacity: ${({ focused }) => (focused ? 1 : 0)};
@@ -106,42 +115,29 @@ const Button = styled.button<ButtonProps>`
       focused ? 'translate3d(10%, 133%, 0)' : 'translate3d(10%, 100%, 0)'};
   }
 
+  & svg {
+    transform: ${({ rotate }) => `rotate(${rotate}deg)`};
+  }
+
   &:focus {
     outline: none;
   }
 
-  &:hover div:first-of-type {
-    cursor: pointer;
-    transform: ${(props) =>
-      props.activeState
-        ? 'translate3d(0, -3px, 0)'
-        : 'translate3d(0, -8px, 0)'};
-  }
-
-  &:disabled div:first-of-type:hover {
-    cursor: not-allowed;
+  @media (hover: hover) {
+    &:hover > span {
+      visibility: visible;
+      opacity: 1;
+      transform: translate3d(10%, 133%, 0);
+    }
   }
 
   &:active::after {
     width: 0;
   }
-
-  &:disabled div:first-of-type {
-    transform: translate3d(0, -3px, 0);
-  }
-
-  &:active div:first-of-type {
-    transform: translate3d(0, -3px, 0);
-  }
-
-  &:visited {
-    transform: translate3d(0, 3px, 0);
-  }
 `;
 
 const InnerButton = styled.div<ButtonProps>`
   height: 100%;
-  width: 100%;
   font-weight: 600;
   letter-spacing: 1.5px;
   display: flex;
@@ -164,18 +160,6 @@ const InnerButton = styled.div<ButtonProps>`
     props.activeState ? 'translate3d(0, -3px, 0)' : 'translate3d(0, -6px, 0)'};
   transition: 0.2s all linear;
 
-  @media (hover: hover) {
-    &:hover ~ span {
-      visibility: visible;
-      opacity: 1;
-      transform: translate3d(10%, 133%, 0);
-    }
-  }
-
-  & svg {
-    transform: ${({ rotate }) => `rotate(${rotate}deg)`};
-  }
-
   &Active {
     height: 100%;
     width: 100%;
@@ -195,21 +179,18 @@ const InnerButton = styled.div<ButtonProps>`
 `;
 
 const Tooltip = styled.span`
-  display: flex;
   visibility: hidden;
-  justify-content: center;
-  align-items: center;
   position: absolute;
   bottom: 0;
   left: 0;
   opacity: 0;
-  width: 80%;
-  padding: 0 8px;
-  height: 2.5rem;
+  width: fit-content;
+  padding: 4px 1.2rem;
   margin-top: 1rem;
   background-color: #333;
   border-radius: 2px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05), 0 1px 2rem rgba(0, 0, 0, 0.04);
+  text-align: center;
   color: #fff;
   font-size: 1.2rem;
   transform: translate3d(50%, 100%, 0);

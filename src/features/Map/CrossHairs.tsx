@@ -1,8 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-// interface CrossHairsProps {}
-
 const CrossHairs: React.FC<{}> = ({}) => {
   return (
     <Border>
@@ -16,7 +14,7 @@ const Border = styled.div`
   bottom: 0;
   left: 0;
   width: 100%;
-  height: calc(100% - 64px);
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;

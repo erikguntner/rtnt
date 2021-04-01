@@ -156,12 +156,6 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
 };
 
 const ControlsContainer = styled.div`
-  position: absolute;
-  top: 8rem;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  max-width: min-content;
   display: flex;
   justify-content: center;
   z-index: 10;

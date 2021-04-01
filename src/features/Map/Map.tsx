@@ -14,7 +14,6 @@ import {
   updatePointCoords,
 } from './routeSlice';
 import { updateViewport } from './viewportSlice';
-import useWindowSize from '../../utils/useWindowSize';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationArrow } from '@fortawesome/free-solid-svg-icons';
 
@@ -57,7 +56,6 @@ const Map = () => {
     viewport: state.viewport.viewport,
   }));
 
-  const [width, height] = useWindowSize();
   const [mapFocus, setMapFocus] = useState<boolean>(false);
   const [clipPath, setClipPath] = useState<boolean>(false);
   const [userLocation, setUserLocation] = useState<number[]>([]);
@@ -266,29 +264,18 @@ const Map = () => {
   }, [mapFocus, points, viewport]);
 
   return (
-    <MapContainer {...{ width, height }}>
+    <MapContainer>
       <Controls
         {...{ setClipPath, clipPath, showElevation, setShowElevation }}
       />
-      <ElevationWrapper>
-        <UpdatedElevationProfile
-          {...{
-            showElevation,
-            lines,
-            units,
-            setDistanceAlongPath,
-          }}
-        />
-      </ElevationWrapper>
       <ReactMapGL
         latitude={viewport.latitude}
         longitude={viewport.longitude}
         zoom={viewport.zoom}
         mapboxApiAccessToken={process.env.MAPBOX_TOKEN}
         reuseMaps={true}
-        width={'100%'}
-        height={'100%'}
-        style={{ display: 'flex', flex: '1' }}
+        width="100%"
+        height="100%"
         onClick={({ lngLat }: MapEvent) => handleClick(lngLat)}
         ref={mapRef}
         keyboard={false}
@@ -331,7 +318,20 @@ const Map = () => {
         <MapControls>
           <NavigationControl showCompass={false} />
         </MapControls>
+        {mapFocus && <CrossHairs />}
       </ReactMapGL>
+      {showElevation && (
+        <ElevationWrapper>
+          <UpdatedElevationProfile
+            {...{
+              showElevation,
+              lines,
+              units,
+              setDistanceAlongPath,
+            }}
+          />
+        </ElevationWrapper>
+      )}
       <GeolocationButton disabled={userLocationLoading} onClick={getLocation}>
         {userLocationLoading ? (
           <Spinner />
@@ -339,20 +339,17 @@ const Map = () => {
           <FontAwesomeIcon icon={faLocationArrow} />
         )}
       </GeolocationButton>
-      {mapFocus && <CrossHairs />}
       {isLoading && <LoadingIndicator />}
       <DistanceIndicator {...{ units, authenticated, lines }} />
     </MapContainer>
   );
 };
 
-const MapContainer = styled.div<{ width: number; height: number }>`
-  height: ${(props) =>
-    props.height > 0 ? `${props.height - 64}px` : 'calc(100vh - 64px)'};
-  width: 100vw;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
+const MapContainer = styled.div`
+  display: grid;
+  height: calc(100vh - 64px);
+  grid-template-columns: 1fr;
+  grid-template-rows: min-content 1fr;
 
   &:focus {
     outline: none;

@@ -55,10 +55,6 @@ export const UpdatedElevationProfile: React.FC<Props> = ({
   units,
   setDistanceAlongPath,
 }) => {
-  if (!showElevation && showElevation !== null) {
-    return null;
-  }
-
   const [contentOrientation, setContentOrientation] = useState<
     'left' | 'right'
   >('left');
