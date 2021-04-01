@@ -108,12 +108,12 @@ const Button = styled.button<ButtonProps>`
     cursor: not-allowed;
   }
 
-  & > span {
+  /* & > span {
     visibility: ${({ focused }) => (focused ? 'visible' : 'hidden')};
     opacity: ${({ focused }) => (focused ? 1 : 0)};
     transform: ${({ focused }) =>
-      focused ? 'translate3d(10%, 133%, 0)' : 'translate3d(10%, 100%, 0)'};
-  }
+    focused ? 'translate3d(10%, 133%, 0)' : 'translate3d(10%, 100%, 0)'};
+  } */
 
   & svg {
     transform: ${({ rotate }) => `rotate(${rotate}deg)`};
@@ -127,12 +127,44 @@ const Button = styled.button<ButtonProps>`
     &:hover > span {
       visibility: visible;
       opacity: 1;
-      transform: translate3d(10%, 133%, 0);
+      transform: translate3d(-50%, 133%, 0);
     }
   }
 
   &:active::after {
     width: 0;
+  }
+`;
+
+const Tooltip = styled.span`
+  visibility: hidden;
+  position: absolute;
+  opacity: 0;
+  bottom: 0;
+  left: 50%;
+  width: max-content;
+  padding: 4px 1.2rem;
+  margin-top: 1rem;
+  background-color: #333;
+  border-radius: 2px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05), 0 1px 2rem rgba(0, 0, 0, 0.04);
+  text-align: center;
+  color: #fff;
+  font-size: 1.2rem;
+  transform: translate3d(-50%, 100%, 0);
+  transition: all 0.2s ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 6px solid #333;
+    top: -6px;
+    left: 87px;
+    z-index: 1090;
+    left: 50%;
+    transform: translate3d(-50%, 10%, 0);
   }
 `;
 
@@ -175,38 +207,6 @@ const InnerButton = styled.div<ButtonProps>`
 
   &:not(:last-child) {
     border-right: 1px solid ${(props) => props.theme.colors.gray[200]};
-  }
-`;
-
-const Tooltip = styled.span`
-  visibility: hidden;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  opacity: 0;
-  width: fit-content;
-  padding: 4px 1.2rem;
-  margin-top: 1rem;
-  background-color: #333;
-  border-radius: 2px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05), 0 1px 2rem rgba(0, 0, 0, 0.04);
-  text-align: center;
-  color: #fff;
-  font-size: 1.2rem;
-  transform: translate3d(50%, 100%, 0);
-  transition: all 0.2s ease;
-
-  &::before {
-    content: '';
-    position: absolute;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    border-bottom: 6px solid #333;
-    top: -6px;
-    left: 87px;
-    z-index: 1090;
-    left: 50%;
-    transform: translate3d(-50%, 10%, 0);
   }
 `;
 

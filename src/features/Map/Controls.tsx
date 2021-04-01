@@ -150,6 +150,7 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
         tooltip={'export as gpx'}
         id={'gpx'}
       />
+      <Input type="text" placeholder="Search for location" />
       <SaveRouteModal {...{ open, setOpen, saving, setSaving }} />
     </ControlsContainer>
   );
@@ -157,7 +158,8 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
 
 const ControlsContainer = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
+  flex: 1;
   z-index: 10;
 
   @media screen and (max-width: 800px) {
@@ -169,6 +171,13 @@ const ControlsContainer = styled.div`
     padding: 0 1.2px;
     top: calc(1.2rem + ${(props) => props.theme.navHeight});
   }
+`;
+
+const Input = styled.input`
+  flex: 1;
+  border: none;
+  background-color: #eee;
+  padding-left: 1.6rem;
 `;
 
 export default Controls;
