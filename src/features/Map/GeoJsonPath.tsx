@@ -3,27 +3,50 @@ import { Source, Layer, LayerProps } from 'react-map-gl';
 import * as turf from '@turf/helpers';
 
 interface Props {
-  line: number[][];
-  transparent?: boolean;
-  width?: number;
-  i: number;
+  lines: number[][][];
 }
 
-const GeoJsonPath: React.FC<Props> = ({ line, width = 4, i }) => {
-  const multiLine = turf.lineString(line);
-  const dataLayer: LayerProps = {
-    id: `path_layer-${i}`,
-    type: 'line',
-    paint: {
-      'line-width': width,
-      'line-color': '#667eea',
-    },
-  };
+// const GeoJsonPath: React.FC<Props> = ({ lines }) => {
+//   const multiLine = turf.multiLineString(lines);
+//   const dataLayer: LayerProps = {
+//     id: `path_layer`,
+//     type: 'line',
+//     paint: {
+//       'line-width': 4,
+//       'line-color': '#667eea',
+//     },
+//   };
 
+//   return (
+//     <Source type="geojson" data={multiLine}>
+//       <Layer {...dataLayer} />
+//     </Source>
+//   );
+// };
+
+const GeoJsonPath: React.FC<Props> = ({ lines }) => {
   return (
-    <Source type="geojson" data={multiLine}>
-      <Layer {...dataLayer} />
-    </Source>
+    <>
+      {lines.map((line, i) => {
+        const multiLine = turf.lineString(line, {
+          startPoint: line[0],
+          endPoint: line[line.length - 1],
+        });
+        const dataLayer: LayerProps = {
+          id: `path_layer_${i}`,
+          type: 'line',
+          paint: {
+            'line-width': 4,
+            'line-color': '#667eea',
+          },
+        };
+        return (
+          <Source key={`${line[0]}`} type="geojson" data={multiLine}>
+            <Layer {...dataLayer} />
+          </Source>
+        );
+      })}
+    </>
   );
 };
 

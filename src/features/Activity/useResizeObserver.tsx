@@ -1,17 +1,5 @@
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  Dispatch,
-  SetStateAction,
-  MutableRefObject,
-} from 'react';
+import { useEffect, useState, MutableRefObject } from 'react';
 import ResizeObserver from 'resize-observer-polyfill';
-
-/**
- * Hook, that returns the current dimensions of an HTML element.
- * Doesn't play well with SVG.
- */
 
 interface Dimensions {
   width: number;

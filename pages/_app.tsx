@@ -56,7 +56,7 @@ const Container = styled.div`
 `;
 
 const Layout = ({ children }) => {
-  const [units] = useUnits();
+  // const [units] = useUnits();
   const dispatch = useDispatch();
 
   useEffect(() => {

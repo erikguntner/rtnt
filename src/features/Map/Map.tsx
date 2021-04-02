@@ -1,9 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  MutableRefObject,
+} from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
-import ReactMapGL, { Marker, NavigationControl, MapEvent } from 'react-map-gl';
+import ReactMapGL, {
+  Marker,
+  NavigationControl,
+  MapEvent,
+  WebMercatorViewport,
+} from 'react-map-gl';
 import { CallbackEvent } from 'react-map-gl/src/components/draggable-control';
 import styled from 'styled-components';
+import ResizeObserver from 'resize-observer-polyfill';
 
 import { RootState } from '../../reducers/rootReducer';
 import { AppDispatch } from '../../reducers/store';
@@ -17,7 +29,7 @@ import { updateViewport } from './viewportSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationArrow } from '@fortawesome/free-solid-svg-icons';
 
-import SvgPath from './SvgPath';
+// import SvgPath from './SvgPath';
 import ConnectingLines from './ConnectingLines';
 import UpdatedElevationProfile from './UpdatedElevationProfile';
 import Controls from './Controls';
@@ -28,6 +40,7 @@ import LoadingIndicator from './LoadingIndicator';
 import CrossHairs from './CrossHairs';
 import { Spinner } from '../Forms/styles';
 import { changeNotificationStatus } from '../Notifications/notificationSlice';
+import GeoJsonPath from './GeoJsonPath';
 
 interface Viewport {
   latitude: number;
@@ -36,6 +49,32 @@ interface Viewport {
   bearing: number;
   pitch: number;
 }
+
+interface Dimensions {
+  width: number;
+  height: number;
+}
+
+const useResizeObserver = (
+  ref: MutableRefObject<HTMLDivElement>
+): Dimensions => {
+  const [dimensions, setDimensions] = useState<Dimensions | null>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const observerTarget = ref.current;
+    const resizeObserver = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect;
+      setDimensions({ width, height });
+    });
+    resizeObserver.observe(observerTarget);
+    return () => {
+      resizeObserver.unobserve(observerTarget);
+    };
+  }, [ref]);
+  return dimensions;
+};
+
 const Map = () => {
   const dispatch: AppDispatch = useDispatch();
   const {
@@ -68,8 +107,16 @@ const Map = () => {
   // state for syncing mouseevents for chart and map
   const [distanceAlongPath, setDistanceAlongPath] = useState<number>(0);
   const [pointAlongPath, setPointAlongPath] = useState<number[]>([]);
+  const [hoverInfo, setHoverInfo] = useState<null | {
+    lng: number;
+    lat: number;
+    x: number;
+    y: number;
+  }>(null);
 
   const mapRef = useRef(null);
+  const viewRef = useRef(null);
+  const dimensions = useResizeObserver(viewRef);
 
   const handleClick = (lngLat: number[]) => {
     const [newLong, newLat] = lngLat;
@@ -263,63 +310,108 @@ const Map = () => {
     };
   }, [mapFocus, points, viewport]);
 
+  const onHover = useCallback(
+    (event: MapEvent) => {
+      const {
+        features,
+        srcEvent: { offsetX, offsetY },
+      } = event;
+      const hoveredFeature = features && features[0];
+
+      const v = new WebMercatorViewport({
+        ...viewport,
+        width: dimensions.width,
+        height: dimensions.height,
+      });
+
+      const [lng, lat] = v.unproject([offsetX, offsetY]); // returns [lng,lat]
+
+      setHoverInfo(
+        hoveredFeature ? { lng, lat, x: offsetX, y: offsetY } : null
+      );
+    },
+    [setHoverInfo, viewport, dimensions]
+  );
+
+  const onMouseDown = useCallback((event: MapEvent) => {
+    console.log(event);
+    const { features } = event;
+    const mousedFeature = features && features[0];
+    console.log('mousedFeature', mousedFeature);
+  }, []);
+
   return (
     <MapContainer>
       <Controls
         {...{ setClipPath, clipPath, showElevation, setShowElevation }}
       />
-      <ReactMapGL
-        latitude={viewport.latitude}
-        longitude={viewport.longitude}
-        zoom={viewport.zoom}
-        mapboxApiAccessToken={process.env.MAPBOX_TOKEN}
-        reuseMaps={true}
-        width="100%"
-        height="100%"
-        onClick={({ lngLat }: MapEvent) => handleClick(lngLat)}
-        ref={mapRef}
-        keyboard={false}
-        className="map"
-        data-testid="map-id"
-        onViewportChange={({ latitude, longitude, zoom, bearing, pitch }) =>
-          dispatch(
-            updateViewport({ latitude, longitude, zoom, bearing, pitch })
-          )
-        }
-        mapStyle="mapbox://styles/mapbox/outdoors-v11"
-      >
-        {userLocation.length > 0 && (
-          <Marker longitude={userLocation[1]} latitude={userLocation[0]}>
-            <UserMarker />
-          </Marker>
-        )}
-        {isDragging && <ConnectingLines points={points} index={index} />}
-        <SvgPath points={lines} />
-        <DistanceMarkers {...{ lines, units }} />
-        {points.map((point, i) => (
-          <Marker
-            key={i}
-            longitude={point[0]}
-            latitude={point[1]}
-            draggable
-            onDragStart={(event: CallbackEvent) => handleDragStart(event, i)}
-            onDrag={(event: CallbackEvent) => handleDrag(event, i)}
-            onDragEnd={(event: CallbackEvent) => handleDragEnd(event, point, i)}
-          >
-            <Pin index={i} points={points} />
-          </Marker>
-        ))}
-        {pointAlongPath.length ? (
-          <Marker longitude={pointAlongPath[0]} latitude={pointAlongPath[1]}>
-            <Label>{distanceAlongPath.toFixed(2)}</Label>
-            <DistanceMarker />
-          </Marker>
-        ) : null}
-        <MapControls>
-          <NavigationControl showCompass={false} />
-        </MapControls>
-        {mapFocus && <CrossHairs />}
-      </ReactMapGL>
+      <div ref={viewRef} style={{ height: '100%', width: '100%' }}>
+        <ReactMapGL
+          {...viewport}
+          mapboxApiAccessToken={process.env.MAPBOX_TOKEN}
+          reuseMaps={true}
+          width="100%"
+          height="100%"
+          onClick={({ lngLat }: MapEvent) => handleClick(lngLat)}
+          ref={mapRef}
+          keyboard={false}
+          className="map"
+          data-testid="map-id"
+          interactiveLayerIds={lines.map((_, i) => `path_layer_${i}`)}
+          onViewportChange={({ latitude, longitude, zoom, bearing, pitch }) =>
+            dispatch(
+              updateViewport({ latitude, longitude, zoom, bearing, pitch })
+            )
+          }
+          mapStyle="mapbox://styles/mapbox/outdoors-v11"
+          onHover={onHover}
+          onMouseDown={onMouseDown}
+        >
+          {userLocation.length > 0 && (
+            <Marker longitude={userLocation[1]} latitude={userLocation[0]}>
+              <UserMarker />
+            </Marker>
+          )}
+          {isDragging && <ConnectingLines points={points} index={index} />}
+          {/* <SvgPath points={lines} /> */}
+          <GeoJsonPath lines={lines} />
+          {/* {hoverInfo && (
+            <Marker
+              draggable
+              latitude={hoverInfo.lat}
+              longitude={hoverInfo.lng}
+            >
+              <HoverInfo></HoverInfo>
+            </Marker>
+          )} */}
+          <DistanceMarkers {...{ lines, units }} />
+          {points.map((point, i) => (
+            <Marker
+              key={i}
+              longitude={point[0]}
+              latitude={point[1]}
+              draggable
+              onDragStart={(event: CallbackEvent) => handleDragStart(event, i)}
+              onDrag={(event: CallbackEvent) => handleDrag(event, i)}
+              onDragEnd={(event: CallbackEvent) =>
+                handleDragEnd(event, point, i)
+              }
+            >
+              <Pin index={i} points={points} />
+            </Marker>
+          ))}
+          {pointAlongPath.length ? (
+            <Marker longitude={pointAlongPath[0]} latitude={pointAlongPath[1]}>
+              <Label>{distanceAlongPath.toFixed(2)}</Label>
+              <DistanceMarker />
+            </Marker>
+          ) : null}
+          <MapControls>
+            <NavigationControl showCompass={false} />
+          </MapControls>
+          {mapFocus && <CrossHairs />}
+        </ReactMapGL>
+      </div>
       {showElevation && (
         <ElevationWrapper>
           <UpdatedElevationProfile
@@ -364,6 +456,16 @@ const MapContainer = styled.div`
   }
 `;
 
+const HoverInfo = styled.div`
+  position: absolute;
+  height: 12px;
+  width: 12px;
+  transform: translate3d(-50%, -50%, 0);
+  border-radius: 50%;
+  background-color: red;
+  pointer-events: none;
+`;
+
 const Label = styled.div`
   position: absolute;
   background-color: #333;
@@ -377,18 +479,18 @@ const Label = styled.div`
 
 const MapControls = styled.div`
   position: absolute;
-  left: 16px;
-  top: 136px;
+  left: 1.6rem;
+  top: 8rem;
   display: flex;
   align-items: center;
 `;
 
 const GeolocationButton = styled.button`
   position: absolute;
-  left: 16px;
-  top: 136px;
-  width: 30px;
-  height: 30px;
+  left: 1.6rem;
+  top: 13.6rem;
+  width: 3rem;
+  height: 3rem;
   border: none;
   display: flex;
   justify-content: center;

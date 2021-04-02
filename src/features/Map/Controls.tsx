@@ -15,6 +15,7 @@ import {
 
 import ControlButton from './ControlButton';
 import SaveRouteModal from './SaveRouteModal';
+import GeocodeSearch from './GeocodeSearch';
 
 import { RootState } from '../../reducers/rootReducer';
 import { clearRoute, outAndBack } from './routeSlice';
@@ -150,7 +151,7 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
         tooltip={'export as gpx'}
         id={'gpx'}
       />
-      <Input type="text" placeholder="Search for location" />
+      <GeocodeSearch />
       <SaveRouteModal {...{ open, setOpen, saving, setSaving }} />
     </ControlsContainer>
   );
@@ -171,13 +172,6 @@ const ControlsContainer = styled.div`
     padding: 0 1.2px;
     top: calc(1.2rem + ${(props) => props.theme.navHeight});
   }
-`;
-
-const Input = styled.input`
-  flex: 1;
-  border: none;
-  background-color: #eee;
-  padding-left: 1.6rem;
 `;
 
 export default Controls;
