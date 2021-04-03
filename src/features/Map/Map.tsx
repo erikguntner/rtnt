@@ -334,10 +334,8 @@ const Map = () => {
   );
 
   const onMouseDown = useCallback((event: MapEvent) => {
-    console.log(event);
     const { features } = event;
     const mousedFeature = features && features[0];
-    console.log('mousedFeature', mousedFeature);
   }, []);
 
   return (
