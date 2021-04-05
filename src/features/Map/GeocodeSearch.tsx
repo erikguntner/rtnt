@@ -2,6 +2,8 @@ import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { debounce } from 'lodash';
 
+import PlaceRow from './PlaceRow';
+
 interface Place {
   place_id: number;
   licence: string;
@@ -17,9 +19,13 @@ interface Place {
   icon?: string;
 }
 
+interface GeocodeSearchProps {
+  locateSearchDestination: (location: number[]) => void;
+}
+
 const fetchPlaces = async (query: string): Promise<Place[]> => {
   const response = await window.fetch(
-    `https://nominatim.openstreetmap.org/search?q=${query}&format=json`
+    `https://nominatim.openstreetmap.org/search?q=${query}&limit=5&format=json`
   );
 
   const data: Place[] = await response.json();
@@ -31,7 +37,7 @@ const fetchPlaces = async (query: string): Promise<Place[]> => {
   }
 };
 
-const GeocodeSearch = () => {
+const GeocodeSearch = ({ locateSearchDestination }: GeocodeSearchProps) => {
   const [value, setValue] = useState<string>('');
   const [places, setPlaces] = useState<Place[]>([]);
   const [queried, setQueried] = useState<boolean>(false);
@@ -51,7 +57,7 @@ const GeocodeSearch = () => {
         setQueried(false);
         setPlaces([]);
       }
-    }, 700),
+    }, 500),
     []
   );
 
@@ -71,22 +77,31 @@ const GeocodeSearch = () => {
         placeholder="Search for location"
         autoComplete="off"
       />
+      {loading && <LoadingSpinner>Loading...</LoadingSpinner>}
       {places.length ? (
         <PlacesList>
-          {places.map((place: Place, i) => (
-            <li key={place.display_name} aria-label={place.display_name}>
-              <button>
-                <div>
-                  <h2>{place.display_name}</h2>
-                </div>
-              </button>
-            </li>
-          ))}
+          {places.map(({ display_name, lat, lon }: Place) => {
+            return (
+              <li key={display_name} aria-label={display_name}>
+                <PlaceRow
+                  onClick={() => {
+                    locateSearchDestination([parseFloat(lon), parseFloat(lat)]);
+                    setValue('');
+                    setQueried(false);
+                    setPlaces([]);
+                  }}
+                  displayName={display_name}
+                />
+              </li>
+            );
+          })}
         </PlacesList>
       ) : queried ? (
-        <Box>
-          {loading ? <p>Loading</p> : <p>Sorry we couldn't find anything</p>}
-        </Box>
+        !loading && (
+          <Box>
+            <h2>Sorry we couldn't find anything</h2>
+          </Box>
+        )
       ) : null}
     </Wrapper>
   );
@@ -104,13 +119,23 @@ const Input = styled.input`
   border: none;
   background-color: #eee;
   padding-left: 1.6rem;
+  padding-right: 2.4rem;
+`;
+
+const LoadingSpinner = styled.div`
+  position: absolute;
+  display: flex;
+  align-items: center;
+  top: 0;
+  right: 0;
+  height: 100%;
+  padding-right: 1.2rem;
 `;
 
 const PlacesList = styled.ul`
   position: absolute;
   top: 5.6rem;
   left: 0;
-  max-height: 40rem;
   width: 100%;
   overflow: scroll;
 
@@ -121,19 +146,6 @@ const PlacesList = styled.ul`
     &:not(:last-of-type) {
       border-bottom: 1px solid lightgray;
     }
-
-    button {
-      width: 100%;
-      padding: 1.6rem;
-      background-color: #fff;
-      border: none;
-      text-align: left;
-
-      &:hover {
-        cursor: pointer;
-        background-color: #eee;
-      }
-    }
   }
 `;
 
@@ -141,6 +153,7 @@ const Box = styled.div`
   position: absolute;
   top: 5.6rem;
   left: 0;
+  width: 100%;
   padding: 1.6rem;
   background-color: #fff;
 `;

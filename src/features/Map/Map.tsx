@@ -4,6 +4,7 @@ import React, {
   useRef,
   useCallback,
   MutableRefObject,
+  useMemo,
 } from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
@@ -41,6 +42,7 @@ import CrossHairs from './CrossHairs';
 import { Spinner } from '../Forms/styles';
 import { changeNotificationStatus } from '../Notifications/notificationSlice';
 import GeoJsonPath from './GeoJsonPath';
+import AddDestinationMarker from './AddDestinationMarker';
 
 interface Viewport {
   latitude: number;
@@ -107,6 +109,9 @@ const Map = () => {
   // state for syncing mouseevents for chart and map
   const [distanceAlongPath, setDistanceAlongPath] = useState<number>(0);
   const [pointAlongPath, setPointAlongPath] = useState<number[]>([]);
+  const [searchDestination, setSearchDestination] = useState<number[] | null>(
+    null
+  );
   const [hoverInfo, setHoverInfo] = useState<null | {
     lng: number;
     lat: number;
@@ -338,10 +343,40 @@ const Map = () => {
     const mousedFeature = features && features[0];
   }, []);
 
+  const locateSearchDestination = (location: number[]) => {
+    const [longitude, latitude] = location;
+    dispatch(updateViewport({ ...viewport, zoom: 14, latitude, longitude }));
+    setSearchDestination(location);
+  };
+
+  const renderPoints = useMemo(
+    () =>
+      points.map((point, i) => (
+        <Marker
+          key={i}
+          longitude={point[0]}
+          latitude={point[1]}
+          draggable
+          onDragStart={(event: CallbackEvent) => handleDragStart(event, i)}
+          onDrag={(event: CallbackEvent) => handleDrag(event, i)}
+          onDragEnd={(event: CallbackEvent) => handleDragEnd(event, point, i)}
+        >
+          <Pin index={i} points={points} />
+        </Marker>
+      )),
+    [points]
+  );
+
   return (
     <MapContainer>
       <Controls
-        {...{ setClipPath, clipPath, showElevation, setShowElevation }}
+        {...{
+          setClipPath,
+          clipPath,
+          showElevation,
+          setShowElevation,
+          locateSearchDestination,
+        }}
       />
       <div ref={viewRef} style={{ height: '100%', width: '100%' }}>
         <ReactMapGL
@@ -371,8 +406,19 @@ const Map = () => {
             </Marker>
           )}
           {isDragging && <ConnectingLines points={points} index={index} />}
-          {/* <SvgPath points={lines} /> */}
           <GeoJsonPath lines={lines} />
+          {searchDestination !== null ? (
+            <AddDestinationMarker
+              cancel={() => {
+                setSearchDestination(null);
+              }}
+              addToRoute={() => {
+                handleClick(searchDestination);
+                setSearchDestination(null);
+              }}
+              location={searchDestination}
+            />
+          ) : null}
           {/* {hoverInfo && (
             <Marker
               draggable
@@ -383,21 +429,7 @@ const Map = () => {
             </Marker>
           )} */}
           <DistanceMarkers {...{ lines, units }} />
-          {points.map((point, i) => (
-            <Marker
-              key={i}
-              longitude={point[0]}
-              latitude={point[1]}
-              draggable
-              onDragStart={(event: CallbackEvent) => handleDragStart(event, i)}
-              onDrag={(event: CallbackEvent) => handleDrag(event, i)}
-              onDragEnd={(event: CallbackEvent) =>
-                handleDragEnd(event, point, i)
-              }
-            >
-              <Pin index={i} points={points} />
-            </Marker>
-          ))}
+          {renderPoints}
           {pointAlongPath.length ? (
             <Marker longitude={pointAlongPath[0]} latitude={pointAlongPath[1]}>
               <Label>{distanceAlongPath.toFixed(2)}</Label>

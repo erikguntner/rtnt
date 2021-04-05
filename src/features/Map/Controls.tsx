@@ -28,9 +28,14 @@ interface Props {
   showElevation: boolean;
   setClipPath: Dispatch<SetStateAction<boolean>>;
   setShowElevation: Dispatch<SetStateAction<boolean>>;
+  locateSearchDestination: (location: number[]) => void;
 }
 
-const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
+const Controls: React.FC<Props> = ({
+  showElevation,
+  setShowElevation,
+  locateSearchDestination,
+}) => {
   const [open, setOpen] = useState<boolean>(false);
   const [saving, setSaving] = useState<boolean>(false);
 
@@ -151,7 +156,7 @@ const Controls: React.FC<Props> = ({ showElevation, setShowElevation }) => {
         tooltip={'export as gpx'}
         id={'gpx'}
       />
-      <GeocodeSearch />
+      <GeocodeSearch locateSearchDestination={locateSearchDestination} />
       <SaveRouteModal {...{ open, setOpen, saving, setSaving }} />
     </ControlsContainer>
   );
