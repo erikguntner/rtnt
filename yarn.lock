@@ -3808,10 +3808,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-map-gl@^5.1.1":
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/@types/react-map-gl/-/react-map-gl-5.1.1.tgz#844187c9ea336225b1a9b06433f7509a4b88b02e"
-  integrity sha512-b88Vt35l2IF4ATrqr9BrEyGmatbRjAi+RPjk0xSjh41InWtaYsrKuXMugVZBBY2xSCHySYB1belCYhbq6CXkrw==
+"@types/react-map-gl@^5.2.9":
+  version "5.2.9"
+  resolved "https://registry.yarnpkg.com/@types/react-map-gl/-/react-map-gl-5.2.9.tgz#67e00d96e3035d792f55a4266b08dbee11d06dd2"
+  integrity sha512-DbN7irrx9OEfDTK9TNOyTjWgz4/TOJXyY9EDDmHQC1Ne7KW6QCbOt6vKD+StMYjdO1CfkayjM1n4/CeyTHw0BA==
   dependencies:
     "@types/geojson" "*"
     "@types/mapbox-gl" "*"
@@ -11824,10 +11824,10 @@ react-lifecycles-compat@^3.0.4:
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
-react-map-gl@5.3:
-  version "5.3.7"
-  resolved "https://registry.yarnpkg.com/react-map-gl/-/react-map-gl-5.3.7.tgz#e5ca321221cc7c7c73f1eeabe6450b931a890021"
-  integrity sha512-75okXoQd8SH9k9z0TTwQW0AmyIFh8lmUg0XUfQ9DbIYGiI5RzeaBxL29OuY++ga4tQZb1VFCDycRmK5U/tNU+w==
+react-map-gl@^5.3.9:
+  version "5.3.11"
+  resolved "https://registry.yarnpkg.com/react-map-gl/-/react-map-gl-5.3.11.tgz#ee7933a55326209a0509cd287581d048376aa14e"
+  integrity sha512-HvM3hf7qVu1V+D/K0E2YzsIrxELCEgZq5I9AjRSXBOAmHJfpIwCZECJNIFKTwEbbW3uB+C7fgqgHFPiuZRFPkg==
   dependencies:
     "@babel/runtime" "^7.0.0"
     "@types/geojson" "^7946.0.7"

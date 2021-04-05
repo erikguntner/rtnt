@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import { Marker, _useMapControl as useMapControl } from 'react-map-gl';
+import { Marker, Popup } from 'react-map-gl';
 
 interface AddDestinationMarkerProps {
   location: number[];
@@ -16,26 +16,33 @@ const AddDestinationMarker = ({
   const [longitude, latitude] = location;
 
   return (
-    <Marker captureClick={false} longitude={longitude} latitude={latitude}>
-      <MarkerWrapper>
-        <Buttons>
-          <button
-            onClick={(event) => {
-              event.stopPropagation();
-              cancel();
-            }}
-          >
-            Cancel
-          </button>
-          <button onClick={addToRoute}>Add to route</button>
-        </Buttons>
+    <>
+      <UserPopup
+        tipSize={5}
+        anchor="bottom"
+        longitude={longitude}
+        latitude={latitude}
+        closeButton={false}
+      >
+        <MarkerWrapper>
+          <Buttons>
+            <button onClick={cancel}>Cancel</button>
+            <button onClick={addToRoute}>Add to route</button>
+          </Buttons>
+        </MarkerWrapper>
+      </UserPopup>
+      <Marker captureClick={false} longitude={longitude} latitude={latitude}>
         <Circle></Circle>
-      </MarkerWrapper>
-    </Marker>
+      </Marker>
+    </>
   );
 };
 const MarkerWrapper = styled.div`
   position: relative;
+`;
+
+const UserPopup = styled(Popup)`
+  padding: 0;
 `;
 
 const Circle = styled.div`
@@ -45,14 +52,15 @@ const Circle = styled.div`
   border: 2px solid #fff;
   border-radius: 50%;
   box-shadow: ${(props) => props.theme.boxShadow.sm};
+  transform: translateX(-50%);
 `;
 
 const Buttons = styled.div`
-  position: absolute;
+  /* position: absolute;
   left: 50%;
   top: -9px;
   display: flex;
-  transform: translateX(-50%) translateY(-99%);
+  transform: translateX(-50%) translateY(-99%); */
 
   button {
     width: 10rem;

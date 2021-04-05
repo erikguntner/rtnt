@@ -50,4 +50,4 @@ const GeoJsonPath: React.FC<Props> = ({ lines }) => {
   );
 };
 
-export default GeoJsonPath;
+export default React.memo(GeoJsonPath);

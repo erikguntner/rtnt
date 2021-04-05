@@ -13,6 +13,7 @@ import ReactMapGL, {
   NavigationControl,
   MapEvent,
   WebMercatorViewport,
+  Popup,
 } from 'react-map-gl';
 import { CallbackEvent } from 'react-map-gl/src/components/draggable-control';
 import styled from 'styled-components';
@@ -541,6 +542,7 @@ const UserMarker = styled.div`
   border: 2px solid #fff;
   border-radius: 50%;
   box-shadow: ${(props) => props.theme.boxShadow.sm};
+  transform: translateX(-50%);
 `;
 
 const DistanceMarker = styled.div`
