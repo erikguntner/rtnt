@@ -167,16 +167,6 @@ const ControlsContainer = styled.div`
   justify-content: flex-start;
   flex: 1;
   z-index: 10;
-
-  @media screen and (max-width: 800px) {
-    max-width: 90%;
-  }
-
-  @media screen and (max-width: 600px) {
-    max-width: calc(100% - 2.4rem);
-    padding: 0 1.2px;
-    top: calc(1.2rem + ${(props) => props.theme.navHeight});
-  }
 `;
 
 export default Controls;

@@ -96,6 +96,11 @@ const Button = styled.button<ButtonProps>`
     }
   }};
 
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    flex: 1;
+    padding: 8px 0;
+  }
+
   &:not(:last-child) {
     border-right: 1px solid ${(props) => props.theme.colors.gray[200]};
   }

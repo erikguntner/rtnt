@@ -514,6 +514,10 @@ const MapControls = styled.div`
   top: 8rem;
   display: flex;
   align-items: center;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    top: 8.6rem;
+  }
 `;
 
 const GeolocationButton = styled.button`

@@ -111,6 +111,10 @@ const Wrapper = styled.div`
   position: relative;
   flex: 1;
   height: 100%;
+
+  @media screen and (max-width: ${(props) => props.theme.screens.md}) {
+    display: none;
+  }
 `;
 
 const Input = styled.input`
@@ -135,9 +139,9 @@ const LoadingSpinner = styled.div`
 const PlacesList = styled.ul`
   position: absolute;
   top: 5.6rem;
-  left: 0;
+  right: 0;
   width: 100%;
-  overflow: scroll;
+  min-width: 40rem;
 
   li {
     list-style: none;
