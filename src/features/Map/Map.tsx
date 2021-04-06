@@ -11,9 +11,7 @@ import * as turf from '@turf/turf';
 import ReactMapGL, {
   Marker,
   NavigationControl,
-  MapEvent,
   WebMercatorViewport,
-  Popup,
 } from 'react-map-gl';
 import { CallbackEvent } from 'react-map-gl/src/components/draggable-control';
 import styled from 'styled-components';
@@ -339,7 +337,7 @@ const Map = () => {
     [setHoverInfo, viewport, dimensions]
   );
 
-  const onMouseDown = useCallback((event: MapEvent) => {
+  const onMouseDown = useCallback((event) => {
     const { features } = event;
     const mousedFeature = features && features[0];
   }, []);
@@ -386,7 +384,7 @@ const Map = () => {
           reuseMaps={true}
           width="100%"
           height="100%"
-          onClick={({ lngLat }: MapEvent) => handleClick(lngLat)}
+          onClick={({ lngLat }) => handleClick(lngLat)}
           ref={mapRef}
           keyboard={false}
           className="map"
