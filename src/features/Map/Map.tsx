@@ -317,7 +317,7 @@ const Map = () => {
   }, [mapFocus, points, viewport]);
 
   const onHover = useCallback(
-    (event: MapEvent) => {
+    (event) => {
       const {
         features,
         srcEvent: { offsetX, offsetY },
