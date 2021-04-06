@@ -24,12 +24,12 @@ const ConnectingLines = ({
 
     if (renderWhileDragging || !isDragging) {
       ctx.lineWidth = lineWidth;
-      ctx.strokeStyle = '#667eea';
+      ctx.strokeStyle = '#0070f3';
       ctx.setLineDash([10, 10]);
       ctx.globalAlpha = 0.5;
       ctx.beginPath();
       const pixel = project([points[index][0], points[index][1]]);
-      
+
       const startPixel =
         index === 0
           ? project([points[index + 1][0], points[index + 1][1]])

@@ -1,28 +1,9 @@
 import React from 'react';
 import { Source, Layer, LayerProps } from 'react-map-gl';
 import * as turf from '@turf/helpers';
-
 interface Props {
   lines: number[][][];
 }
-
-// const GeoJsonPath: React.FC<Props> = ({ lines }) => {
-//   const multiLine = turf.multiLineString(lines);
-//   const dataLayer: LayerProps = {
-//     id: `path_layer`,
-//     type: 'line',
-//     paint: {
-//       'line-width': 4,
-//       'line-color': '#667eea',
-//     },
-//   };
-
-//   return (
-//     <Source type="geojson" data={multiLine}>
-//       <Layer {...dataLayer} />
-//     </Source>
-//   );
-// };
 
 const GeoJsonPath: React.FC<Props> = ({ lines }) => {
   return (
@@ -37,7 +18,7 @@ const GeoJsonPath: React.FC<Props> = ({ lines }) => {
           type: 'line',
           paint: {
             'line-width': 4,
-            'line-color': '#667eea',
+            'line-color': '#0070f3',
           },
         };
         return (
@@ -50,4 +31,4 @@ const GeoJsonPath: React.FC<Props> = ({ lines }) => {
   );
 };
 
-export default React.memo(GeoJsonPath);
+export default GeoJsonPath;

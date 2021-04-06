@@ -16,8 +16,8 @@ interface MarkerProps {
 }
 
 const Marker = styled.div<MarkerProps>`
-  height: 11px;
-  width: 11px;
+  height: 1.6rem;
+  width: 1.6rem;
   border-radius: 50%;
   background-color: ${(props) => {
     if (props.index === 0) {
@@ -28,7 +28,7 @@ const Marker = styled.div<MarkerProps>`
       return props.theme.colors.indigo[700];
     }
   }};
-  border: 1px solid black;
+  border: 3px solid #fff;
   transform: translate3d(-50%, -50%, 0) scale(1);
   transition: all 0.2s linear;
 

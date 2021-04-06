@@ -43,6 +43,10 @@ const MarkerWrapper = styled.div`
 
 const UserPopup = styled(Popup)`
   padding: 0;
+
+  .mapboxgl-popup-content {
+    padding: 0;
+  }
 `;
 
 const Circle = styled.div`

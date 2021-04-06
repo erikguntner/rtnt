@@ -57,7 +57,7 @@ const DistanceMarker = styled.div`
   background-color: #fff;
   padding: 1px 2px;
   border-radius: 2px;
-  border: 2px solid ${(props) => props.theme.colors.indigo[500]};
+  border: 2px solid ${(props) => props.theme.colors.primary};
   transform: translate3d(-50%, -50%, 0);
 `;
 
