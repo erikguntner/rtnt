@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { debounce } from 'lodash';
 
 import PlaceRow from './PlaceRow';
+import Spinner from './Spinner';
 
 interface Place {
   place_id: number;
@@ -77,7 +78,6 @@ const GeocodeSearch = ({ locateSearchDestination }: GeocodeSearchProps) => {
         placeholder="Search for location"
         autoComplete="off"
       />
-      {loading && <LoadingSpinner>Loading...</LoadingSpinner>}
       {places.length ? (
         <PlacesList>
           {places.map(({ display_name, lat, lon }: Place) => {
@@ -103,9 +103,24 @@ const GeocodeSearch = ({ locateSearchDestination }: GeocodeSearchProps) => {
           </Box>
         )
       ) : null}
+      {loading && (
+        <SpinnerWrapper>
+          <Spinner />
+        </SpinnerWrapper>
+      )}
     </Wrapper>
   );
 };
+
+const SpinnerWrapper = styled.div`
+  position: absolute;
+  right: 0;
+  top: -4px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin-right: 16px;
+`;
 
 const Wrapper = styled.div`
   position: relative;
@@ -123,17 +138,7 @@ const Input = styled.input`
   border: none;
   background-color: #eee;
   padding-left: 1.6rem;
-  padding-right: 2.4rem;
-`;
-
-const LoadingSpinner = styled.div`
-  position: absolute;
-  display: flex;
-  align-items: center;
-  top: 0;
-  right: 0;
-  height: 100%;
-  padding-right: 1.2rem;
+  padding-right: 4rem;
 `;
 
 const PlacesList = styled.ul`
