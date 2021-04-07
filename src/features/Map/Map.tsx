@@ -42,6 +42,8 @@ import { Spinner } from '../Forms/styles';
 import { changeNotificationStatus } from '../Notifications/notificationSlice';
 import GeoJsonPath from './GeoJsonPath';
 import AddDestinationMarker from './AddDestinationMarker';
+import { State } from 'react-map-gl/src/components/interactive-map';
+import { GraphQLBoolean } from 'graphql';
 
 interface Viewport {
   latitude: number;
@@ -389,6 +391,9 @@ const Map = () => {
           keyboard={false}
           className="map"
           data-testid="map-id"
+          getCursor={({ isDragging, isHovering }: State) => {
+            return isHovering ? 'pointer' : isDragging ? 'grab' : 'crosshair';
+          }}
           interactiveLayerIds={lines.map((_, i) => `path_layer_${i}`)}
           onViewportChange={({ latitude, longitude, zoom, bearing, pitch }) =>
             dispatch(
@@ -399,6 +404,15 @@ const Map = () => {
           onHover={onHover}
           onMouseDown={onMouseDown}
         >
+          {hoverInfo && (
+            <Marker
+              latitude={hoverInfo.lat}
+              longitude={hoverInfo.lng}
+              draggable
+            >
+              <HoverInfo></HoverInfo>
+            </Marker>
+          )}
           {userLocation.length > 0 && (
             <Marker longitude={userLocation[1]} latitude={userLocation[0]}>
               <UserMarker />
@@ -418,15 +432,7 @@ const Map = () => {
               location={searchDestination}
             />
           ) : null}
-          {/* {hoverInfo && (
-            <Marker
-              draggable
-              latitude={hoverInfo.lat}
-              longitude={hoverInfo.lng}
-            >
-              <HoverInfo></HoverInfo>
-            </Marker>
-          )} */}
+
           <DistanceMarkers {...{ lines, units }} />
           {renderPoints}
           {pointAlongPath.length ? (
