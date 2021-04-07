@@ -165,7 +165,6 @@ const Controls: React.FC<Props> = ({
 const ControlsContainer = styled.div`
   display: flex;
   justify-content: flex-start;
-  flex: 1;
   z-index: 10;
 `;
 

@@ -119,6 +119,7 @@ const Map = () => {
     x: number;
     y: number;
   }>(null);
+  const [draggingHoverInfo, setDraggingHoverInfo] = useState<boolean>(false);
 
   const mapRef = useRef(null);
   const viewRef = useRef(null);
@@ -281,7 +282,7 @@ const Map = () => {
       const center: { lng: number; lat: number } = map.transform._center;
 
       // control map with arrow keys while focused
-      if (e.keyCode === 9) {
+      if (e.code === 'Tab') {
         if (document.activeElement.className === 'mapboxgl-canvas') {
           setMapFocus(true);
         } else {
@@ -289,21 +290,21 @@ const Map = () => {
             setMapFocus(false);
           }
         }
-      } else if (e.keyCode === 32) {
+      } else if (e.code === 'Space') {
         if (document.activeElement.className === 'mapboxgl-canvas') {
           const lngLat: number[] = [center.lng, center.lat];
           handleClick(lngLat);
         }
-      } else if (e.keyCode === 38) {
+      } else if (e.code === 'ArrowUp') {
         const newLat = calculateNewLngLat(center.lat, 40);
         dispatch(updateViewport({ ...viewport, latitude: newLat }));
-      } else if (e.keyCode === 40) {
+      } else if (e.code === 'ArrowDown') {
         const newLat = calculateNewLngLat(center.lat, -40);
         dispatch(updateViewport({ ...viewport, latitude: newLat }));
-      } else if (e.keyCode === 37) {
+      } else if (e.code === 'ArrowLeft') {
         const newLng = calculateNewLngLat(center.lng, -40);
         dispatch(updateViewport({ ...viewport, longitude: newLng }));
-      } else if (e.keyCode === 39) {
+      } else if (e.code === 'ArrowRight') {
         const newLng = calculateNewLngLat(center.lng, 40);
         dispatch(updateViewport({ ...viewport, longitude: newLng }));
       }
@@ -392,7 +393,11 @@ const Map = () => {
           className="map"
           data-testid="map-id"
           getCursor={({ isDragging, isHovering }: State) => {
-            return isHovering ? 'pointer' : isDragging ? 'grab' : 'crosshair';
+            return isHovering
+              ? 'pointer'
+              : isDragging
+              ? 'grabbing'
+              : 'crosshair';
           }}
           interactiveLayerIds={lines.map((_, i) => `path_layer_${i}`)}
           onViewportChange={({ latitude, longitude, zoom, bearing, pitch }) =>
@@ -404,15 +409,21 @@ const Map = () => {
           onHover={onHover}
           onMouseDown={onMouseDown}
         >
-          {hoverInfo && (
+          {hoverInfo || draggingHoverInfo ? (
             <Marker
               latitude={hoverInfo.lat}
               longitude={hoverInfo.lng}
               draggable
+              onDragStart={() => setDraggingHoverInfo(true)}
+              onDrag={(event: CallbackEvent) => {
+                const [lng, lat] = event.lngLat;
+                setHoverInfo({ ...hoverInfo, lng, lat });
+              }}
+              onDragEnd={() => setDraggingHoverInfo(false)}
             >
               <HoverInfo></HoverInfo>
             </Marker>
-          )}
+          ) : null}
           {userLocation.length > 0 && (
             <Marker longitude={userLocation[1]} latitude={userLocation[0]}>
               <UserMarker />
@@ -473,10 +484,10 @@ const Map = () => {
 };
 
 const MapContainer = styled.div`
-  display: grid;
+  display: flex;
+  flex-direction: column;
   height: calc(100vh - 64px);
-  grid-template-columns: 1fr;
-  grid-template-rows: min-content 1fr;
+  overflow: hidden;
 
   &:focus {
     outline: none;
@@ -498,7 +509,7 @@ const HoverInfo = styled.div`
   transform: translate3d(-50%, -50%, 0);
   border-radius: 50%;
   background-color: red;
-  pointer-events: none;
+  /* pointer-events: none; */
 `;
 
 const Label = styled.div`
