@@ -46,7 +46,7 @@ const SignupForm: React.FC<{}> = () => {
     ) => {
       setSubmitting(true);
       try {
-        const response = await fetch(`${API_URL}/api/signin`, {
+        const response = await fetch(`${API_URL}api/signin`, {
           method: 'POST',
           headers: {
             Accept: 'application/json, text/plain, */*',
