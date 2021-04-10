@@ -1,13 +1,9 @@
-console.log('node environment', process.env.NODE_ENV);
-console.log('vercel environment', process.env.VERCEL_ENV);
-console.log('vercel url', process.env.VERCEL_URL);
-
-
-
 const API_URL =
-  process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'preview'
-    ? process.env.VERCEL_URL
+  process.env.NODE_ENV === 'production'
+    ? 'https ://rtnt.vercel.app'
     : 'http://localhost:3000';
+
+console.log(API_URL);
 
 
 export default API_URL;
