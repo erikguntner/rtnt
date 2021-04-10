@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
 import * as turfHelpers from '@turf/helpers';
 import styled from 'styled-components';
@@ -145,6 +147,10 @@ const sortRoutes = (
 };
 
 const RouteList: React.FC<{}> = () => {
+  const MapCard = dynamic(() => import('./MapCard'), {
+    ssr: false,
+  });
+
   const {
     sortedRoutes,
     maxDistance,
@@ -301,22 +307,17 @@ const RouteList: React.FC<{}> = () => {
             ) : (
               <>
                 {sortedRoutes.length ? (
-                  sortedRoutes.map(
-                    ({ id, name, image, distance, sports, surfaces }) => (
-                      <RouteCard
-                        key={id}
-                        {...{
-                          id,
-                          name,
-                          image,
-                          distance,
-                          units,
-                          sports,
-                          surfaces,
-                        }}
-                      />
-                    )
-                  )
+                  sortedRoutes.map((route) => (
+                    <Link
+                      key={route.id}
+                      href="/route/[id]"
+                      as={`/route/${route.id}`}
+                    >
+                      <a>
+                        <MapCard key={route.id} route={route} />
+                      </a>
+                    </Link>
+                  ))
                 ) : (
                   <h2>No Routes</h2>
                 )}
@@ -405,8 +406,8 @@ const Grid = styled.div`
 const RouteGrid = styled.div`
   display: grid;
   padding: 2.4rem;
+  margin-bottom: 2.4rem;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: min-content;
   grid-gap: 2.4rem;
   overflow: scroll;
   justify-content: center;
@@ -416,7 +417,7 @@ const RouteGrid = styled.div`
   }
 
   @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
-    grid-template-columns: 300px;
+    grid-template-columns: 1fr;
   }
 `;
 
