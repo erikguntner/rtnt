@@ -1,5 +1,7 @@
 console.log('node environment', process.env.NODE_ENV);
 console.log('vercel environment', process.env.VERCEL_ENV);
+console.log('vercel url', process.env.VERCEL_URL);
+
 
 
 const API_URL =
