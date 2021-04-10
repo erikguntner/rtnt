@@ -1,6 +1,6 @@
 const API_URL =
   process.env.NODE_ENV === 'production'
-    ? 'https://rtnt.now.sh'
+    ? process.env.VERCEL_URL
     : 'http://localhost:3000';
 
 
