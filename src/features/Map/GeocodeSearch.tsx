@@ -49,11 +49,15 @@ const GeocodeSearch = ({ locateSearchDestination }: GeocodeSearchProps) => {
       if (query.length) {
         setQueried(true);
         setLoading(true);
-
-        const places = await fetchPlaces(query);
-
-        setPlaces(places);
-        setLoading(false);
+        
+        try {
+          const places = await fetchPlaces(query);
+          setPlaces(places);
+          setLoading(false);
+        } catch (err) {
+          console.log(err);
+          setLoading(false);
+        }
       } else {
         setQueried(false);
         setPlaces([]);

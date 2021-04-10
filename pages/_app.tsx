@@ -22,6 +22,7 @@ import { configStore } from '../src/reducers/store';
 import API_URL from '../src/utils/url';
 import Notifications from '../src/features/Notifications/Notifications';
 import { useUnits } from '../src/utils/useUnits';
+import 'leaflet/dist/leaflet.css';
 
 config.autoAddCss = false;
 

@@ -331,13 +331,14 @@ const Map = () => {
         height: dimensions.height,
       });
 
-      const [lng, lat] = v.unproject([offsetX, offsetY]); // returns [lng,lat]
-
-      setHoverInfo(
-        hoveredFeature ? { lng, lat, x: offsetX, y: offsetY } : null
-      );
+      const [lng, lat] = v.unproject([offsetX, offsetY]); // returns [lng,lat]\
+      if (!draggingHoverInfo) {
+        setHoverInfo(
+          hoveredFeature ? { lng, lat, x: offsetX, y: offsetY } : null
+        );
+      }
     },
-    [setHoverInfo, viewport, dimensions]
+    [setHoverInfo, viewport, dimensions, draggingHoverInfo]
   );
 
   const onMouseDown = useCallback((event) => {
@@ -509,7 +510,7 @@ const HoverInfo = styled.div`
   transform: translate3d(-50%, -50%, 0);
   border-radius: 50%;
   background-color: red;
-  /* pointer-events: none; */
+  pointer-events: none;
 `;
 
 const Label = styled.div`

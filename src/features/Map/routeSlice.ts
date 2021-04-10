@@ -314,7 +314,7 @@ export const addRoute = ({
       .join('');
 
     const response = await fetch(
-      `https://graphhopper.com/api/1/route?${pointString}vehicle=foot&debug=true&elevation=true&legs=true&details=street_name&key=${process.env.GRAPH_HOPPER_KEY}&type=json&points_encoded=false`
+      `https://graphhopper.com/api/1/route?${pointString}vehicle=foot&debug=true&elevation=true&legs=true&details=surface&key=${process.env.GRAPH_HOPPER_KEY}&type=json&points_encoded=false`
     );
     const data: GraphHopperResponse = await response.json();
 

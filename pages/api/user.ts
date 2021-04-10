@@ -28,8 +28,6 @@ type NextApiRequestWithUser = NextApiRequest & AdditionalTypes;
 const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
 
   const { id, units } = req.user;
-  console.log(id);
-
   if (req.method === 'GET') {
 
     try {
@@ -74,6 +72,7 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
           Objects: keys
         }
       }, function (err, data) {
+        console.log(err)
       })
 
       // delete all rows from tables
