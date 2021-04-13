@@ -1,11 +1,8 @@
 import React from 'react';
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Circle,
-  Polyline,
-} from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet';
+import { divIcon } from 'leaflet';
+import { renderToStaticMarkup } from 'react-dom/server';
+
 import {
   calculateDistance,
   abbreviatedDistance,
@@ -22,6 +19,15 @@ import RouteOptionsMenu from './RouteOptionsMenu';
 interface MapCardProps {
   route: Route;
 }
+
+const CustomMarker = ({ position, color }) => {
+  const iconMarkup = renderToStaticMarkup(<Circle color={color} />);
+  const customMarkerIcon = divIcon({
+    html: iconMarkup,
+  });
+
+  return <Marker icon={customMarkerIcon} position={position} />;
+};
 
 const MapCard = ({ route }: MapCardProps) => {
   const { name, lines, city, state, start_point, end_point } = route;
@@ -47,7 +53,7 @@ const MapCard = ({ route }: MapCardProps) => {
         ]}
         boundsOptions={{
           paddingTopLeft: [100, 100],
-          paddingBottomRight: [16, 16],
+          paddingBottomRight: [20, 20],
         }}
         scrollWheelZoom={false}
         dragging={false}
@@ -61,17 +67,13 @@ const MapCard = ({ route }: MapCardProps) => {
           pathOptions={{ color: '#0070f3' }}
           positions={latLngLine as LatLngExpression[] | LatLngExpression[][]}
         />
-        <Marker position={[start_point[1], start_point[0]]}></Marker>
-        <Circle
-          center={[end_point[1], end_point[0]]}
-          pathOptions={{
-            fill: true,
-            fillOpacity: 1,
-            fillColor: '#e53e3e',
-            stroke: true,
-            color: '#fff',
-          }}
-          radius={40}
+        <CustomMarker
+          color={'#68d391'}
+          position={[start_point[1], start_point[0]]}
+        />
+        <CustomMarker
+          color={'#e53e3e'}
+          position={[end_point[1], end_point[0]]}
         />
       </MapContainer>
       <Overlay>
@@ -108,6 +110,14 @@ const MapCard = ({ route }: MapCardProps) => {
   );
 };
 
+const Circle = styled.div<{ color: string }>`
+  height: 1.2rem;
+  width: 1.2rem;
+  background-color: ${(props) => props.color};
+  border: 2px solid #fff;
+  border-radius: 50%;
+`;
+
 const Container = styled.div`
   position: relative;
   height: 240px;
@@ -116,6 +126,12 @@ const Container = styled.div`
   border-radius: 8px;
   overflow: hidden;
   transition: all 0.2s ease;
+
+  /* remove default styling for leaflet divIcon so no background or border show around markers */
+  .leaflet-div-icon {
+    background: transparent;
+    border: none;
+  }
 
   &:hover {
     transform: scale(1.01);
