@@ -1,19 +1,17 @@
 import React from 'react';
 import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet';
-import { divIcon } from 'leaflet';
+import { divIcon, LatLngExpression } from 'leaflet';
 import { renderToStaticMarkup } from 'react-dom/server';
-
-import {
-  calculateDistance,
-  abbreviatedDistance,
-} from '../../utils/calculateDistance';
 import styled from 'styled-components';
 import * as turf from '@turf/helpers';
 import center from '@turf/center';
 import bbox from '@turf/bbox';
 
+import {
+  calculateDistance,
+  abbreviatedDistance,
+} from '../../utils/calculateDistance';
 import { Route } from './RouteList';
-import { LatLngExpression } from 'leaflet';
 import RouteOptionsMenu from './RouteOptionsMenu';
 
 interface MapCardProps {
@@ -126,6 +124,7 @@ const Container = styled.div`
   border-radius: 8px;
   overflow: hidden;
   transition: all 0.2s ease;
+  box-shadow: ${({ theme }) => theme.boxShadow.sm};
 
   /* remove default styling for leaflet divIcon so no background or border show around markers */
   .leaflet-div-icon {
@@ -152,22 +151,22 @@ const Overlay = styled.div`
   color: black;
   background: linear-gradient(
     166deg,
-    hsla(0, 0%, 100%, 0.92) 0%,
-    hsla(0, 0%, 100%, 0.909) 8.1%,
-    hsla(0, 0%, 100%, 0.879) 15.5%,
-    hsla(0, 0%, 100%, 0.832) 22.5%,
-    hsla(0, 0%, 100%, 0.771) 29%,
-    hsla(0, 0%, 100%, 0.7) 35.3%,
-    hsla(0, 0%, 100%, 0.621) 41.2%,
-    hsla(0, 0%, 100%, 0.537) 47.1%,
-    hsla(0, 0%, 100%, 0.453) 52.9%,
-    hsla(0, 0%, 100%, 0.369) 58.8%,
-    hsla(0, 0%, 100%, 0.29) 64.7%,
-    hsla(0, 0%, 100%, 0.219) 71%,
-    hsla(0, 0%, 100%, 0.158) 77.5%,
-    hsla(0, 0%, 100%, 0.111) 84.5%,
-    hsla(0, 0%, 100%, 0.081) 91.9%,
-    hsla(0, 0%, 100%, 0.07) 100%
+    hsla(0, 0%, 100%, 0.98) 0%,
+    hsla(0, 0%, 100%, 0.915) 11.8%,
+    hsla(0, 0%, 100%, 0.843) 20.9%,
+    hsla(0, 0%, 100%, 0.765) 27.6%,
+    hsla(0, 0%, 100%, 0.684) 32.4%,
+    hsla(0, 0%, 100%, 0.6) 35.9%,
+    hsla(0, 0%, 100%, 0.515) 38.5%,
+    hsla(0, 0%, 100%, 0.432) 40.7%,
+    hsla(0, 0%, 100%, 0.351) 42.9%,
+    hsla(0, 0%, 100%, 0.274) 45.6%,
+    hsla(0, 0%, 100%, 0.204) 49.4%,
+    hsla(0, 0%, 100%, 0.141) 54.7%,
+    hsla(0, 0%, 100%, 0.088) 61.9%,
+    hsla(0, 0%, 100%, 0.045) 71.5%,
+    hsla(0, 0%, 100%, 0.016) 84.1%,
+    hsla(0, 0%, 100%, 0) 100%
   );
 
   h2 {
@@ -178,7 +177,7 @@ const Overlay = styled.div`
   }
 
   p {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     color: rgba(0, 0, 0, 0.75);
   }
 
