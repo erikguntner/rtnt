@@ -110,7 +110,7 @@ const PopOutWrapper = styled(motion.div)`
   position: absolute;
   bottom: -4px;
   right: -4px;
-  width: 15rem;
+  width: max-content;
   padding: 1.4rem 0;
   background-color: #fff;
   border-radius: 2px;

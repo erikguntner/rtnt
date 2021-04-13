@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import Router from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
 import * as turfHelpers from '@turf/helpers';
 import styled from 'styled-components';
@@ -308,15 +309,16 @@ const RouteList: React.FC<{}> = () => {
               <>
                 {sortedRoutes.length ? (
                   sortedRoutes.map((route) => (
-                    <Link
+                    <a
                       key={route.id}
-                      href="/route/[id]"
-                      as={`/route/${route.id}`}
+                      href={`/route/${route.id}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        Router.push(`/route/${route.id}`);
+                      }}
                     >
-                      <a>
-                        <MapCard key={route.id} route={route} />
-                      </a>
-                    </Link>
+                      <MapCard key={route.id} route={route} />
+                    </a>
                   ))
                 ) : (
                   <h2>No Routes</h2>
