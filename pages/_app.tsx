@@ -11,6 +11,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import debounce from 'lodash/debounce';
 import LogRocket from 'logrocket';
+import NProgress from 'nprogress';
 
 import Nav from '../src/features/Nav/Nav';
 import {
@@ -25,14 +26,7 @@ import 'leaflet/dist/leaflet.css';
 
 config.autoAddCss = false;
 
-// NProgress events
-let NProgress;
-let start;
-
-if (typeof window !== 'undefined') {
-  NProgress = require('nprogress');
-  start = debounce(NProgress.start, 200);
-}
+const start = debounce(NProgress.start, 200);
 
 Router.events.on('routeChangeStart', start);
 Router.events.on('routeChangeComplete', () => {

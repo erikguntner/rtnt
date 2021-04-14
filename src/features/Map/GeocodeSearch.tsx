@@ -49,7 +49,7 @@ const GeocodeSearch = ({ locateSearchDestination }: GeocodeSearchProps) => {
       if (query.length) {
         setQueried(true);
         setLoading(true);
-        
+
         try {
           const places = await fetchPlaces(query);
           setPlaces(places);
@@ -66,7 +66,7 @@ const GeocodeSearch = ({ locateSearchDestination }: GeocodeSearchProps) => {
     []
   );
 
-  const onInputChange = (e) => {
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setValue(value);
     getPlaces(value);
