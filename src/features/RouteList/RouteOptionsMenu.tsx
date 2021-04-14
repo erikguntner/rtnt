@@ -40,6 +40,7 @@ const deleteRoute = async (id: number, image: string) => {
       Router.push('/myroutes');
     } else {
       const error = new Error(response.statusText);
+      Promise.reject(error);
     }
   } catch (err) {
     console.log('send notification of error', err);
@@ -82,17 +83,17 @@ const RouteOptionsMenu = ({
     event.nativeEvent.stopImmediatePropagation();
   };
 
-  const handleDownload = (event) => {
+  const handleDownload = (event: React.MouseEvent<HTMLButtonElement>) => {
     preventBubbling(event);
     downloadGpxFile(route.lines, parseInt(route.distance), units);
   };
 
-  const handleDelete = (event) => {
+  const handleDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     preventBubbling(event);
     deleteRoute(route.id, route.image);
   };
 
-  const handleEdit = (event) => {
+  const handleEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
     preventBubbling(event);
     editRoute();
   };

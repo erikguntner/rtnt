@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Provider, useDispatch } from 'react-redux';
 import Head from 'next/head';
 import Router from 'next/router';
+import { AppProps } from 'next/app';
 import fetch from 'isomorphic-unfetch';
 import styled, { ThemeProvider } from 'styled-components';
 import { config } from '@fortawesome/fontawesome-svg-core';
@@ -10,7 +11,6 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import debounce from 'lodash/debounce';
 import LogRocket from 'logrocket';
-import cookie from 'js-cookie';
 
 import Nav from '../src/features/Nav/Nav';
 import {
@@ -21,7 +21,6 @@ import { theme, GlobalStyle } from '../src/utils/theme';
 import { configStore } from '../src/reducers/store';
 import API_URL from '../src/utils/url';
 import Notifications from '../src/features/Notifications/Notifications';
-import { useUnits } from '../src/utils/useUnits';
 import 'leaflet/dist/leaflet.css';
 
 config.autoAddCss = false;
@@ -56,7 +55,11 @@ const Container = styled.div`
   background-color: #fff;
 `;
 
-const Layout = ({ children }) => {
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+const Layout = ({ children }: LayoutProps) => {
   // const [units] = useUnits();
   const dispatch = useDispatch();
 
@@ -76,7 +79,6 @@ const Layout = ({ children }) => {
 
           dispatch(authenticateUser({ authenticated: token, user }));
         } else {
-          const res = await response.json();
         }
 
         dispatch(setValidating(false));
@@ -102,7 +104,7 @@ const Layout = ({ children }) => {
   );
 };
 
-const MyApp = ({ Component, pageProps }) => {
+const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />

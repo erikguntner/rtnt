@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import Router from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
 import * as turfHelpers from '@turf/helpers';
@@ -20,7 +19,6 @@ import {
   removeFilter,
   getRoutes,
 } from './routeListSlice';
-import RouteCard from './RouteCard';
 import MobileFilters from './MobileFilters';
 import CustomSelect from './CustomSelect';
 import CardSkeleton from './CardSkeleton';

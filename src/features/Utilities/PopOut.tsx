@@ -10,34 +10,6 @@ interface PopOutProps {
   parentRef: React.MutableRefObject<HTMLLIElement | HTMLDivElement>;
 }
 
-// const useKeyPress = function (targetKey) {
-//   const [keyPressed, setKeyPressed] = useState(false);
-
-//   function downHandler({ key }) {
-//     if (key === targetKey) {
-//       setKeyPressed(true);
-//     }
-//   }
-
-//   const upHandler = ({ key }) => {
-//     if (key === targetKey) {
-//       setKeyPressed(false);
-//     }
-//   };
-
-//   React.useEffect(() => {
-//     window.addEventListener('keydown', downHandler);
-//     window.addEventListener('keyup', upHandler);
-
-//     return () => {
-//       window.removeEventListener('keydown', downHandler);
-//       window.removeEventListener('keyup', upHandler);
-//     };
-//   });
-
-//   return keyPressed;
-// };
-
 const PopOut: React.FC<PopOutProps> = ({
   motionKey,
   children,
@@ -45,21 +17,9 @@ const PopOut: React.FC<PopOutProps> = ({
   setOpen,
   parentRef,
 }) => {
-  // const [cursor, setCursor] = useState<number>(0);
-  // const downPress = useKeyPress('ArrowDown');
-  // const upPress = useKeyPress('ArrowUp');
-
-  // const handleArrowPress = (e) => {
-  //   if (e.key === 'ArrowUp') {
-  //     console.log('arrow up');
-  //   } else if (e.key === 'ArrowDown') {
-  //     console.log('arrow down');
-  //   }
-  // };
-
-  const handleClick = (e) => {
+  const handleClick = (e: MouseEvent) => {
     if (parentRef.current) {
-      if (parentRef.current.contains(e.target)) {
+      if (parentRef.current.contains(e.target as Node)) {
         // inside click
         return;
       }

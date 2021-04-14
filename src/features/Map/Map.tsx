@@ -42,8 +42,7 @@ import { Spinner } from '../Forms/styles';
 import { changeNotificationStatus } from '../Notifications/notificationSlice';
 import GeoJsonPath from './GeoJsonPath';
 import AddDestinationMarker from './AddDestinationMarker';
-import { State } from 'react-map-gl/src/components/interactive-map';
-import { GraphQLBoolean } from 'graphql';
+import { MapEvent, State } from 'react-map-gl/src/components/interactive-map';
 
 interface Viewport {
   latitude: number;
@@ -66,10 +65,12 @@ const useResizeObserver = (
   useEffect(() => {
     if (!ref.current) return;
     const observerTarget = ref.current;
-    const resizeObserver = new ResizeObserver((entries) => {
-      const { width, height } = entries[0].contentRect;
-      setDimensions({ width, height });
-    });
+    const resizeObserver = new ResizeObserver(
+      (entries: ResizeObserverEntry[]) => {
+        const { width, height } = entries[0].contentRect;
+        setDimensions({ width, height });
+      }
+    );
     resizeObserver.observe(observerTarget);
     return () => {
       resizeObserver.unobserve(observerTarget);
@@ -247,7 +248,7 @@ const Map = () => {
 
     setUserLocationLoading(true);
 
-    const onSuccess = (position) => {
+    const onSuccess = (position: GeolocationPosition) => {
       dispatch(
         updateViewport({
           ...viewport,
@@ -341,7 +342,7 @@ const Map = () => {
     [setHoverInfo, viewport, dimensions, draggingHoverInfo]
   );
 
-  const onMouseDown = useCallback((event) => {
+  const onMouseDown = useCallback((event: MapEvent) => {
     const { features } = event;
     const mousedFeature = features && features[0];
   }, []);
@@ -401,7 +402,13 @@ const Map = () => {
               : 'crosshair';
           }}
           interactiveLayerIds={lines.map((_, i) => `path_layer_${i}`)}
-          onViewportChange={({ latitude, longitude, zoom, bearing, pitch }) =>
+          onViewportChange={({
+            latitude,
+            longitude,
+            zoom,
+            bearing,
+            pitch,
+          }: Viewport) =>
             dispatch(
               updateViewport({ latitude, longitude, zoom, bearing, pitch })
             )

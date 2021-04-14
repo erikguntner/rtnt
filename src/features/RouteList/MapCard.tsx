@@ -4,7 +4,6 @@ import { divIcon, LatLngExpression } from 'leaflet';
 import { renderToStaticMarkup } from 'react-dom/server';
 import styled from 'styled-components';
 import * as turf from '@turf/helpers';
-import center from '@turf/center';
 import bbox from '@turf/bbox';
 
 import {
@@ -18,13 +17,26 @@ interface MapCardProps {
   route: Route;
 }
 
-const CustomMarker = ({ position, color }) => {
+const stopPropagation = (event: React.MouseEvent<HTMLButtonElement>) => {
+  event.preventDefault();
+  event.stopPropagation();
+  event.nativeEvent.stopImmediatePropagation();
+};
+
+interface CustomMarkerProps {
+  position: number[];
+  color: string;
+}
+
+const CustomMarker = ({ position, color }: CustomMarkerProps) => {
   const iconMarkup = renderToStaticMarkup(<Circle color={color} />);
   const customMarkerIcon = divIcon({
     html: iconMarkup,
   });
 
-  return <Marker icon={customMarkerIcon} position={position} />;
+  return (
+    <Marker icon={customMarkerIcon} position={position as LatLngExpression} />
+  );
 };
 
 const MapCard = ({ route }: MapCardProps) => {
@@ -37,9 +49,11 @@ const MapCard = ({ route }: MapCardProps) => {
       lines.map((line) => line.map((point) => [point[1], point[0], point[2]])),
     [lines]
   );
-  const {
-    geometry: { coordinates: points },
-  } = center(multiLine);
+
+  const toggleFavorite = (e: React.MouseEvent<HTMLButtonElement>) => {
+    stopPropagation(e);
+    console.log('favorited');
+  };
 
   return (
     <Container>
@@ -85,22 +99,24 @@ const MapCard = ({ route }: MapCardProps) => {
           </p>
         </div>
         <div>
-          {/* <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            height="24"
-            width="24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              stroke="#ffc107"
-              strokeWidth={2}
-              d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
-            />
-          </svg> */}
+          <StarButton onClick={toggleFavorite}>
+            <Star
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              height="24"
+              width="24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                stroke="#ffc107"
+                strokeWidth={2}
+                d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+              />
+            </Star>
+          </StarButton>
           <RouteOptionsMenu route={route} />
         </div>
       </Overlay>
@@ -124,7 +140,7 @@ const Container = styled.div`
   border-radius: 8px;
   overflow: hidden;
   transition: all 0.2s ease;
-  box-shadow: ${({ theme }) => theme.boxShadow.sm};
+  box-shadow: ${({ theme }) => theme.boxShadow.default};
 
   /* remove default styling for leaflet divIcon so no background or border show around markers */
   .leaflet-div-icon {
@@ -188,5 +204,18 @@ const Overlay = styled.div`
     height: fit-content;
   }
 `;
+
+const StarButton = styled.button`
+  line-height: 1;
+  margin-right: 8px;
+  background: transparent;
+  border: none;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const Star = styled.svg``;
 
 export default MapCard;
