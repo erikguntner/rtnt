@@ -9,14 +9,13 @@ interface Props {
 }
 
 const Modal: React.FC<Props> = ({ children, toggle, open }) => {
-
   React.useEffect(() => {
     window.addEventListener('scroll', () => {
-      if(open) {
+      if (open) {
         return;
       }
-    })
-  }, [open])
+    });
+  }, [open]);
 
   return (
     <Portal selector={'#portal'}>
@@ -54,8 +53,9 @@ const Background = styled.div`
 `;
 
 const ModalCard = styled.article`
-  border-radius: 2px;
+  border-radius: 8px;
   background-color: #fff;
+  margin: 0 1.6rem;
   z-index: 1010;
 `;
 

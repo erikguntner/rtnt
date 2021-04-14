@@ -1,17 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Router from 'next/router';
 import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet';
 import { divIcon, LatLngExpression } from 'leaflet';
 import { renderToStaticMarkup } from 'react-dom/server';
 import styled from 'styled-components';
 import * as turf from '@turf/helpers';
 import bbox from '@turf/bbox';
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import {
   calculateDistance,
   abbreviatedDistance,
 } from '../../utils/calculateDistance';
 import { Route } from './RouteList';
+import Modal from '../Utilities/Modal';
 import RouteOptionsMenu from './RouteOptionsMenu';
+
+const deleteRoute = async (id: number, image: string) => {
+  const imageId: string = image.split('/')[4];
+
+  try {
+    const response = await fetch(`/api/route/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json, text/plain, */*',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ imageId }),
+    });
+
+    if (response.ok) {
+      Router.push('/myroutes');
+    } else {
+      const error = new Error(response.statusText);
+      Promise.reject(error);
+    }
+  } catch (err) {
+    console.log('send notification of error', err);
+  }
+};
 
 interface MapCardProps {
   route: Route;
@@ -40,7 +69,8 @@ const CustomMarker = ({ position, color }: CustomMarkerProps) => {
 };
 
 const MapCard = ({ route }: MapCardProps) => {
-  const { name, lines, city, state, start_point, end_point } = route;
+  const [open, setOpen] = useState<boolean>(false);
+  const { name, lines, city, state, start_point, end_point, id } = route;
 
   const multiLine = React.useMemo(() => turf.multiLineString(lines), [lines]);
   const bounds = bbox(multiLine);
@@ -56,73 +86,141 @@ const MapCard = ({ route }: MapCardProps) => {
   };
 
   return (
-    <Container>
-      <MapContainer
-        style={{ height: '100%', width: '100%', zIndex: 5 }}
-        bounds={[
-          [bounds[1], bounds[0]],
-          [bounds[3], bounds[2]],
-        ]}
-        boundsOptions={{
-          paddingTopLeft: [100, 100],
-          paddingBottomRight: [20, 20],
+    <>
+      <a
+        key={id}
+        href={`/route/${id}`}
+        onClick={(e) => {
+          e.preventDefault();
+          Router.push(`/route/${id}`);
         }}
-        scrollWheelZoom={false}
-        dragging={false}
-        zoomControl={false}
-        doubleClickZoom={false}
       >
-        <TileLayer
-          url={`https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.MAPBOX_TOKEN}`}
-        />
-        <Polyline
-          pathOptions={{ color: '#0070f3' }}
-          positions={latLngLine as LatLngExpression[] | LatLngExpression[][]}
-        />
-        <CustomMarker
-          color={'#68d391'}
-          position={[start_point[1], start_point[0]]}
-        />
-        <CustomMarker
-          color={'#e53e3e'}
-          position={[end_point[1], end_point[0]]}
-        />
-      </MapContainer>
-      <Overlay>
-        <div>
-          <h2>{name}</h2>
-          <p>
-            {city}, {state}
-          </p>
-          <p>
-            {calculateDistance(lines, 'miles')} {abbreviatedDistance('miles')}
-          </p>
-        </div>
-        <div>
-          <StarButton onClick={toggleFavorite}>
-            <Star
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              height="24"
-              width="24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                stroke="#ffc107"
-                strokeWidth={2}
-                d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
-              />
-            </Star>
-          </StarButton>
-          <RouteOptionsMenu route={route} />
-        </div>
-      </Overlay>
-    </Container>
+        <Container>
+          <MapContainer
+            style={{ height: '100%', width: '100%', zIndex: 5 }}
+            bounds={[
+              [bounds[1], bounds[0]],
+              [bounds[3], bounds[2]],
+            ]}
+            boundsOptions={{
+              paddingTopLeft: [100, 100],
+              paddingBottomRight: [20, 20],
+            }}
+            scrollWheelZoom={false}
+            dragging={false}
+            zoomControl={false}
+            doubleClickZoom={false}
+          >
+            <TileLayer
+              url={`https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.MAPBOX_TOKEN}`}
+            />
+            <Polyline
+              pathOptions={{ color: '#0070f3' }}
+              positions={
+                latLngLine as LatLngExpression[] | LatLngExpression[][]
+              }
+            />
+            <CustomMarker
+              color={'#68d391'}
+              position={[start_point[1], start_point[0]]}
+            />
+            <CustomMarker
+              color={'#e53e3e'}
+              position={[end_point[1], end_point[0]]}
+            />
+          </MapContainer>
+          <Overlay>
+            <div>
+              <h2>{name}</h2>
+              <p>
+                {city}, {state}
+              </p>
+              <p>
+                {calculateDistance(lines, 'miles')}{' '}
+                {abbreviatedDistance('miles')}
+              </p>
+            </div>
+            <div>
+              <StarButton onClick={toggleFavorite}>
+                <Star
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  height="24"
+                  width="24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    stroke="#ffc107"
+                    strokeWidth={2}
+                    d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+                  />
+                </Star>
+              </StarButton>
+              <RouteOptionsMenu setDeleteModal={setOpen} route={route} />
+            </div>
+          </Overlay>
+        </Container>
+      </a>
+      <Modal open={open} toggle={() => setOpen(!open)}>
+        <Alert>
+          <Icon>
+            <FontAwesomeIcon icon={faExclamationTriangle} />
+          </Icon>
+          <h3>Are you sure you want to delete this route?</h3>
+          <ButtonRow>
+            <button onClick={() => setOpen(!open)}>Cancel</button>
+            <button onClick={() => console.log('deleteRoute')}>Delete</button>
+          </ButtonRow>
+        </Alert>
+      </Modal>
+    </>
   );
 };
+
+const Alert = styled.div`
+  padding: 2.4rem;
+  max-width: 40rem;
+
+  & > h3 {
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+`;
+
+const Icon = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 4rem;
+  width: 4rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  background-color: ${(props) => props.theme.colors.red[200]};
+  font-size: 1.6rem;
+  color: ${(props) => props.theme.colors.red[600]};
+`;
+
+const ButtonRow = styled.div`
+  display: flex;
+  justify-content: center;
+
+  & button {
+    padding: 8px 1.6rem;
+    font-size: 1.6rem;
+    line-height: 1;
+
+    &:first-of-type {
+      margin-right: 1.6rem;
+    }
+  }
+`;
 
 const Circle = styled.div<{ color: string }>`
   height: 1.2rem;
@@ -149,7 +247,6 @@ const Container = styled.div`
   }
 
   &:hover {
-    transform: scale(1.01);
     box-shadow: ${({ theme }) => theme.boxShadow.lg};
   }
 `;

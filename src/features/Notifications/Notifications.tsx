@@ -6,12 +6,21 @@ import {
   faExclamationTriangle,
   faCheck,
   faTimes,
+  IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { changeNotificationStatus } from './notificationSlice';
 
 import { AppDispatch } from '../../reducers/store';
 import { RootState } from '../../reducers/rootReducer';
+
+interface NotificationProperties {
+  icon: IconDefinition;
+  color: string;
+}
+interface NotificationTypes {
+  [key: string]: NotificationProperties;
+}
 
 const Notifications: React.FC<{}> = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -21,13 +30,14 @@ const Notifications: React.FC<{}> = () => {
     message: state.notifications.message,
   }));
 
-  const notification = {
+  const notification: NotificationTypes = {
     error: { icon: faTimes, color: 'red' },
     warning: { icon: faExclamationTriangle, color: 'orange' },
     success: { icon: faCheck, color: 'green' },
   };
+
   // timeout variable
-  let timeout;
+  let timeout: null | number = null;
 
   const handleClose = () => {
     clearTimeout(timeout);

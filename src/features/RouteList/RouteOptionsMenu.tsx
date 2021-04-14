@@ -19,37 +19,14 @@ import { downloadGpxFile } from '../../utils/downloadGpxFile';
 
 interface RouteOptionsMenuProps {
   route: Route;
+  setDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
   units?: 'miles' | 'kilometers';
 }
-
-const deleteRoute = async (id: number, image: string) => {
-  const imageId: string = image.split('/')[4];
-
-  try {
-    const response = await fetch(`/api/route/${id}`, {
-      method: 'DELETE',
-      credentials: 'include',
-      headers: {
-        Accept: 'application/json, text/plain, */*',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ imageId }),
-    });
-
-    if (response.ok) {
-      Router.push('/myroutes');
-    } else {
-      const error = new Error(response.statusText);
-      Promise.reject(error);
-    }
-  } catch (err) {
-    console.log('send notification of error', err);
-  }
-};
 
 const RouteOptionsMenu = ({
   route,
   units = 'miles',
+  setDeleteModal,
 }: RouteOptionsMenuProps) => {
   const dispatch = useDispatch();
   const [open, setOpen] = useState<boolean>(false);
@@ -90,7 +67,8 @@ const RouteOptionsMenu = ({
 
   const handleDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     preventBubbling(event);
-    deleteRoute(route.id, route.image);
+    // deleteRoute(route.id, route.image);
+    setDeleteModal(true);
   };
 
   const handleEdit = (event: React.MouseEvent<HTMLButtonElement>) => {

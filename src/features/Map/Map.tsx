@@ -236,6 +236,8 @@ const Map = () => {
   const getLocation = () => {
     const geo = navigator.geolocation;
     if (!geo) {
+      console.log('no geolocation');
+
       dispatch(
         changeNotificationStatus({
           isVisible: true,
@@ -249,6 +251,8 @@ const Map = () => {
     setUserLocationLoading(true);
 
     const onSuccess = (position: GeolocationPosition) => {
+      console.log('success');
+
       dispatch(
         updateViewport({
           ...viewport,
@@ -263,6 +267,8 @@ const Map = () => {
     };
 
     const onError = () => {
+      console.log('error');
+
       dispatch(
         changeNotificationStatus({
           isVisible: true,
@@ -273,6 +279,8 @@ const Map = () => {
       );
       setUserLocationLoading(false);
     };
+
+    console.log('looking for position');
 
     geo.getCurrentPosition(onSuccess, onError);
   };
@@ -344,6 +352,7 @@ const Map = () => {
 
   const onMouseDown = useCallback((event: MapEvent) => {
     const { features } = event;
+    console.log(features);
     const mousedFeature = features && features[0];
   }, []);
 
