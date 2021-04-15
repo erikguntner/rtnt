@@ -6,8 +6,6 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import styled from 'styled-components';
 import * as turf from '@turf/helpers';
 import bbox from '@turf/bbox';
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import {
   calculateDistance,
@@ -141,7 +139,7 @@ const MapCard = ({ route }: MapCardProps) => {
               </p>
             </div>
             <div>
-              <StarButton onClick={toggleFavorite}>
+              {/* <StarButton onClick={toggleFavorite}>
                 <Star
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -158,7 +156,7 @@ const MapCard = ({ route }: MapCardProps) => {
                     d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
                   />
                 </Star>
-              </StarButton>
+              </StarButton> */}
               <RouteOptionsMenu setDeleteModal={setOpen} route={route} />
             </div>
           </Overlay>
@@ -167,7 +165,20 @@ const MapCard = ({ route }: MapCardProps) => {
       <Modal open={open} toggle={() => setOpen(!open)}>
         <Alert>
           <Icon>
-            <FontAwesomeIcon icon={faExclamationTriangle} />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
           </Icon>
           <h3>Are you sure you want to delete this route?</h3>
           <ButtonRow>
@@ -203,21 +214,59 @@ const Icon = styled.div`
   margin-bottom: 8px;
   border-radius: 50%;
   background-color: ${(props) => props.theme.colors.red[200]};
-  font-size: 1.6rem;
   color: ${(props) => props.theme.colors.red[600]};
+
+  & svg {
+    height: 2.4rem;
+  }
 `;
 
 const ButtonRow = styled.div`
   display: flex;
   justify-content: center;
 
+  @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
+    flex-direction: column;
+  }
+
   & button {
-    padding: 8px 1.6rem;
-    font-size: 1.6rem;
+    padding: 1.2rem 2.4rem;
+    font-size: 1.4rem;
     line-height: 1;
+    border-radius: 8px;
+    border: none;
+    transition: all 0.2s ease;
+
+    @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
+      width: 100%;
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
 
     &:first-of-type {
       margin-right: 1.6rem;
+      background-color: #fff;
+      border: 1px solid ${(props) => props.theme.colors.gray[400]};
+
+      @media screen and (max-width: ${(props) => props.theme.screens.sm}) {
+        margin-right: 0px;
+        margin-bottom: 8px;
+      }
+
+      &:hover {
+        background-color: ${(props) => props.theme.colors.gray[100]};
+      }
+    }
+
+    &:last-of-type {
+      background-color: ${(props) => props.theme.colors.red[600]};
+      color: #fff;
+
+      &:hover {
+        background-color: ${(props) => props.theme.colors.red[700]};
+      }
     }
   }
 `;

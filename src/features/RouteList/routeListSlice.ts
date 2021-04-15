@@ -6,7 +6,7 @@ import { convertLength } from '@turf/helpers';
 
 
 interface Filters {
-  keyword: string;
+  [index: string]: string | number[] | string[];
   range: number[];
   sports: string[];
   surfaces: string[];
@@ -48,7 +48,9 @@ const { actions, reducer } = createSlice({
     updateSortingTerm: (state, action: PayloadAction<string>) => {
       state.sortingTerm = action.payload;
     },
-    updateFilter: (state, action: PayloadAction<{ filter: string; value: string | number[] | string[] }>) => {
+    updateFilter: (state, action: PayloadAction<{
+      filter: string; value: string | number[] | string[];
+    }>) => {
       const { filter, value } = action.payload;
       state.filters[filter] = value;
     },
@@ -75,9 +77,9 @@ const { actions, reducer } = createSlice({
 
 export const { addRoutes, updateSortingTerm, updateFilter, removeFilter, clearState, updateMaxDistance, changeLoadingState } = actions;
 
-const calculateMaxDistance = (routes, units) => {
+const calculateMaxDistance = (routes: Route[], units: 'miles' | 'kilometers') => {
   const distance = routes.reduce((accum, curr) => {
-    return Math.max(accum, curr.distance);
+    return Math.max(accum, parseInt(curr.distance));
   }, 0);
   return Math.ceil(convertLength(distance, 'meters', units));
 };
