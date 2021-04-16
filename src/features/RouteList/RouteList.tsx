@@ -17,6 +17,7 @@ import {
   updateFilter,
   removeFilter,
   getRoutes,
+  Filters,
 } from './routeListSlice';
 import MobileFilters from './MobileFilters';
 import CustomSelect from './CustomSelect';
@@ -39,13 +40,6 @@ export interface Route {
   surfaces: string[];
   city: string;
   state: string;
-}
-
-export interface FiltersTypes {
-  keyword: string;
-  range: number[];
-  sports: string[];
-  surfaces: string[];
 }
 
 export interface SelectOption {
@@ -72,9 +66,9 @@ const ValueLabelComponent = (props: LabelProps) => {
 const sortRoutes = (
   sortTerm: string,
   routes: Route[],
-  filters: FiltersTypes,
+  filters: Filters,
   maxDistance: number,
-  units
+  units: 'miles' | 'kilometers'
 ): Route[] => {
   let result = routes;
   const { keyword, range } = filters;
@@ -184,14 +178,14 @@ const RouteList: React.FC<{}> = () => {
     dispatch(updateSortingTerm(selectedOption.value));
   };
 
-  const handleChange = (filter, value) => {
+  const handleChange = (filter: string, value: string) => {
     dispatch(updateFilter({ filter, value }));
   };
 
   const handleSlide = (
     event: React.ChangeEvent<{}>,
     newValue: number[],
-    filters: FiltersTypes
+    filters: Filters
   ) => {
     if (newValue[0] === filters.range[0] && newValue[1] === filters.range[1])
       return;
@@ -234,7 +228,7 @@ const RouteList: React.FC<{}> = () => {
           <FilterButton onClick={() => setOpen(true)}>filters</FilterButton>
         </Header>
         <Grid>
-          <Filters>
+          <FiltersWrapper>
             <FilterGroup>
               <Label>Keyword</Label>
               <InputWrapper>
@@ -294,7 +288,7 @@ const RouteList: React.FC<{}> = () => {
                 ))}
               </TagsWrapper>
             </FilterGroup>
-          </Filters>
+          </FiltersWrapper>
           <RouteGrid>
             {loading ? (
               <>
@@ -411,7 +405,7 @@ const RouteGrid = styled.div`
   }
 `;
 
-export const Filters = styled.div`
+export const FiltersWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

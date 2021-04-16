@@ -60,7 +60,10 @@ interface Dimensions {
 const useResizeObserver = (
   ref: MutableRefObject<HTMLDivElement>
 ): Dimensions => {
-  const [dimensions, setDimensions] = useState<Dimensions | null>(null);
+  const [dimensions, setDimensions] = useState<Dimensions | null>({
+    width: 0,
+    height: 0,
+  });
 
   useEffect(() => {
     if (!ref.current) return;
@@ -76,6 +79,7 @@ const useResizeObserver = (
       resizeObserver.unobserve(observerTarget);
     };
   }, [ref]);
+
   return dimensions;
 };
 

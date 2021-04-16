@@ -11,10 +11,10 @@ import {
   InputWrapper,
   InputWithIcon,
   InputGroup,
-  FiltersTypes,
   SelectOption,
   TagsWrapper,
 } from './RouteList';
+import { Filters } from './routeListSlice';
 import CustomSelect from './CustomSelect';
 import Tag from '../Utilities/Tag';
 import { sportsArr, surfacesArr } from '../Utilities/Tag';
@@ -23,16 +23,16 @@ import { LabelProps } from './RouteList';
 interface MobileFiltersProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  filters: FiltersTypes;
+  filters: Filters;
   sortingTerm: string;
   maxDistance: number;
-  handleChange: (filter, value) => void;
+  handleChange: (filter: string, value: string) => void;
   handleSelect: (selectedOption: SelectOption) => void;
   toggleTags: (filter: string, title: string, tags: string[]) => void;
   handleSlide: (
     event: React.ChangeEvent<{}>,
     newValue: number[],
-    filters: FiltersTypes
+    filters: Filters
   ) => void;
   ValueLabelComponent: (props: LabelProps) => JSX.Element;
 }
@@ -52,7 +52,7 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({
   return (
     <Portal selector={'#portal'}>
       {open && (
-        <Filters>
+        <FiltersWrapper>
           <CloseButton onClick={() => setOpen(false)}>X</CloseButton>
           <SelectContainer>
             <CustomSelect {...{ sortingTerm, handleSelect }} />
@@ -114,7 +114,7 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({
               ))}
             </TagsWrapper>
           </FilterGroup>
-        </Filters>
+        </FiltersWrapper>
       )}
     </Portal>
   );
@@ -144,7 +144,7 @@ const SelectContainer = styled.div`
   }
 `;
 
-export const Filters = styled.div`
+export const FiltersWrapper = styled.div`
   display: none;
   position: absolute;
   top: 0;

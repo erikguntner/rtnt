@@ -4,9 +4,9 @@ import { AppThunk } from '../../reducers/store';
 import API_URL from '../../utils/url';
 import { convertLength } from '@turf/helpers';
 
-
-interface Filters {
+export interface Filters {
   [index: string]: string | number[] | string[];
+  keyword: string;
   range: number[];
   sports: string[];
   surfaces: string[];
@@ -45,6 +45,9 @@ const { actions, reducer } = createSlice({
         state.filters.range = [0, action.payload.maxDistance];
       }
     },
+    deleteRoute: (state, action: PayloadAction<number>) => {
+      state.routes = state.routes.filter((route) => route.id !== action.payload)
+    },
     updateSortingTerm: (state, action: PayloadAction<string>) => {
       state.sortingTerm = action.payload;
     },
@@ -75,7 +78,7 @@ const { actions, reducer } = createSlice({
   },
 });
 
-export const { addRoutes, updateSortingTerm, updateFilter, removeFilter, clearState, updateMaxDistance, changeLoadingState } = actions;
+export const { addRoutes, deleteRoute, updateSortingTerm, updateFilter, removeFilter, clearState, updateMaxDistance, changeLoadingState } = actions;
 
 const calculateMaxDistance = (routes: Route[], units: 'miles' | 'kilometers') => {
   const distance = routes.reduce((accum, curr) => {

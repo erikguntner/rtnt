@@ -55,17 +55,16 @@ const request = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       const route = results.rows[0];
 
       // delete image from S3
-      s3.deleteObject({
+      await s3.deleteObject({
         Bucket: 'run-tracker-bucket',
         Key: `${user.id}/${imageId}`
-      }, function (err, data) {
-      })
+      }).promise();
 
       return res.status(200).json({ route });
     } catch (err) {
       return res
         .status(400)
-        .json({ message: 'there was an error fetching the route' });
+        .json({ message: 'there was an error deleting the route' });
     }
   }
 };

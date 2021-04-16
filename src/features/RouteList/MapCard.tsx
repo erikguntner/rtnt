@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Router from 'next/router';
+import { useDispatch } from 'react-redux';
 import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet';
 import { divIcon, LatLngExpression } from 'leaflet';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -11,11 +12,12 @@ import {
   calculateDistance,
   abbreviatedDistance,
 } from '../../utils/calculateDistance';
+import { deleteRoute } from './routeListSlice';
 import { Route } from './RouteList';
 import Modal from '../Utilities/Modal';
 import RouteOptionsMenu from './RouteOptionsMenu';
 
-const deleteRoute = async (id: number, image: string) => {
+const deleteRouteClient = async (id: number, image: string): Promise<any> => {
   const imageId: string = image.split('/')[4];
 
   try {
@@ -29,14 +31,17 @@ const deleteRoute = async (id: number, image: string) => {
       body: JSON.stringify({ imageId }),
     });
 
+    const data = await response.json();
+
     if (response.ok) {
-      Router.push('/myroutes');
-    } else {
-      const error = new Error(response.statusText);
-      Promise.reject(error);
+      return data;
     }
+
+    throw new Error(data.message);
   } catch (err) {
-    console.log('send notification of error', err);
+    return Promise.reject(
+      err.message ? err.message : 'there was an error deleting'
+    );
   }
 };
 
@@ -68,7 +73,8 @@ const CustomMarker = ({ position, color }: CustomMarkerProps) => {
 
 const MapCard = ({ route }: MapCardProps) => {
   const [open, setOpen] = useState<boolean>(false);
-  const { name, lines, city, state, start_point, end_point, id } = route;
+  const dispatch = useDispatch();
+  const { name, lines, city, state, start_point, end_point, id, image } = route;
 
   const multiLine = React.useMemo(() => turf.multiLineString(lines), [lines]);
   const bounds = bbox(multiLine);
@@ -81,6 +87,17 @@ const MapCard = ({ route }: MapCardProps) => {
   const toggleFavorite = (e: React.MouseEvent<HTMLButtonElement>) => {
     stopPropagation(e);
     console.log('favorited');
+  };
+
+  const handleDeleteRoute = async () => {
+    try {
+      await deleteRouteClient(id, image);
+      dispatch(deleteRoute(id));
+      setOpen(false);
+    } catch (err) {
+      // TODO: display toast
+      setOpen(false);
+    }
   };
 
   return (
@@ -183,7 +200,7 @@ const MapCard = ({ route }: MapCardProps) => {
           <h3>Are you sure you want to delete this route?</h3>
           <ButtonRow>
             <button onClick={() => setOpen(!open)}>Cancel</button>
-            <button onClick={() => console.log('deleteRoute')}>Delete</button>
+            <button onClick={handleDeleteRoute}>Delete</button>
           </ButtonRow>
         </Alert>
       </Modal>
