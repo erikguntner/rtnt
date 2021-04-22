@@ -5,9 +5,7 @@ import Skeleton from '../Utilities/Skeleton';
 const CardSkeleton = () => {
   return (
     <SkeletonWrapper>
-      <Skeleton height={'200px'} width={'100%'} />
-      <Skeleton height={'24px'} width={'150px'} />
-      <Skeleton width={'50px'} />
+      <Skeleton height={'100%'} width={'100%'} borderRadius={'8px'} />
     </SkeletonWrapper>
   );
 };

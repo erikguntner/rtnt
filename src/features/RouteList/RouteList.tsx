@@ -389,10 +389,11 @@ const Grid = styled.div`
 
 const RouteGrid = styled.div`
   display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 24rem;
+  grid-gap: 2.4rem;
   padding: 2.4rem;
   margin-bottom: 2.4rem;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 2.4rem;
   overflow: scroll;
   justify-content: center;
 

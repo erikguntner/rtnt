@@ -298,7 +298,7 @@ const Circle = styled.div<{ color: string }>`
 
 const Container = styled.div`
   position: relative;
-  height: 240px;
+  height: 100%;
   width: 100%;
   z-index: 1;
   border-radius: 8px;
