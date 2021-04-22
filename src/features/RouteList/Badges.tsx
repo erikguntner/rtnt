@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FiltersTypes } from './RouteList';
+import { Filters } from './routeListSlice';
 
 interface BadgesProps {
-  filters: FiltersTypes;
+  filters: Filters;
   removeFilter: (filter: string) => void;
   length: number;
   units: 'miles' | 'kilometers';
@@ -36,7 +36,7 @@ const Badges: React.FC<BadgesProps> = ({
   units,
   maxDistance,
 }) => {
-  const renderBadges = (filters: FiltersTypes, maxDistance: number) => {
+  const renderBadges = (filters: Filters, maxDistance: number) => {
     return Object.keys(filters).map((filter) => {
       if (filter === 'keyword' && filters.keyword) {
         return (
