@@ -29,6 +29,7 @@ const options = [
 const CustomSelect = ({ sortingTerm, handleSelect }: CustomSelectProps) => {
   return (
     <Select
+      instanceId={'custom-select'}
       styles={customStyles}
       theme={(theme) => ({
         ...theme,
@@ -40,7 +41,7 @@ const CustomSelect = ({ sortingTerm, handleSelect }: CustomSelectProps) => {
       })}
       defaultValue={options.filter((option) => option.value === sortingTerm)}
       value={options.filter((option) => option.value === sortingTerm)}
-      {...{ options }}
+      options={options}
       onChange={handleSelect}
     />
   );
