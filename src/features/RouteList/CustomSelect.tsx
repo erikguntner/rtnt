@@ -1,5 +1,5 @@
 import React from 'react';
-import Select from 'react-select';
+import Select, { StylesConfig } from 'react-select';
 import { SelectOption } from './RouteList';
 
 interface CustomSelectProps {
@@ -7,7 +7,7 @@ interface CustomSelectProps {
   handleSelect: (selectedOption: SelectOption) => void;
 }
 
-const customStyles = {
+const customStyles: StylesConfig = {
   container: (styles) => ({
     ...styles,
     fontSize: '16px',
@@ -26,10 +26,7 @@ const options = [
   { value: 'longest', label: 'Sort By: Longest' },
 ];
 
-const CustomSelect: React.FC<CustomSelectProps> = ({
-  sortingTerm,
-  handleSelect,
-}) => {
+const CustomSelect = ({ sortingTerm, handleSelect }: CustomSelectProps) => {
   return (
     <Select
       styles={customStyles}
