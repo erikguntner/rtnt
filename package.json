@@ -20,7 +20,7 @@
     "@reduxjs/toolkit": "^1.2.1",
     "@turf/turf": "^5.1.6",
     "@zeit/next-sass": "^1.0.1",
-    "aws-sdk": "^2.628.0",
+    "aws-sdk": "^2.814.0",
     "babel-plugin-import": "^1.13.0",
     "bcrypt": "^3.0.8",
     "chrome-aws-lambda": "^2.1.1",
