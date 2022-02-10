@@ -49,7 +49,7 @@
     "mapbox-gl": "^1.5.0",
     "next": "^9.4.0",
     "next-cookies": "^2.0.3",
-    "node-sass": "^4.13.0",
+    "node-sass": "^7.0.0",
     "nprogress": "^0.2.0",
     "pg": "^8.5.1",
     "puppeteer-core": "^2.1.1",
